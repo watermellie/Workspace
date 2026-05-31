@@ -688,7 +688,10 @@ textarea.lesson-notes:focus, textarea.reflect:focus { border-color: var(--blue);
 }
 
 .collected-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 4px; }
-.collected-chip { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--yellow); color: var(--ink); border: 1px solid var(--line-bold); }
+.collected-chip { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--yellow); color: var(--ink); border: 1px solid var(--line-bold); display:inline-flex; align-items:center; gap:4px; }
+.collected-chip.mine { background: var(--blue-soft); }
+.collected-chip .icon-btn { width: 16px; height: 16px; }
+.collected-chip .icon-btn svg { width: 11px; height: 11px; }
 
 /* personalization settings */
 .theme-row { display: flex; flex-wrap: wrap; gap: 6px; }

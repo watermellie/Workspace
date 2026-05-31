@@ -1287,6 +1287,7 @@
         pane.innerHTML=''; pane.append(lessonBody(L, st, pane)); pane.scrollTop = 0;
         $$('.ix-link').forEach(a => { if (a.getAttribute('href')===`#work/lesson/${L.id}`) a.classList.toggle('complete', st.complete); });
         toast(cb.checked ? 'lesson complete ✓' : 'reopened');
+        if (cb.checked) Pets.celebrate();
       });
       toggle.append(cb, el('span', { text:'mark “Lesson Complete” → lock as read-only reference' }));
       bar.append(toggle);
