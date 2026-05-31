@@ -520,22 +520,40 @@
     return wrap;
   }
 
+  /* downscale + recompress images so months of photos don't blow the storage budget */
+  function compressImage(dataURL, done, maxEdge = 1400, quality = 0.82) {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      const scale = Math.min(1, maxEdge / Math.max(w, h));
+      w = Math.round(w * scale); h = Math.round(h * scale);
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      try { done(c.toDataURL('image/jpeg', quality)); } catch { done(dataURL); }
+    };
+    img.onerror = () => done(dataURL);
+    img.src = dataURL;
+  }
+  function fileToImage(file, done) {
+    const rd = new FileReader();
+    rd.onload = () => compressImage(rd.result, done);
+    rd.readAsDataURL(file);
+  }
+
   function handlePaste(e, note, node) {
     const items = [...(e.clipboardData?.items || [])].filter(it => it.type.startsWith('image/'));
     if (!items.length) return;                 // let text paste through
     e.preventDefault();
     items.forEach(it => {
       const file = it.getAsFile(); if (!file) return;
-      const rd = new FileReader();
-      rd.onload = () => {
-        note.images.push({ src: rd.result, caption: '' });
+      fileToImage(file, (src) => {
+        note.images.push({ src, caption: '' });
         const body = node.querySelector('.note-body-scroll');
         const existing = body.querySelector('.note-images');
         if (existing) existing.replaceWith(renderImages(note, node, false));
         else (body.querySelector('.note-checklist') || body.querySelector('.note-rich')).after(renderImages(note, node, false));
         Store.save(true); toast('image pasted');
-      };
-      rd.readAsDataURL(file);
+      });
     });
   }
 
@@ -878,7 +896,7 @@
     document.body.append(input);
     input.addEventListener('change', () => {
       const f = input.files[0];
-      if (f) { const rd = new FileReader(); rd.onload = () => { done(rd.result); input.remove(); }; rd.readAsDataURL(f); }
+      if (f) fileToImage(f, (src) => { done(src); input.remove(); });
       else input.remove();
     });
     input.click();
@@ -1175,7 +1193,7 @@
           grid.append(box);
         });
       };
-      const ingest = (files) => [...files].filter(f=>f.type.startsWith('image/')).forEach(f => { const rd=new FileReader(); rd.onload=() => { (st.shots||=[]).push({src:rd.result,caption:''}); Store.save(true); renderShots(); }; rd.readAsDataURL(f); });
+      const ingest = (files) => [...files].filter(f=>f.type.startsWith('image/')).forEach(f => fileToImage(f, (src) => { (st.shots||=[]).push({src,caption:''}); Store.save(true); renderShots(); }));
       dz.addEventListener('click', () => pickImage((src) => { (st.shots||=[]).push({src,caption:''}); Store.save(true); renderShots(); }));
       dz.addEventListener('paste', (e) => { const imgs=[...(e.clipboardData?.items||[])].filter(i=>i.type.startsWith('image/')); if(imgs.length){e.preventDefault(); ingest(imgs.map(i=>i.getAsFile()));}});
       ['dragover','dragenter'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('over');}));
@@ -1691,6 +1709,8 @@
     if (!location.hash) location.replace('#dashboard');
     window.addEventListener('hashchange', render);
     startClock();
+    initShortcuts();
+    initPWA();
     render();
 
     // cloud sync: mark unsaved on change (auto-pushes if enabled), warn-on-load if behind
