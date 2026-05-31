@@ -199,21 +199,23 @@
   const Sync = (() => {
     const CFG_KEY = 'wsi_sync_config';
     let cfg = (() => { try { return JSON.parse(localStorage.getItem(CFG_KEY)) || null; } catch { return null; } })();
-    let pushTimer = null, status = 'idle', lastError = '';
+    let pushTimer = null, status = 'idle', lastError = '', dirty = false, autopush = (cfg ? cfg.autopush !== false : true);
 
     const enabled = () => !!(cfg && cfg.url && cfg.key && cfg.code);
     const get = () => cfg;
+    const isAuto = () => autopush;
     function set(next) {
-      cfg = next && next.url ? { url: next.url.replace(/\/+$/, ''), key: next.key.trim(), code: next.code.trim() } : null;
+      cfg = next && next.url ? { url: next.url.replace(/\/+$/, ''), key: next.key.trim(), code: next.code.trim(), autopush } : null;
       if (cfg) localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
       else localStorage.removeItem(CFG_KEY);
     }
+    function setAuto(on) { autopush = !!on; if (cfg) { cfg.autopush = autopush; localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } updateBtn(); }
     const endpoint = () => `${cfg.url}/rest/v1/workspaces`;
     const headers = () => ({ 'apikey': cfg.key, 'Authorization': `Bearer ${cfg.key}`, 'Content-Type': 'application/json' });
 
     async function push() {
       if (!enabled()) return;
-      status = 'syncing'; updateBadge();
+      status = 'syncing'; updateBtn();
       try {
         const body = [{ code: cfg.code, data: Store.get(), updated_at: new Date(Store.get().meta.updatedAt || Date.now()).toISOString() }];
         const r = await fetch(`${endpoint()}?on_conflict=code`, {
@@ -222,40 +224,75 @@
           body: JSON.stringify(body),
         });
         if (!r.ok) throw new Error(`push ${r.status}: ${(await r.text()).slice(0,120)}`);
-        status = 'ok'; lastError = '';
+        status = 'ok'; lastError = ''; dirty = false;
       } catch (e) { status = 'error'; lastError = e.message; console.error('sync push', e); }
-      updateBadge();
+      updateBtn();
     }
     async function pull() {
       if (!enabled()) return null;
-      status = 'syncing'; updateBadge();
+      status = 'syncing'; updateBtn();
       try {
         const r = await fetch(`${endpoint()}?code=eq.${encodeURIComponent(cfg.code)}&select=data,updated_at`, { headers: headers() });
         if (!r.ok) throw new Error(`pull ${r.status}: ${(await r.text()).slice(0,120)}`);
         const rows = await r.json();
-        status = 'ok'; lastError = ''; updateBadge();
+        status = 'ok'; lastError = ''; updateBtn();
         return rows && rows[0] ? rows[0] : null;
-      } catch (e) { status = 'error'; lastError = e.message; console.error('sync pull', e); updateBadge(); return null; }
+      } catch (e) { status = 'error'; lastError = e.message; console.error('sync pull', e); updateBtn(); return null; }
     }
+
+    /* manual "save to cloud" — what the corner button does */
+    async function pushNow() {
+      if (!enabled()) { toast('cloud sync is off — set it up in settings'); return; }
+      await push();
+      toast(status === 'ok' ? 'saved to cloud ✓' : `save failed: ${lastError}`);
+    }
+
+    /* on load: if another device saved newer changes while this one was idle,
+       WARN once and let the user choose — don't silently overwrite either side. */
     async function syncOnLoad() {
       if (!enabled()) return;
       const remote = await pull();
-      if (!remote || !remote.data) { if (status === 'ok') push(); return; }
+      if (!remote || !remote.data) { push(); return; }              // cloud empty → seed it
       const localTs = Store.get().meta.updatedAt || 0;
       const remoteTs = remote.data.meta?.updatedAt || Date.parse(remote.updated_at) || 0;
-      if (remoteTs > localTs + 1500) { Store.replaceAll(remote.data); toast('synced from cloud'); render(); }
-      else if (localTs > remoteTs) { push(); }
+      if (remoteTs > localTs + 1500) warnStale(remote, remoteTs, localTs);  // this device is behind
+      else if (localTs > remoteTs + 1500) { if (autopush) push(); else { dirty = true; updateBtn(); } }
     }
-    function schedulePush() { if (!enabled()) return; clearTimeout(pushTimer); pushTimer = setTimeout(push, 2500); }
-    function updateBadge() {
-      const b = $('#sync-badge'); if (!b) return;
+
+    function warnStale(remote, remoteTs, localTs) {
+      $('#sync-warn')?.remove();
+      const ago = (ts) => { const m = Math.round((Date.now()-ts)/60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : `${Math.round(m/60)} hr ago`; };
+      const bar = el('div', { id:'sync-warn' }, [
+        el('span', { html: `☁️ <b>Another device has newer changes</b> (cloud saved ${ago(remoteTs)}; this device ${localTs?('last edited '+ago(localTs)):'has no local edits'}).` }),
+        el('div', { class:'sw-actions' }, [
+          el('button', { class:'btn primary sm', text:'load latest', onclick: () => { Store.replaceAll(remote.data); toast('loaded latest from cloud'); bar.remove(); render(); } }),
+          el('button', { class:'btn ghost sm', text:'keep this device', onclick: () => { bar.remove(); push(); toast('kept this device — uploaded to cloud'); } }),
+        ]),
+      ]);
+      document.body.append(bar);
+    }
+
+    function markDirty() {
+      if (!enabled()) return;
+      dirty = true; updateBtn();
+      if (autopush) { clearTimeout(pushTimer); pushTimer = setTimeout(push, 2500); }
+    }
+
+    /* the corner cloud button reflects state: synced / unsaved / syncing / error */
+    function updateBtn() {
+      const b = $('#sync-btn'); if (!b) return;
       b.hidden = !enabled();
-      b.dataset.status = status;
-      b.title = !enabled() ? 'cloud sync off'
-        : status === 'error' ? `sync error: ${lastError}`
-        : status === 'syncing' ? 'syncing…' : 'cloud sync on';
+      const state = !enabled() ? 'off' : status === 'syncing' ? 'syncing' : status === 'error' ? 'error' : dirty ? 'dirty' : 'ok';
+      b.dataset.status = state;
+      b.title = state === 'error' ? `sync error: ${lastError} — tap to retry`
+        : state === 'syncing' ? 'saving…'
+        : state === 'dirty' ? 'unsaved changes — tap to save to cloud'
+        : 'saved to cloud — tap to save now';
+      b.innerHTML = svg('cloud') + '<span class="sync-dot"></span>';
     }
-    return { enabled, get, set, push, pull, syncOnLoad, schedulePush, updateBadge, get status() { return status; }, get lastError() { return lastError; } };
+
+    return { enabled, get, set, isAuto, setAuto, push, pull, pushNow, syncOnLoad, markDirty, updateBtn,
+      get status() { return status; }, get lastError() { return lastError; }, get dirty() { return dirty; } };
   })();
 
   /* ==========================================================
@@ -1435,22 +1472,33 @@
         if (remote?.data && confirm('Replace this device’s data with the cloud copy?')) { Store.replaceAll(remote.data); location.reload(); }
         else toast(remote ? 'kept local' : 'nothing in cloud yet');
       } }) : null,
-      on ? el('button', { class:'btn ghost sm', text:'turn off', onclick: () => { Sync.set(null); toast('sync turned off'); statusLine.textContent='○ sync off'; statusLine.className='sync-status off'; Sync.updateBadge(); } }) : null,
+      on ? el('button', { class:'btn ghost sm', text:'turn off', onclick: () => { Sync.set(null); toast('sync turned off'); statusLine.textContent='○ sync off'; statusLine.className='sync-status off'; Sync.updateBtn(); } }) : null,
     ]);
     wrap.append(actions);
+
+    if (on) {
+      const auto = el('label', { class:'sync-auto' });
+      const cb = el('input', { type:'checkbox' }); cb.checked = Sync.isAuto();
+      cb.addEventListener('change', () => { Sync.setAuto(cb.checked); toast(cb.checked ? 'auto-save on' : 'manual save — tap the cloud button'); });
+      auto.append(cb, el('span', { text:'auto-save to cloud as I work (off = save only when I tap the cloud button)' }));
+      wrap.append(auto);
+    }
+
     wrap.append(el('div', { style:'font-size:11.5px;color:var(--ink-faint);margin-top:8px', html:
       'one-time setup (~5 min): create a free <b>Supabase</b> project → SQL editor → run the snippet in <b>README</b> → paste your Project URL + anon key here, and make up a long sync code. use the same three on every device. ' +
-      '<b>last edit wins</b>, so avoid editing two devices at the same moment. keep your key + code private.' }));
+      'the <b>☁ cloud button</b> in the top-right saves on tap and shows status. <b>last edit wins</b>, so if you switch devices, load the latest before editing. keep your key + code private.' }));
     return wrap;
   }
 
   function boot() {
     $('#settings-btn').innerHTML = svg('gear');
+    // corner cloud button → tap to save to cloud now
+    $('#sync-btn').addEventListener('click', () => Sync.pushNow());
     $('#settings-btn').addEventListener('click', () => Modal.open('Settings', (body, close) => {
       const meta = Store.get().meta;
       body.append(
         el('div', { class:'modal-row' }, el('div', { style:'font-size:13px;color:var(--ink-soft)', html:
-          'all data is stored locally in this browser. it does <b>not</b> sync between devices automatically — use backup/restore below to move it to your iPad or phone.' })),
+          'data is stored locally in this browser. use <b>backup/restore</b> or turn on <b>cloud sync</b> below to move it to your iPad or phone.' })),
 
         el('div', { class:'modal-row' }, [ el('label', { text:'Backup & restore (move data between devices)' }),
           el('div', { style:'display:flex;gap:8px;flex-wrap:wrap' }, [
@@ -1478,9 +1526,9 @@
     startClock();
     render();
 
-    // cloud sync: auto-push on change, pull/adopt on load
-    Store.onSave(() => Sync.schedulePush());
-    Sync.updateBadge();
+    // cloud sync: mark unsaved on change (auto-pushes if enabled), warn-on-load if behind
+    Store.onSave(() => Sync.markDirty());
+    Sync.updateBtn();
     Sync.syncOnLoad();
 
     let lastDay = todayKey();

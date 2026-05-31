@@ -91,13 +91,43 @@ mark { background: var(--yellow); color: var(--ink); padding: 0 2px; border-radi
 #topdate { font-size: 13px; color: var(--ink-soft); text-align: center; letter-spacing: -.01em; }
 #topdate .clock { color: var(--ink-faint); font-variant-numeric: tabular-nums; }
 #topright { justify-self: end; display: flex; align-items: center; gap: 8px; }
-#sync-badge { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px var(--green-soft); }
-#sync-badge[data-status="syncing"] { background: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
-#sync-badge[data-status="error"] { background: var(--red); box-shadow: 0 0 0 3px var(--red-soft); }
+
+/* corner cloud "save" button */
+#sync-btn {
+  position: relative; display: grid; place-items: center; width: 34px; height: 34px;
+  background: var(--paper); border: 1px solid var(--line-bold); border-radius: var(--radius-sm);
+  color: var(--ink-soft); transition: all var(--t) var(--ease); -webkit-tap-highlight-color: transparent;
+}
+#sync-btn:hover { background: var(--wash); color: var(--ink); }
+#sync-btn:active { transform: translateY(.5px); }
+#sync-btn svg { width: 17px; height: 17px; }
+#sync-btn .sync-dot { position: absolute; top: 4px; right: 4px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 2px var(--paper); }
+#sync-btn[data-status="ok"]      { color: var(--green); border-color: var(--green); }
+#sync-btn[data-status="ok"]      .sync-dot { background: var(--green); }
+#sync-btn[data-status="dirty"]   { color: var(--blue); border-color: var(--blue); }
+#sync-btn[data-status="dirty"]   .sync-dot { background: var(--blue); animation: pulse 1.6s var(--ease) infinite; }
+#sync-btn[data-status="syncing"] { color: var(--blue); border-color: var(--blue); }
+#sync-btn[data-status="syncing"] .sync-dot { background: var(--blue); }
+#sync-btn[data-status="error"]   { color: var(--red); border-color: var(--red); }
+#sync-btn[data-status="error"]   .sync-dot { background: var(--red); }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+
+/* one-time "another device is newer" warning bar */
+#sync-warn {
+  position: fixed; left: 50%; top: 14px; transform: translateX(-50%); z-index: 96;
+  max-width: min(560px, 92vw); display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  background: var(--paper); border: 1px solid var(--line-bold); border-left: 3px solid var(--blue);
+  border-radius: var(--radius); padding: 12px 16px; box-shadow: var(--shadow-lg); font-size: 13.5px;
+  animation: pop var(--t) var(--ease) both;
+}
+#sync-warn .sw-actions { display: flex; gap: 8px; margin-left: auto; }
+
 .sync-block .sync-status { font-size: 12px; margin: 6px 0 2px; }
 .sync-block .sync-status.ok { color: var(--green); }
 .sync-block .sync-status.error { color: var(--red); }
 .sync-block .sync-status.off, .sync-block .sync-status.idle { color: var(--ink-faint); }
+.sync-auto { display: flex; align-items: flex-start; gap: 9px; margin-top: 10px; font-size: 12.5px; color: var(--ink-soft); }
+.sync-auto input { margin-top: 2px; width: 15px; height: 15px; accent-color: var(--blue); }
 
 /* ───────────────────────── Shared bits ───────────────────────── */
 #view { position: relative; }
