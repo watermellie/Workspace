@@ -136,22 +136,34 @@
       version: 2,
       canvas: { dashboard: {}, personal: {} },     // { [dateKey]: [note] }
       work: { lessons: {}, customLessons: [], entries: [] },
-      meta: { catImage: '', focusPos: { x: 26, y: 20 }, weather: null, coords: null },
+      meta: { catImage: '', focusPos: { x: 26, y: 20 }, weather: null, coords: null, recurring: ['gym'], mood: {}, delight: true, collected: [] },
     };
+
+    /* shape-guard ANY payload (fresh / localStorage / synced / imported) so older
+       or partial data never crashes newer code. Run on load AND in replaceAll(). */
+    function guard(d) {
+      d = d || structuredClone(blank);
+      d.canvas ||= {}; d.canvas.dashboard ||= {}; d.canvas.personal ||= {};
+      d.work ||= {}; d.work.lessons ||= {}; d.work.customLessons ||= []; d.work.entries ||= [];
+      d.meta ||= {}; d.meta.focusPos ||= { x: 26, y: 20 };
+      if (!('catImage' in d.meta)) d.meta.catImage = '';
+      if (!Array.isArray(d.meta.recurring)) d.meta.recurring = ['gym'];
+      d.meta.mood ||= {};
+      if (d.meta.delight === undefined) d.meta.delight = true;
+      if (!Array.isArray(d.meta.collected)) d.meta.collected = [];
+      for (const view of ['dashboard', 'personal']) {
+        for (const k of Object.keys(d.canvas[view])) {
+          d.canvas[view][k] = (d.canvas[view][k] || []).map(normalizeNote);
+        }
+      }
+      return d;
+    }
+
     let data;
     try { data = JSON.parse(localStorage.getItem(LS_KEY)) || structuredClone(blank); }
     catch { data = structuredClone(blank); }
+    data = guard(data);
 
-    data.canvas ||= {}; data.canvas.dashboard ||= {}; data.canvas.personal ||= {};
-    data.work ||= {}; data.work.lessons ||= {}; data.work.customLessons ||= []; data.work.entries ||= [];
-    data.meta ||= {}; data.meta.focusPos ||= { x: 26, y: 20 };
-    if (!('catImage' in data.meta)) data.meta.catImage = '';
-
-    for (const view of ['dashboard', 'personal']) {
-      for (const k of Object.keys(data.canvas[view])) {
-        data.canvas[view][k] = (data.canvas[view][k] || []).map(normalizeNote);
-      }
-    }
     function normalizeNote(n) {
       return {
         id: n.id || uid(),
