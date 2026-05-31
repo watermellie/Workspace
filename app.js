@@ -190,6 +190,75 @@
   })();
 
   /* ==========================================================
+     2b · Cloud sync (optional, bring-your-own Supabase)
+     ---------------------------------------------------------
+     Credentials live ONLY in this browser's localStorage —
+     never in the repo. Every device that enters the same
+     url + key + code shares one workspace row. Last write wins.
+     ========================================================== */
+  const Sync = (() => {
+    const CFG_KEY = 'wsi_sync_config';
+    let cfg = (() => { try { return JSON.parse(localStorage.getItem(CFG_KEY)) || null; } catch { return null; } })();
+    let pushTimer = null, status = 'idle', lastError = '';
+
+    const enabled = () => !!(cfg && cfg.url && cfg.key && cfg.code);
+    const get = () => cfg;
+    function set(next) {
+      cfg = next && next.url ? { url: next.url.replace(/\/+$/, ''), key: next.key.trim(), code: next.code.trim() } : null;
+      if (cfg) localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+      else localStorage.removeItem(CFG_KEY);
+    }
+    const endpoint = () => `${cfg.url}/rest/v1/workspaces`;
+    const headers = () => ({ 'apikey': cfg.key, 'Authorization': `Bearer ${cfg.key}`, 'Content-Type': 'application/json' });
+
+    async function push() {
+      if (!enabled()) return;
+      status = 'syncing'; updateBadge();
+      try {
+        const body = [{ code: cfg.code, data: Store.get(), updated_at: new Date(Store.get().meta.updatedAt || Date.now()).toISOString() }];
+        const r = await fetch(`${endpoint()}?on_conflict=code`, {
+          method: 'POST',
+          headers: { ...headers(), 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+          body: JSON.stringify(body),
+        });
+        if (!r.ok) throw new Error(`push ${r.status}: ${(await r.text()).slice(0,120)}`);
+        status = 'ok'; lastError = '';
+      } catch (e) { status = 'error'; lastError = e.message; console.error('sync push', e); }
+      updateBadge();
+    }
+    async function pull() {
+      if (!enabled()) return null;
+      status = 'syncing'; updateBadge();
+      try {
+        const r = await fetch(`${endpoint()}?code=eq.${encodeURIComponent(cfg.code)}&select=data,updated_at`, { headers: headers() });
+        if (!r.ok) throw new Error(`pull ${r.status}: ${(await r.text()).slice(0,120)}`);
+        const rows = await r.json();
+        status = 'ok'; lastError = ''; updateBadge();
+        return rows && rows[0] ? rows[0] : null;
+      } catch (e) { status = 'error'; lastError = e.message; console.error('sync pull', e); updateBadge(); return null; }
+    }
+    async function syncOnLoad() {
+      if (!enabled()) return;
+      const remote = await pull();
+      if (!remote || !remote.data) { if (status === 'ok') push(); return; }
+      const localTs = Store.get().meta.updatedAt || 0;
+      const remoteTs = remote.data.meta?.updatedAt || Date.parse(remote.updated_at) || 0;
+      if (remoteTs > localTs + 1500) { Store.replaceAll(remote.data); toast('synced from cloud'); render(); }
+      else if (localTs > remoteTs) { push(); }
+    }
+    function schedulePush() { if (!enabled()) return; clearTimeout(pushTimer); pushTimer = setTimeout(push, 2500); }
+    function updateBadge() {
+      const b = $('#sync-badge'); if (!b) return;
+      b.hidden = !enabled();
+      b.dataset.status = status;
+      b.title = !enabled() ? 'cloud sync off'
+        : status === 'error' ? `sync error: ${lastError}`
+        : status === 'syncing' ? 'syncing…' : 'cloud sync on';
+    }
+    return { enabled, get, set, push, pull, syncOnLoad, schedulePush, updateBadge, get status() { return status; }, get lastError() { return lastError; } };
+  })();
+
+  /* ==========================================================
      3 · Icons
      ========================================================== */
   function svg(name) {
@@ -1342,6 +1411,8 @@
             el('button', { class:'btn blue sm', text:'export backup (.json)', onclick: exportData }),
             el('button', { class:'btn ghost sm', text:'import backup', onclick: () => importData(close) }),
           ]) ]),
+
+        syncSettings(),
 
         el('div', { class:'modal-row' }, [ el('label', { text:'Weather location' }),
           el('div', { style:'display:flex;gap:8px;flex-wrap:wrap' }, [
