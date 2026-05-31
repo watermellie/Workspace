@@ -647,4 +647,35 @@ textarea.lesson-notes:focus, textarea.reflect:focus { border-color: var(--blue);
   .note-resize { opacity: .5; }
   .chk-row .chk-del { opacity: .5; }
 }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .001ms !important; animation-duration: .001ms !important; } }
+/* ═══════════════════════ DELIGHT: sparkles + floating phrases ═══════════════════════ */
+.spark {
+  position: fixed; z-index: 100; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px;
+  pointer-events: none; border-radius: 50%;
+  background: radial-gradient(circle, var(--yellow) 0 40%, var(--red) 41% 70%, transparent 71%);
+  animation: spark-fly 650ms var(--ease) forwards; animation-delay: var(--delay, 0ms);
+}
+@keyframes spark-fly {
+  0%   { opacity: 1; transform: translate(0,0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(.3); }
+}
+
+.floatie {
+  position: fixed; left: 0; z-index: 70; white-space: nowrap;
+  font-size: 13px; font-weight: 600; color: var(--ink);
+  background: rgba(255,255,255,.86); backdrop-filter: blur(4px);
+  border: 1px solid var(--line-bold); border-radius: 999px; padding: 7px 14px;
+  box-shadow: var(--shadow-md); cursor: pointer; -webkit-tap-highlight-color: transparent;
+  animation: floatie-drift 26s linear forwards;
+}
+.floatie:hover { color: var(--red); border-color: var(--red); transform: scale(1.06); }
+@keyframes floatie-drift {
+  0%   { left: var(--from); opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { left: var(--to); opacity: 0; }
+}
+
+.collected-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 4px; }
+.collected-chip { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--yellow); color: var(--ink); border: 1px solid var(--line-bold); }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .001ms !important; animation-duration: .001ms !important; } .spark, .floatie { display: none !important; } }

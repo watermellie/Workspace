@@ -1316,7 +1316,7 @@
       return card;
     }
 
-    return { mount };
+    return { mount, allLessons };
   })();
 
   /* ==========================================================
@@ -1673,6 +1673,94 @@
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(e => console.warn('sw', e));
   }
 
+  /* ==========================================================
+     14 · Delight — click sparkles + collectible floating phrases
+     ========================================================== */
+  const Delight = (() => {
+    const PHRASES = [
+      'better days ahead','you are growing','trust the process','small steps count','breathe',
+      'you’ve got this','make it happen','stay curious','progress over perfection','one day at a time',
+      'be proud of you','keep going','create boldly','rest is productive','你可以的',
+      'design with heart','future you says thanks','bloom slowly','good things take time','shine',
+    ];
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    let phraseTimer = null;
+    const on = () => Store.get().meta.delight && !reduced;
+
+    /* sparkles on click/tap */
+    function sparkle(x, y) {
+      const n = 6;
+      for (let i = 0; i < n; i++) {
+        const s = el('div', { class:'spark' });
+        const ang = (Math.PI * 2 * i) / n + Math.random() * 0.6;
+        const dist = 18 + Math.random() * 26;
+        s.style.left = x + 'px'; s.style.top = y + 'px';
+        s.style.setProperty('--dx', Math.cos(ang) * dist + 'px');
+        s.style.setProperty('--dy', Math.sin(ang) * dist + 'px');
+        s.style.setProperty('--delay', (Math.random() * 60) + 'ms');
+        document.body.append(s);
+        setTimeout(() => s.remove(), 700);
+      }
+    }
+    function onPointer(e) {
+      if (!on()) return;
+      // skip while dragging notes/widgets to avoid clutter
+      if (e.target.closest?.('.dragging')) return;
+      sparkle(e.clientX, e.clientY);
+    }
+
+    /* a phrase drifts across; tap to collect it */
+    function floatOne() {
+      if (!on()) { schedule(); return; }
+      if (document.hidden || $('.floatie')) { schedule(); return; }   // one at a time
+      const txt = pick(PHRASES);
+      const fromLeft = Math.random() < 0.5;
+      const top = 90 + Math.random() * (window.innerHeight - 220);
+      const f = el('button', { class:'floatie', text: '✦ ' + txt, title:'tap to collect' });
+      f.style.top = top + 'px';
+      f.style.setProperty('--from', fromLeft ? '-30vw' : '110vw');
+      f.style.setProperty('--to', fromLeft ? '110vw' : '-30vw');
+      f.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const r = f.getBoundingClientRect();
+        sparkle(r.left + r.width/2, r.top + r.height/2);
+        const col = Store.get().meta.collected;
+        if (!col.includes(txt)) { col.push(txt); Store.save(); }
+        toast(`collected “${txt}” ✨  (${col.length})`);
+        f.remove();
+      });
+      f.addEventListener('animationend', () => f.remove());
+      document.body.append(f);
+      schedule();
+    }
+    function schedule() {
+      clearTimeout(phraseTimer);
+      phraseTimer = setTimeout(floatOne, 18000 + Math.random() * 22000);  // every ~18–40s
+    }
+
+    function init() {
+      document.addEventListener('pointerdown', onPointer);
+      schedule();
+    }
+
+    /* little collection viewer for Settings */
+    function collectionView() {
+      const col = Store.get().meta.collected || [];
+      const wrap = el('div', { class:'modal-row' });
+      wrap.append(el('label', { text:`Collected phrases (${col.length})` }));
+      if (!col.length) wrap.append(el('div', { class:'empty-line', text:'none yet — catch the floating ✦ phrases as they drift by' }));
+      else wrap.append(el('div', { class:'collected-wrap' }, col.map(p => el('span', { class:'collected-chip', text: p }))));
+      const toggle = el('label', { class:'recurring-row' });
+      const cb = el('input', { type:'checkbox' }); cb.checked = !!Store.get().meta.delight;
+      cb.addEventListener('change', () => { Store.get().meta.delight = cb.checked; Store.save(true); toast(cb.checked ? 'delight on ✨' : 'delight off'); });
+      toggle.append(cb, el('span', { text:'sparkles & floating phrases' }));
+      wrap.append(toggle);
+      return wrap;
+    }
+
+    return { init, collectionView };
+  })();
+
   function boot() {
     $('#settings-btn').innerHTML = svg('gear');
     $('#search-btn').innerHTML = svg('search');
@@ -1693,6 +1781,8 @@
 
         syncSettings(),
 
+        Delight.collectionView(),
+
         el('div', { class:'modal-row' }, [ el('label', { text:'Weather location' }),
           el('div', { style:'display:flex;gap:8px;flex-wrap:wrap' }, [
             el('button', { class:'btn ghost sm', text:'use my location', onclick: async () => { meta.coords=null; meta.weather=null; Store.save(true); await Weather.fetch7(true); toast('weather refreshed'); close(); render(); } }),
@@ -1711,6 +1801,7 @@
     startClock();
     initShortcuts();
     initPWA();
+    Delight.init();
     render();
 
     // cloud sync: mark unsaved on change (auto-pushes if enabled), warn-on-load if behind
