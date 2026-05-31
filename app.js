@@ -145,9 +145,9 @@
         theme: 'cream', accent: '',
         pets: [
           { id: 'cat', emoji: '🐱', name: 'mochi', on: true },
-          { id: 'bun', emoji: '🐰', name: 'pancake', on: true },
-          { id: 'mel', emoji: '🍉', name: 'melly', on: true },
-          { id: 'duck', emoji: '🐥', name: 'pip', on: true },
+          { id: 'bun', emoji: '🐰', name: 'pancake', on: false },
+          { id: 'mel', emoji: '🍉', name: 'melly', on: false },
+          { id: 'duck', emoji: '🐥', name: 'pip', on: false },
         ],
         affirmations: [], affirmVibe: ['gentle', 'hype'],
       },
@@ -912,6 +912,7 @@
       const canvasCol = el('div', { class:'dash-canvas' });
       const surface = Canvas.build({ view:'dashboard', dateKey: KEY, readonly: false, onChange: refreshPanel, tall: true });
       surface.prepend(focusWidget()); surface.prepend(digestCard());
+      Pets.mount(surface);
       canvasCol.append(surface);
 
       const panel = el('aside', { class:'side-panel' + (panelOpen ? ' open':''), id:'dash-panel' });
@@ -1726,7 +1727,7 @@
     const { route, sub } = parseHash();
     $$('.nav-link').forEach(a => a.classList.toggle('active', a.dataset.route === route));
     const view = $('#view'); view.innerHTML = '';
-    Canvas.teardown(); Fmt.hide(); $('.popover')?.remove();
+    Canvas.teardown(); Pets.teardown(); Fmt.hide(); $('.popover')?.remove();
     Dashboard.reset(); Personal.reset();
 
     const fb = fridayBanner();
