@@ -1398,6 +1398,48 @@
     input.click();
   }
 
+  /* ---- cloud-sync settings block (bring-your-own Supabase) ---- */
+  function syncSettings() {
+    const cfg = Sync.get() || { url:'', key:'', code:'' };
+    const wrap = el('div', { class:'modal-row sync-block' });
+    wrap.append(el('label', { text:'Cloud sync (optional — auto-sync across devices)' }));
+
+    const on = Sync.enabled();
+    const statusLine = el('div', { class:'sync-status ' + (on ? Sync.status : 'off'), text:
+      on ? `● sync on · ${Sync.status}${Sync.lastError ? ' · ' + Sync.lastError : ''}` : '○ sync off — data stays on this device only' });
+    wrap.append(statusLine);
+
+    const url = el('input', { class:'field', placeholder:'Supabase Project URL (https://xxxx.supabase.co)', value: cfg.url || '' });
+    const key = el('input', { class:'field', placeholder:'Supabase anon public key', value: cfg.key || '' });
+    const code = el('input', { class:'field', placeholder:'sync code (a long secret you reuse on every device)', value: cfg.code || '' });
+    [url, key, code].forEach(i => { i.style.marginTop = '6px'; });
+    wrap.append(url, key, code);
+
+    const actions = el('div', { style:'display:flex;gap:8px;flex-wrap:wrap;margin-top:8px' }, [
+      el('button', { class:'btn primary sm', text: on ? 'save & sync now' : 'enable sync', onclick: async () => {
+        if (!url.value.trim() || !key.value.trim() || !code.value.trim()) { toast('fill url, key, and code'); return; }
+        Sync.set({ url: url.value, key: key.value, code: code.value });
+        toast('checking cloud…');
+        const remote = await Sync.pull();
+        if (Sync.status === 'error') { statusLine.textContent = '● error · ' + Sync.lastError; statusLine.className = 'sync-status error'; return; }
+        if (remote && remote.data && confirm('Found existing cloud data. Load it onto THIS device? (Cancel = upload this device’s data instead)')) {
+          Store.replaceAll(remote.data); toast('synced from cloud'); location.reload();
+        } else { await Sync.push(); toast('this device uploaded to cloud'); statusLine.textContent = '● sync on · ok'; statusLine.className = 'sync-status ok'; }
+      } }),
+      on ? el('button', { class:'btn ghost sm', text:'pull now', onclick: async () => {
+        const remote = await Sync.pull();
+        if (remote?.data && confirm('Replace this device’s data with the cloud copy?')) { Store.replaceAll(remote.data); location.reload(); }
+        else toast(remote ? 'kept local' : 'nothing in cloud yet');
+      } }) : null,
+      on ? el('button', { class:'btn ghost sm', text:'turn off', onclick: () => { Sync.set(null); toast('sync turned off'); statusLine.textContent='○ sync off'; statusLine.className='sync-status off'; Sync.updateBadge(); } }) : null,
+    ]);
+    wrap.append(actions);
+    wrap.append(el('div', { style:'font-size:11.5px;color:var(--ink-faint);margin-top:8px', html:
+      'one-time setup (~5 min): create a free <b>Supabase</b> project → SQL editor → run the snippet in <b>README</b> → paste your Project URL + anon key here, and make up a long sync code. use the same three on every device. ' +
+      '<b>last edit wins</b>, so avoid editing two devices at the same moment. keep your key + code private.' }));
+    return wrap;
+  }
+
   function boot() {
     $('#settings-btn').innerHTML = svg('gear');
     $('#settings-btn').addEventListener('click', () => Modal.open('Settings', (body, close) => {
