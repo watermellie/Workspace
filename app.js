@@ -180,7 +180,7 @@
     return {
       get: () => data, save, normalizeNote,
       onSave(fn) { afterSave = fn; },
-      replaceAll(next) { data = migrate(next); localStorage.setItem(LS_KEY, JSON.stringify(data)); },
+      replaceAll(next) { data = guard(next); localStorage.setItem(LS_KEY, JSON.stringify(data)); },
       notes(view, key) { return (data.canvas[view][key] ||= []); },
       datesWithNotes(view) {
         return Object.keys(data.canvas[view]).filter(k => (data.canvas[view][k] || []).length).sort((a,b) => b.localeCompare(a));
@@ -783,7 +783,7 @@
       rows.append(digestRow('📘', next ? `next: ${next.builtin ? 'day '+next.day+' — ' : ''}${next.title}` : 'curriculum complete 🎉',
         `${done}/${lessons.length}`, next ? `#work/lesson/${next.id}` : '#work'));
 
-      const todayNotes = (d.canvas.personal[tk] || []).filter(n => !n.archived);
+      const todayNotes = ((d.canvas.personal || {})[tk] || []).filter(n => !n.archived);
       const gym = todayNotes.find(n => n.tag === 'gym');
       if (gym && gym.checklist) {
         const leftN = gym.checklist.filter(c => !c.done).length;
@@ -793,7 +793,7 @@
       const journaled = jr && stripHtml(jr.html).replace(/^.*?\?/, '').trim().length > 0;
       rows.append(digestRow('✍️', journaled ? 'journal: written ✓' : 'journal: not yet', '', '#personal'));
 
-      const mood = d.meta.mood[tk];
+      const mood = (d.meta.mood || {})[tk];
       rows.append(digestRow('🌤️', mood ? `mood: ${['','low','meh','ok','good','great'][mood]}` : 'mood: not logged', '', '#personal'));
 
       card.append(rows);
