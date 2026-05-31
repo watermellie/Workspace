@@ -2092,6 +2092,8 @@
         el('div', { class:'modal-row' }, el('div', { style:'font-size:13px;color:var(--ink-soft)', html:
           'data is stored locally in this browser. use <b>backup/restore</b> or turn on <b>cloud sync</b> below to move it to your iPad or phone.' })),
 
+        personalizeSettings(),
+
         el('div', { class:'modal-row' }, [ el('label', { text:'Backup & restore (move data between devices)' }),
           el('div', { style:'display:flex;gap:8px;flex-wrap:wrap' }, [
             el('button', { class:'btn blue sm', text:'export backup (.json)', onclick: exportData }),

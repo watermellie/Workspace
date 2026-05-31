@@ -371,7 +371,12 @@ input.field:focus, select.field:focus, textarea.field:focus { border-color: var(
   position: absolute; left: 26px; top: 360px; width: 340px;
   background: var(--paper); border: 1px solid var(--line-bold); border-radius: var(--radius);
   box-shadow: var(--shadow-sm); padding: 14px 16px;
+  transition: box-shadow var(--t) var(--ease);
 }
+.digest-card.dragging { box-shadow: var(--shadow-lg); z-index: 40; transition: none; }
+.digest-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; cursor: grab; }
+.digest-head .digest-grip { color: var(--ink-faint); font-size: 14px; letter-spacing: 1px; }
+.digest-greet { font-size: 17px; font-weight: 700; letter-spacing: -.01em; margin: 2px 0 10px; }
 .digest-rows { display: flex; flex-direction: column; }
 .digest-row {
   display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-top: 1px solid var(--line);
