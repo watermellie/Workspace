@@ -40,6 +40,18 @@
   --t: 140ms;
 }
 
+/* ── cozy themes: override the canvas + accent feel (set on <body data-theme>) ── */
+body[data-theme="cream"]    { --bg:#fbf7ef; --paper:#fffdf8; --wash:#f3ede1; --dot:#e8e0d0; --line:#ece4d6; --line-bold:#ddd2bf; }
+body[data-theme="pink"]     { --bg:#fdf3f5; --paper:#fffafb; --wash:#f8e9ee; --dot:#f0dbe2; --line:#f1e1e7; --line-bold:#e6c9d3; --red:#e0577a; --red-soft:#fbe6ec; }
+body[data-theme="mint"]     { --bg:#eff7f2; --paper:#fafefb; --wash:#e4f1ea; --dot:#d6e8de; --line:#dcebe3; --line-bold:#c4ddd0; --green:#23a06a; --green-soft:#e2f4ec; }
+body[data-theme="lavender"] { --bg:#f5f2fb; --paper:#fdfbff; --wash:#ece6f6; --dot:#e0d8ef; --line:#e7e0f3; --line-bold:#d4c8ea; --blue:#7a5fe0; --blue-soft:#eee8fb; }
+body[data-theme="dark"] {
+  --bg:#17171a; --paper:#202024; --ink:#ececef; --ink-soft:#b3b3ba; --ink-faint:#7c7c86;
+  --line:#2c2c31; --line-bold:#3a3a41; --dot:#26262b; --wash:#26262b;
+  --red-soft:#3a2422; --blue-soft:#202a3f; --green-soft:#1e3026; --yellow:#ffe27a;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4); --shadow-md:0 4px 14px rgba(0,0,0,.5); --shadow-lg:0 12px 34px rgba(0,0,0,.6);
+}
+
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 html { -webkit-text-size-adjust: 100%; }
@@ -677,6 +689,16 @@ textarea.lesson-notes:focus, textarea.reflect:focus { border-color: var(--blue);
 
 .collected-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 4px; }
 .collected-chip { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--yellow); color: var(--ink); border: 1px solid var(--line-bold); }
+
+/* personalization settings */
+.theme-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.theme-chip { font-size: 12.5px; padding: 6px 11px; border: 1px solid var(--line-bold); border-radius: 999px; background: var(--paper); color: var(--ink); }
+.theme-chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.pet-settings { display: flex; flex-direction: column; gap: 7px; }
+.pet-row { display: flex; align-items: center; gap: 9px; }
+.pet-row input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--green); }
+.pet-row .pet-emoji { font-size: 20px; }
+.pet-row .pet-name { flex: 1; }
 
 /* ═══════════════════════ PETS ═══════════════════════ */
 .pets-layer { position: absolute; inset: 0; pointer-events: none; z-index: 6; overflow: hidden; }

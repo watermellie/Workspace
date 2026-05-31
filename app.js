@@ -930,6 +930,13 @@
     }
 
     /* auto-pinned "today" digest: curriculum next-up, gym, journal, mood — draggable */
+    function greeting() {
+      const h = new Date().getHours();
+      const part = h < 5 ? 'still up' : h < 12 ? 'good morning' : h < 17 ? 'good afternoon' : h < 21 ? 'good evening' : 'good night';
+      const m = Store.get().meta;
+      const who = m.name || (m.nicknames && pick(m.nicknames)) || '';
+      return `${part}, ${who} ✨`;
+    }
     function digestCard() {
       const d = Store.get();
       const tk = todayKey();
@@ -940,6 +947,7 @@
         el('span', { class:'digest-grip', title:'drag', text:'⠿' }),
       ]);
       head.addEventListener('pointerdown', (e) => dragDigest(e, card));
+      card.append(el('div', { class:'digest-greet', text: greeting() }));
       card.append(head);
       const rows = el('div', { class:'digest-rows' });
 
@@ -1743,6 +1751,49 @@
     tick(); setInterval(tick, 1000);
   }
 
+  /* personalization: name, theme, pets */
+  function personalizeSettings() {
+    const meta = Store.get().meta;
+    const wrap = el('div', { class:'modal-row' });
+    wrap.append(el('label', { text:'Make it yours' }));
+
+    // name
+    const nameRow = el('div', { style:'display:flex;align-items:center;gap:8px;margin-bottom:10px' });
+    const nameInput = el('input', { class:'field', value: meta.name || '', placeholder:'your name (for greetings)' });
+    nameInput.addEventListener('input', () => { meta.name = nameInput.value.trim(); Store.save(); });
+    nameRow.append(el('span', { style:'font-size:13px;color:var(--ink-soft);white-space:nowrap', text:'call me' }), nameInput);
+    wrap.append(nameRow);
+
+    // theme
+    wrap.append(el('div', { class:'kicker', style:'margin:4px 0 6px', text:'theme' }));
+    const themes = [['cream','🍦 cream'],['pink','🌸 pink'],['mint','🌿 mint'],['lavender','💜 lavender'],['dark','🌙 dark']];
+    const tRow = el('div', { class:'theme-row' });
+    themes.forEach(([id,label]) => {
+      const b = el('button', { class:'theme-chip' + (meta.theme===id?' on':''), dataset:{ id }, text: label, onclick: () => {
+        meta.theme = id; Store.save(true); applyTheme();
+        [...tRow.children].forEach(c => c.classList.toggle('on', c.dataset.id===id));
+      } });
+      tRow.append(b);
+    });
+    wrap.append(tRow);
+
+    // pets
+    wrap.append(el('div', { class:'kicker', style:'margin:12px 0 6px', text:'pet pals' }));
+    const petWrap = el('div', { class:'pet-settings' });
+    (meta.pets || []).forEach(p => {
+      const row = el('label', { class:'pet-row' });
+      const cb = el('input', { type:'checkbox' }); cb.checked = !!p.on;
+      cb.addEventListener('change', () => { p.on = cb.checked; Store.save(true); });
+      const name = el('input', { class:'field pet-name', value: p.name, maxlength:'14' });
+      name.addEventListener('input', () => { p.name = name.value.trim() || p.id; Store.save(); });
+      row.append(cb, el('span', { class:'pet-emoji', text: p.emoji }), name);
+      petWrap.append(row);
+    });
+    wrap.append(petWrap);
+    wrap.append(el('div', { style:'font-size:11.5px;color:var(--ink-faint);margin-top:6px', text:'pets wander your dashboard — tap one to pet it ♡ (refresh dashboard after toggling)' }));
+    return wrap;
+  }
+
   /* backup / restore — the no-backend way to move data across devices */
   function exportData() {
     const blob = new Blob([JSON.stringify(Store.get(), null, 2)], { type:'application/json' });
@@ -1952,7 +2003,12 @@
     return { init, collectionView };
   })();
 
+  function applyTheme() {
+    document.body.dataset.theme = Store.get().meta.theme || 'cream';
+  }
+
   function boot() {
+    applyTheme();
     $('#settings-btn').innerHTML = svg('gear');
     $('#search-btn').innerHTML = svg('search');
     $('#search-btn').addEventListener('click', () => Search.open());
