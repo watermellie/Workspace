@@ -135,6 +135,7 @@
     const blank = {
       version: 2,
       canvas: { dashboard: {}, personal: {} },     // { [dateKey]: [note] }
+      doodles: { dashboard: {}, personal: {} },    // { [dateKey]: [stroke] }
       work: { lessons: {}, customLessons: [], entries: [] },
       meta: { catImage: '', focusPos: { x: 26, y: 20 }, weather: null, coords: null, recurring: ['gym'], mood: {}, delight: true, collected: [] },
     };
@@ -144,6 +145,7 @@
     function guard(d) {
       d = d || structuredClone(blank);
       d.canvas ||= {}; d.canvas.dashboard ||= {}; d.canvas.personal ||= {};
+      d.doodles ||= {}; d.doodles.dashboard ||= {}; d.doodles.personal ||= {};
       d.work ||= {}; d.work.lessons ||= {}; d.work.customLessons ||= []; d.work.entries ||= [];
       d.meta ||= {}; d.meta.focusPos ||= { x: 26, y: 20 };
       if (!('catImage' in d.meta)) d.meta.catImage = '';
@@ -151,10 +153,27 @@
       d.meta.mood ||= {};
       if (d.meta.delight === undefined) d.meta.delight = true;
       if (!Array.isArray(d.meta.collected)) d.meta.collected = [];
+      d.meta.digestPos ||= null;
       for (const view of ['dashboard', 'personal']) {
         for (const k of Object.keys(d.canvas[view])) {
           d.canvas[view][k] = (d.canvas[view][k] || []).map(normalizeNote);
         }
+      }
+      // dashboard notes now live under a fixed 'board' key (no daily reset);
+      // fold any older date-keyed dashboard notes into it once.
+      const board = d.canvas.dashboard;
+      board.board ||= [];
+      for (const k of Object.keys(board)) {
+        if (k === 'board' || !/^\d{4}-\d{2}-\d{2}$/.test(k)) continue;
+        board.board.push(...board[k]);
+        delete board[k];
+      }
+      // same fold for dashboard doodles
+      const bd = d.doodles.dashboard;
+      bd.board ||= [];
+      for (const k of Object.keys(bd)) {
+        if (k === 'board' || !/^\d{4}-\d{2}-\d{2}$/.test(k)) continue;
+        bd.board.push(...bd[k]); delete bd[k];
       }
       return d;
     }
@@ -194,6 +213,7 @@
       onSave(fn) { afterSave = fn; },
       replaceAll(next) { data = guard(next); localStorage.setItem(LS_KEY, JSON.stringify(data)); },
       notes(view, key) { return (data.canvas[view][key] ||= []); },
+      doodles(view, key) { return (data.doodles[view][key] ||= []); },
       datesWithNotes(view) {
         return Object.keys(data.canvas[view]).filter(k => (data.canvas[view][k] || []).length).sort((a,b) => b.localeCompare(a));
       },
@@ -343,6 +363,7 @@
 
   /* floating + add-note button */
   const addFab = (onClick) => el('button', { class:'add-fab', title:'add note', 'aria-label':'add note', html: svg('plus'), onclick: onClick });
+  const penFab = () => { const b = el('button', { class:'fab-mini', title:'draw', 'aria-label':'draw', html: svg('pen'), onclick: () => b.classList.toggle('on', Draw.toggle()) }); return b; };
 
   /* ==========================================================
      4 · Weather (Open-Meteo + reverse geocode, cached & auto-refresh)
@@ -674,13 +695,14 @@
      ========================================================== */
   const Canvas = (() => {
     let active = null;
-    function teardown() { active = null; }
+    function teardown() { active = null; Draw.teardown(); }
 
     function build({ view, dateKey, readonly, tags = false, onChange = () => {}, tall = false }) {
       const surface = el('div', { class:'canvas-surface dotgrid' + (tall ? ' tall' : ''), role:'application', 'aria-label':`${view} canvas` });
       const ctx = { view, dateKey, readonly, tags, onChange, onArchive: archive, onDelete: remove, onDragStart: startDrag };
       active = { surface, ctx };
       paint();
+      Draw.attach(surface, view, dateKey, readonly);   // doodle layer (under notes until pen mode)
       return surface;
     }
 
@@ -737,14 +759,118 @@
 
     const findNote = (id) => Store.notes(active.ctx.view, active.ctx.dateKey).find(x => x.id === id);
     function archive(id) { const n = findNote(id); if (!n) return; n.archived = true; Store.save(true); paint(); active.ctx.onChange(); toast('archived'); }
+    function noteHasContent(n) {
+      if (n.images && n.images.length) return true;
+      if (n.checklist && n.checklist.some(c => stripHtml(c.html).trim())) return true;
+      // ignore an auto-filled journal prompt (just a bold question) as "empty"
+      const t = stripHtml(n.html).replace(/\?.*$/, '').trim();
+      return t.length > 0 && !(n.tag === 'journal' && stripHtml(n.html).trim().endsWith('?'));
+    }
     function remove(id) {
       const list = Store.notes(active.ctx.view, active.ctx.dateKey);
       const i = list.findIndex(x => x.id === id);
-      if (i > -1) { list.splice(i, 1); Store.save(true); paint(); active.ctx.onChange(); }
+      if (i < 0) return;
+      if (noteHasContent(list[i]) && !confirm('Delete this note? This can’t be undone. (Tip: archive it instead to keep it.)')) return;
+      list.splice(i, 1); Store.save(true); paint(); active.ctx.onChange();
     }
     function restore(id) { const n = findNote(id); if (!n) return; n.archived = false; Store.save(true); paint(); active.ctx.onChange(); toast('restored'); }
 
     return { build, paint, teardown, restore, spawn, addNote, get current() { return active; } };
+  })();
+
+  /* ==========================================================
+     7b · Draw — finger/pen doodling layer over a canvas
+     ========================================================== */
+  const Draw = (() => {
+    const NS = 'http://www.w3.org/2000/svg';
+    const COLORS = ['#1c1c1e', '#d6453d', '#2f6df0', '#1f9d57', '#ffd84d'];
+    let svg = null, surface = null, view = null, key = null;
+    let enabled = false, color = '#1c1c1e', tool = 'pen';
+    let pts = null, strokeEl = null;
+
+    const node = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+    const toD = (p) => p.length ? 'M' + p.map(q => q[0] + ',' + q[1]).join(' L') : '';
+    const rel = (e) => { const r = svg.getBoundingClientRect(); return [Math.round(e.clientX - r.left), Math.round(e.clientY - r.top)]; };
+
+    /* attach a doodle layer to a freshly built canvas surface */
+    function attach(surf, v, k, readonly) {
+      surface = surf; view = v; key = k; enabled = false;
+      svg = node('svg', { class: 'doodle-layer' });
+      surface.appendChild(svg);
+      renderAll();
+      if (!readonly) svg.addEventListener('pointerdown', down);
+      return svg;
+    }
+    function renderAll() {
+      if (!svg) return;
+      svg.innerHTML = '';
+      Store.doodles(view, key).forEach(s => {
+        const p = node('path', { d: toD(s.points), stroke: s.color, 'stroke-width': s.width || 3, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+        p.dataset.id = s.id; svg.appendChild(p);
+      });
+    }
+
+    function down(e) {
+      if (!enabled) return;
+      e.preventDefault(); svg.setPointerCapture?.(e.pointerId);
+      if (tool === 'eraser') { eraseAt(e); svg.addEventListener('pointermove', erMove); svg.addEventListener('pointerup', erUp); return; }
+      pts = [rel(e)];
+      strokeEl = node('path', { stroke: color, 'stroke-width': 3, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', d: '' });
+      svg.appendChild(strokeEl);
+      svg.addEventListener('pointermove', move); svg.addEventListener('pointerup', up);
+    }
+    function move(e) { pts.push(rel(e)); strokeEl.setAttribute('d', toD(pts)); }
+    function up() {
+      svg.removeEventListener('pointermove', move); svg.removeEventListener('pointerup', up);
+      if (pts && pts.length > 1) {
+        const s = { id: uid(), color, width: 3, points: pts };
+        Store.doodles(view, key).push(s); Store.save(true);
+        strokeEl.dataset.id = s.id;
+      } else strokeEl?.remove();
+      pts = null; strokeEl = null;
+    }
+    function eraseAt(e) {
+      const [x, y] = rel(e); const list = Store.doodles(view, key);
+      for (let i = list.length - 1; i >= 0; i--) {
+        if (list[i].points.some(p => Math.hypot(p[0] - x, p[1] - y) < 16)) {
+          const id = list[i].id; list.splice(i, 1);
+          svg.querySelector(`[data-id="${id}"]`)?.remove(); Store.save(true); break;
+        }
+      }
+    }
+    function erMove(e) { eraseAt(e); }
+    function erUp() { svg.removeEventListener('pointermove', erMove); svg.removeEventListener('pointerup', erUp); }
+
+    /* toggle draw mode + floating toolbar */
+    function toggle() {
+      if (!surface) return;
+      enabled = !enabled;
+      surface.classList.toggle('drawing', enabled);
+      if (enabled) showBar(); else $('#draw-bar')?.remove();
+      return enabled;
+    }
+    function showBar() {
+      $('#draw-bar')?.remove();
+      const bar = el('div', { id: 'draw-bar' });
+      const swEls = COLORS.map(c => el('button', { class: 'draw-sw', style: `background:${c}`, dataset: { c }, title: 'pen' }));
+      const eraser = el('button', { class: 'draw-tool', html: svg('eraser'), title: 'eraser' });
+      const mark = () => {
+        swEls.forEach(b => b.classList.toggle('on', tool === 'pen' && b.dataset.c === color));
+        eraser.classList.toggle('on', tool === 'eraser');
+      };
+      swEls.forEach(b => b.addEventListener('click', () => { color = b.dataset.c; tool = 'pen'; mark(); }));
+      eraser.addEventListener('click', () => { tool = 'eraser'; mark(); });
+      const clear = el('button', { class: 'draw-tool', html: svg('trash'), title: 'clear all drawings',
+        onclick: () => { if (confirm('Clear all drawings on this page?')) { Store.doodles(view, key).length = 0; Store.save(true); renderAll(); } } });
+      const done = el('button', { class: 'btn primary sm', text: 'done', onclick: () => toggle() });
+      bar.append(el('div', { class: 'draw-swatches' }, swEls), eraser, clear, done);
+      document.body.append(bar);
+      mark();
+    }
+
+    function teardown() { enabled = false; $('#draw-bar')?.remove(); svg = surface = null; }
+
+    return { attach, toggle, teardown, get enabled() { return enabled; } };
   })();
 
   /* ==========================================================
@@ -772,21 +898,27 @@
       wrap.append(body);
       root.append(wrap);
 
-      // floating cluster: archive · history · + note
+      // floating cluster: draw · archive · + note  (dashboard notes persist; no daily reset)
       wrap.append(el('div', { class:'fab-cluster' }, [
-        el('button', { class:'fab-mini', title:'archived notes', 'aria-label':'archived notes', html: svg('archive'), onclick: () => togglePanel('archive') }),
-        el('button', { class:'fab-mini', title:'history', 'aria-label':'history', html: svg('clock'), onclick: () => togglePanel('history') }),
-        readonly ? null : addFab(() => Canvas.addNote()),
+        penFab(),
+        el('button', { class:'fab-mini', title:'archived notes', 'aria-label':'archived notes', html: svg('archive'), onclick: () => togglePanel() }),
+        addFab(() => Canvas.addNote()),
       ]));
       refreshPanel();
     }
 
-    /* auto-pinned "today" digest: curriculum next-up, gym, journal, mood */
+    /* auto-pinned "today" digest: curriculum next-up, gym, journal, mood — draggable */
     function digestCard() {
       const d = Store.get();
       const tk = todayKey();
-      const card = el('div', { class:'digest-card' });
-      card.append(el('div', { class:'kicker', style:'margin-bottom:8px', text: `today · ${prettyDate()}` }));
+      const pos = d.meta.digestPos;
+      const card = el('div', { class:'digest-card' + (pos ? ' pinned' : ''), style: pos ? `left:${pos.x}px; top:${pos.y}px` : '' });
+      const head = el('div', { class:'digest-head' }, [
+        el('span', { class:'kicker', text: `today · ${prettyDate()}` }),
+        el('span', { class:'digest-grip', title:'drag', text:'⠿' }),
+      ]);
+      head.addEventListener('pointerdown', (e) => dragDigest(e, card));
+      card.append(head);
       const rows = el('div', { class:'digest-rows' });
 
       const lessons = Work.allLessons();
@@ -817,6 +949,26 @@
         el('span', { class:'dg-label', text: label }),
         badge ? el('span', { class:'dg-badge', text: badge }) : el('span'),
       ]);
+    }
+    function dragDigest(e, card) {
+      e.preventDefault();
+      const surface = card.parentElement, r = surface.getBoundingClientRect();
+      const meta = Store.get().meta;
+      const start = card.getBoundingClientRect();
+      let px = start.left - r.left, py = start.top - r.top;
+      const offX = e.clientX - r.left - px, offY = e.clientY - r.top - py;
+      card.classList.add('pinned', 'dragging'); card.setPointerCapture?.(e.pointerId);
+      const move = (ev) => {
+        px = Math.round(clamp(ev.clientX - r.left - offX, 0, r.width - 60));
+        py = Math.round(clamp(ev.clientY - r.top - offY, 0, 6000));
+        card.style.left = px + 'px'; card.style.top = py + 'px';
+      };
+      const up = () => {
+        card.classList.remove('dragging');
+        document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up);
+        meta.digestPos = { x: px, y: py }; Store.save(true);
+      };
+      document.addEventListener('pointermove', move); document.addEventListener('pointerup', up);
     }
 
     function focusWidget() {
@@ -860,26 +1012,24 @@
       document.addEventListener('pointermove', move); document.addEventListener('pointerup', up);
     }
 
-    function togglePanel(tab) {
+    function togglePanel() {
       const p = $('#dash-panel');
-      if (panelOpen && panelTab === tab) { panelOpen = false; p.classList.remove('open'); return; }
-      panelOpen = true; panelTab = tab; p.classList.add('open'); refreshPanel();
+      if (panelOpen) { panelOpen = false; p.classList.remove('open'); return; }
+      panelOpen = true; p.classList.add('open'); refreshPanel();
     }
     function refreshPanel() {
       const p = $('#dash-panel'); if (!p) return;
       const inner = el('div', { class:'side-inner' });
       inner.append(el('div', { class:'side-phead' }, [
-        el('span', { class:'kicker', text:'panel' }),
+        el('span', { class:'kicker', text:'archived notes' }),
         iconBtn('x', 'close panel', () => { panelOpen = false; p.classList.remove('open'); }),
       ]));
-      inner.append(el('div', { class:'side-tabs' }, [ tabBtn('archive','archived'), tabBtn('history','history') ]));
-      inner.append(panelTab === 'archive' ? archiveList() : historyList());
+      inner.append(archiveList());
       p.innerHTML = ''; p.append(inner);
     }
-    const tabBtn = (id,label) => el('button', { class:'side-tab' + (panelTab===id?' active':''), text:label, onclick:() => { panelTab=id; refreshPanel(); } });
     function archiveList() {
       const box = el('div');
-      const arch = Store.notes('dashboard', viewDate).filter(n => n.archived);
+      const arch = Store.notes('dashboard', KEY).filter(n => n.archived);
       if (!arch.length) { box.append(el('div', { class:'empty-line', text:'no archived notes.' })); return box; }
       arch.forEach(n => box.append(el('div', { class:'arch-item' }, [
         el('div', { class:'arch-text', html: n.html || '(empty)' }),
@@ -1363,7 +1513,10 @@
       right.append(Canvas.build({ view:'personal', dateKey: viewDate, readonly, tags:true, onChange: refreshCal, tall:true }));
       body.append(drawer, right);
       root.append(body);
-      if (!readonly) body.append(addFab(() => { Canvas.addNote(); refreshCal(); }));
+      if (!readonly) body.append(el('div', { class:'fab-cluster' }, [
+        penFab(),
+        addFab(() => { Canvas.addNote(); refreshCal(); }),
+      ]));
     }
 
     /* mood / energy quick-log — one tap, trends stored in meta.mood */
