@@ -136,7 +136,7 @@
       version: 2,
       canvas: { dashboard: {}, personal: {} },     // { [dateKey]: [note] }
       work: { lessons: {}, customLessons: [], entries: [] },
-      meta: { catImage: '', focusPos: { x: 26, y: 20 }, weather: null, coords: null, recurring: ['gym'], mood: {} },
+      meta: { catImage: '', focusPos: { x: 26, y: 20 }, weather: null, coords: null },
     };
     let data;
     try { data = JSON.parse(localStorage.getItem(LS_KEY)) || structuredClone(blank); }
@@ -146,8 +146,6 @@
     data.work ||= {}; data.work.lessons ||= {}; data.work.customLessons ||= []; data.work.entries ||= [];
     data.meta ||= {}; data.meta.focusPos ||= { x: 26, y: 20 };
     if (!('catImage' in data.meta)) data.meta.catImage = '';
-    if (!Array.isArray(data.meta.recurring)) data.meta.recurring = ['gym'];
-    data.meta.mood ||= {};
 
     for (const view of ['dashboard', 'personal']) {
       for (const k of Object.keys(data.canvas[view])) {
@@ -325,7 +323,6 @@
       copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
       note:'<path d="M4 4h16v12l-4 4H4z"/><path d="M14 20v-4h4"/>',
       book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
-      search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
     };
     return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${P[name]||''}</svg>`;
   }
@@ -754,7 +751,7 @@
       refreshPanel();
     }
 
-    /* auto-pinned "today" digest: curriculum progress, gym, journal, mood */
+    /* auto-pinned "today" digest: curriculum next-up, gym, journal, mood */
     function digestCard() {
       const d = Store.get();
       const tk = todayKey();
@@ -762,27 +759,24 @@
       card.append(el('div', { class:'kicker', style:'margin-bottom:8px', text: `today · ${prettyDate()}` }));
       const rows = el('div', { class:'digest-rows' });
 
-      // curriculum: next not-done lesson
       const lessons = Work.allLessons();
       const done = lessons.reduce((a, L) => a + (Store.lesson(L.id).complete ? 1 : 0), 0);
       const next = lessons.find(L => !Store.lesson(L.id).complete);
       rows.append(digestRow('📘', next ? `next: ${next.builtin ? 'day '+next.day+' — ' : ''}${next.title}` : 'curriculum complete 🎉',
         `${done}/${lessons.length}`, next ? `#work/lesson/${next.id}` : '#work'));
 
-      // gym + journal today
       const todayNotes = (d.canvas.personal[tk] || []).filter(n => !n.archived);
       const gym = todayNotes.find(n => n.tag === 'gym');
       if (gym && gym.checklist) {
-        const left = gym.checklist.filter(c => !c.done).length;
-        rows.append(digestRow('🏋️', left ? `gym: ${left} left` : 'gym: done ✓', `${gym.checklist.length-left}/${gym.checklist.length}`, '#personal'));
+        const leftN = gym.checklist.filter(c => !c.done).length;
+        rows.append(digestRow('🏋️', leftN ? `gym: ${leftN} left` : 'gym: done ✓', `${gym.checklist.length-leftN}/${gym.checklist.length}`, '#personal'));
       }
       const jr = todayNotes.find(n => n.tag === 'journal');
       const journaled = jr && stripHtml(jr.html).replace(/^.*?\?/, '').trim().length > 0;
       rows.append(digestRow('✍️', journaled ? 'journal: written ✓' : 'journal: not yet', '', '#personal'));
 
-      // mood
       const mood = d.meta.mood[tk];
-      rows.append(digestRow('🌤️', mood ? `mood logged: ${['','low','meh','ok','good','great'][mood]}` : 'mood: not logged', '', '#personal'));
+      rows.append(digestRow('🌤️', mood ? `mood: ${['','low','meh','ok','good','great'][mood]}` : 'mood: not logged', '', '#personal'));
 
       card.append(rows);
       return card;
@@ -1181,7 +1175,7 @@
           grid.append(box);
         });
       };
-      const ingest = (files) => [...files].filter(f=>f.type.startsWith('image/')).forEach(f => fileToImage(f, (src) => { (st.shots||=[]).push({src,caption:''}); Store.save(true); renderShots(); }));
+      const ingest = (files) => [...files].filter(f=>f.type.startsWith('image/')).forEach(f => { const rd=new FileReader(); rd.onload=() => { (st.shots||=[]).push({src:rd.result,caption:''}); Store.save(true); renderShots(); }; rd.readAsDataURL(f); });
       dz.addEventListener('click', () => pickImage((src) => { (st.shots||=[]).push({src,caption:''}); Store.save(true); renderShots(); }));
       dz.addEventListener('paste', (e) => { const imgs=[...(e.clipboardData?.items||[])].filter(i=>i.type.startsWith('image/')); if(imgs.length){e.preventDefault(); ingest(imgs.map(i=>i.getAsFile()));}});
       ['dragover','dragenter'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('over');}));
@@ -1304,7 +1298,7 @@
       return card;
     }
 
-    return { mount, allLessons };
+    return { mount };
   })();
 
   /* ==========================================================
@@ -1342,7 +1336,7 @@
       if (!readonly) body.append(addFab(() => { Canvas.addNote(); refreshCal(); }));
     }
 
-    /* mood / energy quick-log — one tap, trends live in the data */
+    /* mood / energy quick-log — one tap, trends stored in meta.mood */
     const MOODS = [['😞',1],['😕',2],['😐',3],['🙂',4],['😄',5]];
     function moodStrip() {
       const wrap = el('div', { class:'mood-strip' });
@@ -1350,16 +1344,22 @@
       const row = el('div', { class:'mood-row' });
       const cur = Store.get().meta.mood[todayKey()];
       MOODS.forEach(([emoji, val]) => {
-        const b = el('button', { class:'mood-btn' + (cur===val?' on':''), text:emoji, title:`mood ${val}/5`, onclick: () => {
+        row.append(el('button', { class:'mood-btn' + (cur===val?' on':''), text:emoji, title:`mood ${val}/5`, onclick: () => {
           Store.get().meta.mood[todayKey()] = val; Store.save(true);
           [...row.children].forEach((c,i) => c.classList.toggle('on', MOODS[i][1]===val));
           toast('mood logged');
-        } });
-        row.append(b);
+        } }));
       });
       wrap.append(row);
       return wrap;
     }
+
+    const presetFor = (t) => {
+      const preset = { tag: t };
+      if (t === 'gym') preset.checklist = GYM_CHECKLIST.map(x => ({ id: uid(), html: esc(x), done:false }));
+      if (t === 'journal') preset.html = `<b>${esc(pick(JOURNAL_PROMPTS))}</b><br>`;
+      return preset;
+    };
 
     function quickTags() {
       const wrap = el('div', {});
@@ -1370,28 +1370,20 @@
         Canvas.addNote(presetFor(t)); refreshCal();
       } })));
       wrap.append(tags);
-      // recurring toggle
       const rec = Store.get().meta.recurring || [];
       const recRow = el('label', { class:'recurring-row' });
       const cb = el('input', { type:'checkbox' }); cb.checked = rec.includes('gym');
       cb.addEventListener('change', () => {
-        const r = Store.get().meta;
-        r.recurring = cb.checked ? [...new Set([...(r.recurring||[]), 'gym'])] : (r.recurring||[]).filter(x => x!=='gym');
+        const m = Store.get().meta;
+        m.recurring = cb.checked ? [...new Set([...(m.recurring||[]), 'gym'])] : (m.recurring||[]).filter(x => x!=='gym');
         Store.save(true);
         if (cb.checked && viewDate === todayKey()) { ensureDailyNotes(); Canvas.paint(); refreshCal(); }
-        toast(cb.checked ? 'gym checklist will auto-appear daily' : 'gym auto-add off');
+        toast(cb.checked ? 'gym auto-adds each day' : 'gym auto-add off');
       });
       recRow.append(cb, el('span', { text:'auto-add gym checklist each day' }));
       wrap.append(recRow);
       return wrap;
     }
-
-    const presetFor = (t) => {
-      const preset = { tag: t };
-      if (t === 'gym') preset.checklist = GYM_CHECKLIST.map(x => ({ id: uid(), html: esc(x), done:false }));
-      if (t === 'journal') preset.html = `<b>${esc(pick(JOURNAL_PROMPTS))}</b><br>`;
-      return preset;
-    };
 
     /* always-on journal + any recurring checklists (e.g. gym), once per day */
     function ensureDailyNotes() {
@@ -1496,8 +1488,7 @@
       (d.work.entries || []).forEach(e => items.push({ kind: 'journal', text: `${e.title || 'untitled'} — ${e.body || ''}`, hash: `#work/journal/${e.id}`, date: dKey(e.ts) }));
       Work.allLessons().forEach(L => {
         const st = Store.lesson(L.id);
-        const txt = [L.title, L.coreConcept, st.notes, st.reflect].filter(Boolean).join(' — ');
-        items.push({ kind: 'lesson', text: txt, hash: `#work/lesson/${L.id}` });
+        items.push({ kind: 'lesson', text: [L.title, L.coreConcept, st.notes, st.reflect].filter(Boolean).join(' — '), hash: `#work/lesson/${L.id}` });
       });
       return items;
     }
@@ -1550,9 +1541,9 @@
     const fb = fridayBanner();
     if (fb) view.append(el('div', { style:'padding:16px 0 0' }, fb));
 
-    if (route === 'dashboard') Dashboard.mount(view, sub);
+    if (route === 'dashboard') Dashboard.mount(view);
     else if (route === 'work') Work.mount(view, sub);
-    else Personal.mount(view, sub);
+    else Personal.mount(view);
   }
 
   function startClock() {
@@ -1648,8 +1639,7 @@
       const t = e.target;
       const typing = t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));
       if (e.key === '/' && !typing) { e.preventDefault(); Search.open(); return; }
-      if (typing) return;
-      if (!$('#modal').hidden) return;
+      if (typing || !$('#modal').hidden) return;
       if (e.key === '1') location.hash = '#dashboard';
       else if (e.key === '2') location.hash = '#work';
       else if (e.key === '3') location.hash = '#personal';
@@ -1662,9 +1652,7 @@
 
   /* PWA: register the service worker so it installs + works offline */
   function initPWA() {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(e => console.warn('sw', e));
-    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(e => console.warn('sw', e));
   }
 
   function boot() {
