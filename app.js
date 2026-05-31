@@ -1668,9 +1668,26 @@
     });
   }
 
-  /* PWA: register the service worker so it installs + works offline */
+  /* PWA: register the service worker so it installs + works offline.
+     Auto-reload once when a new version takes control, so updates land
+     without manual cache-clearing on any device. */
   function initPWA() {
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(e => console.warn('sw', e));
+    if (!('serviceWorker' in navigator)) return;
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing) return;
+      refreshing = true;
+      location.reload();
+    });
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      reg.addEventListener?.('updatefound', () => {
+        const nw = reg.installing;
+        nw?.addEventListener('statechange', () => {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) nw.postMessage?.('skip-waiting');
+        });
+      });
+      setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);  // hourly update check
+    }).catch(e => console.warn('sw', e));
   }
 
   /* ==========================================================
