@@ -136,7 +136,7 @@
       version: 2,
       canvas: { dashboard: {}, personal: {} },     // { [dateKey]: [note] }
       work: { lessons: {}, customLessons: [], entries: [] },
-      meta: { catImage: '', focusPos: { x: 26, y: 20 }, weather: null, coords: null },
+      meta: { catImage: '', focusPos: { x: 26, y: 20 }, weather: null, coords: null, recurring: ['gym'], mood: {} },
     };
     let data;
     try { data = JSON.parse(localStorage.getItem(LS_KEY)) || structuredClone(blank); }
@@ -146,6 +146,8 @@
     data.work ||= {}; data.work.lessons ||= {}; data.work.customLessons ||= []; data.work.entries ||= [];
     data.meta ||= {}; data.meta.focusPos ||= { x: 26, y: 20 };
     if (!('catImage' in data.meta)) data.meta.catImage = '';
+    if (!Array.isArray(data.meta.recurring)) data.meta.recurring = ['gym'];
+    data.meta.mood ||= {};
 
     for (const view of ['dashboard', 'personal']) {
       for (const k of Object.keys(data.canvas[view])) {
@@ -323,6 +325,7 @@
       copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
       note:'<path d="M4 4h16v12l-4 4H4z"/><path d="M14 20v-4h4"/>',
       book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+      search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
     };
     return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${P[name]||''}</svg>`;
   }
@@ -724,7 +727,8 @@
     let panelOpen = false, panelTab = 'archive', viewDate = todayKey();
     function reset() { viewDate = todayKey(); }
 
-    function mount(root) {
+    function mount(root, sub = []) {
+      if (sub[0] && DATE_RE.test(sub[0]) && sub[0] <= todayKey()) viewDate = sub[0];
       const readonly = viewDate !== todayKey();
       const wrap = el('div', { class:'dash-wrap' });
 
@@ -733,7 +737,7 @@
       const body = el('div', { class:'dash-body' });
       const canvasCol = el('div', { class:'dash-canvas' });
       const surface = Canvas.build({ view:'dashboard', dateKey: viewDate, readonly, onChange: refreshPanel, tall: true });
-      if (!readonly) surface.prepend(focusWidget());
+      if (!readonly) { surface.prepend(focusWidget()); surface.prepend(digestCard()); }
       canvasCol.append(surface);
 
       const panel = el('aside', { class:'side-panel' + (panelOpen ? ' open':''), id:'dash-panel' });
@@ -748,6 +752,47 @@
         readonly ? null : addFab(() => Canvas.addNote()),
       ]));
       refreshPanel();
+    }
+
+    /* auto-pinned "today" digest: curriculum progress, gym, journal, mood */
+    function digestCard() {
+      const d = Store.get();
+      const tk = todayKey();
+      const card = el('div', { class:'digest-card' });
+      card.append(el('div', { class:'kicker', style:'margin-bottom:8px', text: `today · ${prettyDate()}` }));
+      const rows = el('div', { class:'digest-rows' });
+
+      // curriculum: next not-done lesson
+      const lessons = Work.allLessons();
+      const done = lessons.reduce((a, L) => a + (Store.lesson(L.id).complete ? 1 : 0), 0);
+      const next = lessons.find(L => !Store.lesson(L.id).complete);
+      rows.append(digestRow('📘', next ? `next: ${next.builtin ? 'day '+next.day+' — ' : ''}${next.title}` : 'curriculum complete 🎉',
+        `${done}/${lessons.length}`, next ? `#work/lesson/${next.id}` : '#work'));
+
+      // gym + journal today
+      const todayNotes = (d.canvas.personal[tk] || []).filter(n => !n.archived);
+      const gym = todayNotes.find(n => n.tag === 'gym');
+      if (gym && gym.checklist) {
+        const left = gym.checklist.filter(c => !c.done).length;
+        rows.append(digestRow('🏋️', left ? `gym: ${left} left` : 'gym: done ✓', `${gym.checklist.length-left}/${gym.checklist.length}`, '#personal'));
+      }
+      const jr = todayNotes.find(n => n.tag === 'journal');
+      const journaled = jr && stripHtml(jr.html).replace(/^.*?\?/, '').trim().length > 0;
+      rows.append(digestRow('✍️', journaled ? 'journal: written ✓' : 'journal: not yet', '', '#personal'));
+
+      // mood
+      const mood = d.meta.mood[tk];
+      rows.append(digestRow('🌤️', mood ? `mood logged: ${['','low','meh','ok','good','great'][mood]}` : 'mood: not logged', '', '#personal'));
+
+      card.append(rows);
+      return card;
+    }
+    function digestRow(icon, label, badge, hash) {
+      return el('a', { class:'digest-row', href: hash }, [
+        el('span', { class:'dg-ico', text: icon }),
+        el('span', { class:'dg-label', text: label }),
+        badge ? el('span', { class:'dg-badge', text: badge }) : el('span'),
+      ]);
     }
 
     function focusWidget() {
@@ -1136,7 +1181,7 @@
           grid.append(box);
         });
       };
-      const ingest = (files) => [...files].filter(f=>f.type.startsWith('image/')).forEach(f => { const rd=new FileReader(); rd.onload=() => { (st.shots||=[]).push({src:rd.result,caption:''}); Store.save(true); renderShots(); }; rd.readAsDataURL(f); });
+      const ingest = (files) => [...files].filter(f=>f.type.startsWith('image/')).forEach(f => fileToImage(f, (src) => { (st.shots||=[]).push({src,caption:''}); Store.save(true); renderShots(); }));
       dz.addEventListener('click', () => pickImage((src) => { (st.shots||=[]).push({src,caption:''}); Store.save(true); renderShots(); }));
       dz.addEventListener('paste', (e) => { const imgs=[...(e.clipboardData?.items||[])].filter(i=>i.type.startsWith('image/')); if(imgs.length){e.preventDefault(); ingest(imgs.map(i=>i.getAsFile()));}});
       ['dragover','dragenter'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('over');}));
@@ -1259,7 +1304,7 @@
       return card;
     }
 
-    return { mount };
+    return { mount, allLessons };
   })();
 
   /* ==========================================================
@@ -1271,15 +1316,17 @@
     function reset() { viewDate = todayKey(); calCursor = logicalDate(); }
     function remount(root) { root.innerHTML=''; Canvas.teardown(); mount(root); }
 
-    function mount(root) {
+    function mount(root, sub = []) {
+      if (sub[0] && DATE_RE.test(sub[0]) && sub[0] <= todayKey()) { viewDate = sub[0]; calCursor = new Date(sub[0] + 'T12:00:00'); }
       const readonly = viewDate !== todayKey();
-      if (!readonly) ensureJournal();
+      if (!readonly) ensureDailyNotes();
 
       const body = el('div', { class:'personal-body' });
       const drawer = el('aside', { class:'cal-drawer' }, [
         el('h2', { text:'history' }),
         el('div', { class:'sub', text:'pages auto-file at 3:00 am' }),
       ]);
+      if (!readonly) drawer.append(moodStrip());
       drawer.append(quickTags());
       drawer.append(calendar());
       drawer.append(el('button', { class:'btn ghost sm', style:'width:100%;margin-top:6px', text:'→ jump to today',
@@ -1295,27 +1342,75 @@
       if (!readonly) body.append(addFab(() => { Canvas.addNote(); refreshCal(); }));
     }
 
+    /* mood / energy quick-log — one tap, trends live in the data */
+    const MOODS = [['😞',1],['😕',2],['😐',3],['🙂',4],['😄',5]];
+    function moodStrip() {
+      const wrap = el('div', { class:'mood-strip' });
+      wrap.append(el('div', { class:'kicker', style:'margin-bottom:6px', text:'today’s mood' }));
+      const row = el('div', { class:'mood-row' });
+      const cur = Store.get().meta.mood[todayKey()];
+      MOODS.forEach(([emoji, val]) => {
+        const b = el('button', { class:'mood-btn' + (cur===val?' on':''), text:emoji, title:`mood ${val}/5`, onclick: () => {
+          Store.get().meta.mood[todayKey()] = val; Store.save(true);
+          [...row.children].forEach((c,i) => c.classList.toggle('on', MOODS[i][1]===val));
+          toast('mood logged');
+        } });
+        row.append(b);
+      });
+      wrap.append(row);
+      return wrap;
+    }
+
     function quickTags() {
       const wrap = el('div', {});
       wrap.append(el('div', { class:'kicker', style:'margin-bottom:6px', text:'quick log' }));
       const tags = el('div', { class:'quick-tags' });
       PERSONAL_TAGS.forEach(t => tags.append(el('button', { dataset:{ t }, text:`+ ${t}`, onclick: () => {
         if (viewDate !== todayKey()) { toast('switch to today to add'); return; }
-        const preset = { tag: t };
-        if (t === 'gym') preset.checklist = GYM_CHECKLIST.map(x => ({ id: uid(), html: esc(x), done:false }));
-        if (t === 'journal') preset.html = `<b>${esc(pick(JOURNAL_PROMPTS))}</b><br>`;
-        Canvas.addNote(preset); refreshCal();
+        Canvas.addNote(presetFor(t)); refreshCal();
       } })));
       wrap.append(tags);
+      // recurring toggle
+      const rec = Store.get().meta.recurring || [];
+      const recRow = el('label', { class:'recurring-row' });
+      const cb = el('input', { type:'checkbox' }); cb.checked = rec.includes('gym');
+      cb.addEventListener('change', () => {
+        const r = Store.get().meta;
+        r.recurring = cb.checked ? [...new Set([...(r.recurring||[]), 'gym'])] : (r.recurring||[]).filter(x => x!=='gym');
+        Store.save(true);
+        if (cb.checked && viewDate === todayKey()) { ensureDailyNotes(); Canvas.paint(); refreshCal(); }
+        toast(cb.checked ? 'gym checklist will auto-appear daily' : 'gym auto-add off');
+      });
+      recRow.append(cb, el('span', { text:'auto-add gym checklist each day' }));
+      wrap.append(recRow);
       return wrap;
     }
 
-    function ensureJournal() {
-      const list = Store.notes('personal', todayKey());
-      if (list.some(n => n.tag === 'journal' && !n.archived)) return;
-      list.push(Store.normalizeNote({ id: uid(), x: 30, y: 30, tag:'journal',
-        html: `<b>${esc(pick(JOURNAL_PROMPTS))}</b><br>`, timestamp: Date.now() }));
-      Store.save(true);
+    const presetFor = (t) => {
+      const preset = { tag: t };
+      if (t === 'gym') preset.checklist = GYM_CHECKLIST.map(x => ({ id: uid(), html: esc(x), done:false }));
+      if (t === 'journal') preset.html = `<b>${esc(pick(JOURNAL_PROMPTS))}</b><br>`;
+      return preset;
+    };
+
+    /* always-on journal + any recurring checklists (e.g. gym), once per day */
+    function ensureDailyNotes() {
+      const tk = todayKey();
+      const list = Store.notes('personal', tk);
+      let changed = false;
+      if (!list.some(n => n.tag === 'journal' && !n.archived)) {
+        list.push(Store.normalizeNote({ id: uid(), x: 30, y: 30, tag:'journal',
+          html: `<b>${esc(pick(JOURNAL_PROMPTS))}</b><br>`, timestamp: Date.now() }));
+        changed = true;
+      }
+      (Store.get().meta.recurring || []).forEach((t, i) => {
+        if (!PERSONAL_TAGS.includes(t)) return;
+        if (!list.some(n => n.tag === t && !n.archived)) {
+          list.push(Store.normalizeNote({ id: uid(), x: 30 + (i+1)*30, y: 30 + (i+1)*30, ...presetFor(t), timestamp: Date.now() }));
+          changed = true;
+        }
+      });
+      if (changed) Store.save(true);
     }
 
     function refreshCal() { const old = $('.cal-drawer .cal-wrap'); if (old) old.replaceWith(calendar()); }
@@ -1380,6 +1475,62 @@
   }
 
   /* ==========================================================
+     12b · Search (notes · journal · lessons)
+     ========================================================== */
+  const stripHtml = (h) => { const d = el('div', { html: h || '' }); return (d.textContent || '').replace(/\s+/g, ' ').trim(); };
+  const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+  const Search = (() => {
+    function buildIndex() {
+      const items = [];
+      const d = Store.get();
+      for (const view of ['dashboard', 'personal']) {
+        for (const [date, notes] of Object.entries(d.canvas[view])) {
+          (notes || []).forEach(n => {
+            if (n.archived) return;
+            const txt = [stripHtml(n.html), ...(n.checklist || []).map(c => stripHtml(c.html)), ...(n.images || []).map(im => im.caption)].filter(Boolean).join(' · ');
+            if (txt) items.push({ kind: view === 'dashboard' ? 'dashboard note' : `#${n.tag || 'note'}`, text: txt, hash: `#${view}/${date}`, date });
+          });
+        }
+      }
+      (d.work.entries || []).forEach(e => items.push({ kind: 'journal', text: `${e.title || 'untitled'} — ${e.body || ''}`, hash: `#work/journal/${e.id}`, date: dKey(e.ts) }));
+      Work.allLessons().forEach(L => {
+        const st = Store.lesson(L.id);
+        const txt = [L.title, L.coreConcept, st.notes, st.reflect].filter(Boolean).join(' — ');
+        items.push({ kind: 'lesson', text: txt, hash: `#work/lesson/${L.id}` });
+      });
+      return items;
+    }
+    function open() {
+      Modal.open('Search', (body, close) => {
+        const input = el('input', { class:'field', placeholder:'search notes, journal, lessons…', autocomplete:'off' });
+        const results = el('div', { class:'search-results' });
+        body.append(input, results);
+        const index = buildIndex();
+        const run = () => {
+          const q = input.value.trim().toLowerCase();
+          results.innerHTML = '';
+          if (!q) { results.append(el('div', { class:'empty-line', text:`type to search ${index.length} items` })); return; }
+          const hits = index.filter(it => it.text.toLowerCase().includes(q)).slice(0, 40);
+          if (!hits.length) { results.append(el('div', { class:'empty-line', text:'no matches' })); return; }
+          hits.forEach(it => {
+            const i = it.text.toLowerCase().indexOf(q);
+            const start = Math.max(0, i - 30);
+            const snip = (start > 0 ? '…' : '') + it.text.slice(start, start + 90) + (it.text.length > start + 90 ? '…' : '');
+            results.append(el('button', { class:'search-hit', onclick: () => { close(); location.hash = it.hash; } }, [
+              el('span', { class:'sh-kind', text: it.kind + (it.date ? ` · ${it.date}` : '') }),
+              el('span', { class:'sh-text', text: snip }),
+            ]));
+          });
+        };
+        input.addEventListener('input', run); run();
+        setTimeout(() => input.focus(), 60);
+      });
+    }
+    return { open };
+  })();
+
+  /* ==========================================================
      13 · Router + boot
      ========================================================== */
   const ROUTES = ['dashboard','work','personal'];
@@ -1399,9 +1550,9 @@
     const fb = fridayBanner();
     if (fb) view.append(el('div', { style:'padding:16px 0 0' }, fb));
 
-    if (route === 'dashboard') Dashboard.mount(view);
+    if (route === 'dashboard') Dashboard.mount(view, sub);
     else if (route === 'work') Work.mount(view, sub);
-    else Personal.mount(view);
+    else Personal.mount(view, sub);
   }
 
   function startClock() {
@@ -1490,8 +1641,36 @@
     return wrap;
   }
 
+  /* keyboard shortcuts (laptop): n = new note · 1/2/3 = pages · / = search */
+  function initShortcuts() {
+    document.addEventListener('keydown', (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target;
+      const typing = t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));
+      if (e.key === '/' && !typing) { e.preventDefault(); Search.open(); return; }
+      if (typing) return;
+      if (!$('#modal').hidden) return;
+      if (e.key === '1') location.hash = '#dashboard';
+      else if (e.key === '2') location.hash = '#work';
+      else if (e.key === '3') location.hash = '#personal';
+      else if (e.key === 'n' || e.key === 'N') {
+        const r = parseHash().route;
+        if (r === 'dashboard' || r === 'personal') Canvas.addNote();
+      }
+    });
+  }
+
+  /* PWA: register the service worker so it installs + works offline */
+  function initPWA() {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(e => console.warn('sw', e));
+    }
+  }
+
   function boot() {
     $('#settings-btn').innerHTML = svg('gear');
+    $('#search-btn').innerHTML = svg('search');
+    $('#search-btn').addEventListener('click', () => Search.open());
     // corner cloud button → tap to save to cloud now
     $('#sync-btn').addEventListener('click', () => Sync.pushNow());
     $('#settings-btn').addEventListener('click', () => Modal.open('Settings', (body, close) => {
