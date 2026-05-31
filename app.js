@@ -1474,6 +1474,11 @@
     startClock();
     render();
 
+    // cloud sync: auto-push on change, pull/adopt on load
+    Store.onSave(() => Sync.schedulePush());
+    Sync.updateBadge();
+    Sync.syncOnLoad();
+
     let lastDay = todayKey();
     setInterval(async () => {
       await Weather.fetch7();
