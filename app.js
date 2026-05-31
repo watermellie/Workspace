@@ -1920,12 +1920,20 @@
      14 · Delight — click sparkles + collectible floating phrases
      ========================================================== */
   const Delight = (() => {
-    const PHRASES = [
-      'better days ahead','you are growing','trust the process','small steps count','breathe',
-      'you’ve got this','make it happen','stay curious','progress over perfection','one day at a time',
-      'be proud of you','keep going','create boldly','rest is productive','你可以的',
-      'design with heart','future you says thanks','bloom slowly','good things take time','shine',
+    const BASE_PHRASES = [
+      // gentle
+      'better days ahead','you are growing','you’re doing enough','be proud of you','rest is productive',
+      'breathe','bloom slowly','good things take time',
+      // hype
+      'you’ve got this','make it happen','keep going','create boldly','shine',
+      // mindful
+      'one day at a time','stay present','small steps count','trust the process',
+      // career / design
+      'design with heart','progress over perfection','ship it, then refine','your taste is leveling up',
+      'great designers were once beginners','your portfolio is growing','future you says thanks',
+      'curiosity is your edge','你可以的',
     ];
+    const PHRASES = () => [...BASE_PHRASES, ...(Store.get().meta.affirmations || [])];
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     let phraseTimer = null;
     const on = () => Store.get().meta.delight && !reduced;
@@ -1956,7 +1964,7 @@
     function floatOne() {
       if (!on()) { schedule(); return; }
       if (document.hidden || $('.floatie')) { schedule(); return; }   // one at a time
-      const txt = pick(PHRASES);
+      const txt = pick(PHRASES());
       const fromLeft = Math.random() < 0.5;
       const top = 90 + Math.random() * (window.innerHeight - 220);
       const f = el('button', { class:'floatie', text: '✦ ' + txt, title:'tap to collect' });
@@ -1998,10 +2006,73 @@
       cb.addEventListener('change', () => { Store.get().meta.delight = cb.checked; Store.save(true); toast(cb.checked ? 'delight on ✨' : 'delight off'); });
       toggle.append(cb, el('span', { text:'sparkles & floating phrases' }));
       wrap.append(toggle);
+
+      // your own affirmations
+      const af = Store.get().meta.affirmations;
+      wrap.append(el('div', { class:'kicker', style:'margin:12px 0 6px', text:'your own affirmations' }));
+      const inp = el('input', { class:'field', placeholder:'add a phrase to float around…', maxlength:'60' });
+      const mine = el('div', { class:'collected-wrap', style:'margin-top:8px' });
+      const renderMine = () => { mine.innerHTML = ''; af.forEach((p, i) => mine.append(el('span', { class:'collected-chip mine', text: p }, iconBtn('x', 'remove', () => { af.splice(i,1); Store.save(true); renderMine(); })))); };
+      const addIt = () => { const v = inp.value.trim(); if (!v) return; af.push(v); Store.save(true); inp.value=''; renderMine(); };
+      inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addIt(); } });
+      wrap.append(el('div', { style:'display:flex;gap:6px' }, [ inp, el('button', { class:'btn primary sm', text:'add', onclick: addIt }) ]));
+      renderMine(); wrap.append(mine);
       return wrap;
     }
 
     return { init, collectionView };
+  })();
+
+  /* ==========================================================
+     Pets — cozy companions that wander a canvas surface
+     ========================================================== */
+  const Pets = (() => {
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    let layer = null, walkers = [], timer = null;
+    const active = () => (Store.get().meta.pets || []).filter(p => p.on);
+
+    function mount(surface) {
+      teardown();
+      const list = active();
+      if (!list.length) return;
+      layer = el('div', { class:'pets-layer' });
+      surface.appendChild(layer);
+      walkers = list.map(spawn);
+      if (!reduced) { setTimeout(wander, 800); timer = setInterval(wander, 4200); }
+    }
+    function teardown() { clearInterval(timer); timer = null; layer?.remove(); layer = null; walkers = []; }
+
+    function spawn(pet) {
+      const r = layer.getBoundingClientRect();
+      const x = 40 + Math.random() * Math.max(60, r.width - 120);
+      const y = 90 + Math.random() * 220;
+      const w = el('button', { class:'pet', title: pet.name, style:`left:${x}px; top:${y}px`, text: pet.emoji });
+      w._pet = pet;
+      w.addEventListener('click', (e) => { e.stopPropagation(); petIt(w); });
+      layer.appendChild(w);
+      return w;
+    }
+    function wander() {
+      if (!layer) return;
+      const r = layer.getBoundingClientRect();
+      walkers.forEach(w => {
+        if (Math.random() < 0.25) return;
+        const nx = 20 + Math.random() * Math.max(60, r.width - 100);
+        const ny = 80 + Math.random() * Math.max(120, Math.min(r.height, 600) - 160);
+        w.style.setProperty('--face', nx < parseFloat(w.style.left) ? -1 : 1);
+        w.style.left = Math.round(nx) + 'px';
+        w.style.top = Math.round(ny) + 'px';
+      });
+    }
+    function petIt(w) { w.classList.remove('hop'); void w.offsetWidth; w.classList.add('hop'); heart(w); toast(`${w._pet.name} ♡`); }
+    function heart(w) {
+      const r = w.getBoundingClientRect();
+      const h = el('div', { class:'pet-heart', text:'♡', style:`left:${r.left + r.width/2}px; top:${r.top}px` });
+      document.body.appendChild(h); setTimeout(() => h.remove(), 900);
+    }
+    function celebrate() { walkers.forEach((w, i) => setTimeout(() => { w.classList.remove('hop'); void w.offsetWidth; w.classList.add('hop'); heart(w); }, i * 120)); }
+
+    return { mount, teardown, celebrate };
   })();
 
   function applyTheme() {
