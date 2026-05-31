@@ -180,7 +180,7 @@
     return {
       get: () => data, save, normalizeNote,
       onSave(fn) { afterSave = fn; },
-      replaceAll(next) { data = next; localStorage.setItem(LS_KEY, JSON.stringify(data)); },
+      replaceAll(next) { data = migrate(next); localStorage.setItem(LS_KEY, JSON.stringify(data)); },
       notes(view, key) { return (data.canvas[view][key] ||= []); },
       datesWithNotes(view) {
         return Object.keys(data.canvas[view]).filter(k => (data.canvas[view][k] || []).length).sort((a,b) => b.localeCompare(a));
