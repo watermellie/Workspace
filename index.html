@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="watermellie" />
   <title>watermellie // workspace</title>
   <meta name="description" content="watermellie intern workspace — dashboard, work, personal." />
 
@@ -46,6 +50,22 @@
   </div>
 
   <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Mobile bottom tab bar (finger navigation) -->
+  <nav id="mobilenav" aria-label="Primary (mobile)">
+    <a class="mnav-link nav-link" data-route="dashboard" href="#dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+      <span>dashboard</span>
+    </a>
+    <a class="mnav-link nav-link" data-route="work" href="#work">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>work</span>
+    </a>
+    <a class="mnav-link nav-link" data-route="personal" href="#personal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>
+      <span>personal</span>
+    </a>
+  </nav>
 
   <script src="app.js" defer></script>
   <script src="curriculum.js" defer></script>

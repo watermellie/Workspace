@@ -762,6 +762,10 @@
     function refreshPanel() {
       const p = $('#dash-panel'); if (!p) return;
       const inner = el('div', { class:'side-inner' });
+      inner.append(el('div', { class:'side-phead' }, [
+        el('span', { class:'kicker', text:'panel' }),
+        iconBtn('x', 'close panel', () => { panelOpen = false; p.classList.remove('open'); }),
+      ]));
       inner.append(el('div', { class:'side-tabs' }, [ tabBtn('archive','archived'), tabBtn('history','history') ]));
       inner.append(panelTab === 'archive' ? archiveList() : historyList());
       p.innerHTML = ''; p.append(inner);

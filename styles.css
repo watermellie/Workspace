@@ -170,9 +170,12 @@ input.field:focus, select.field:focus, textarea.field:focus { border-color: var(
 
 .canvas-surface {
   position: relative; width: 100%; min-height: calc(100vh - 96px);
-  overflow: hidden; touch-action: none;
+  overflow: hidden;
+  touch-action: pan-y;   /* let a finger scroll the page; drag handles opt out below */
 }
 .canvas-surface.tall { min-height: 1500px; }
+/* only the grab/resize handles capture touch, so the page still scrolls elsewhere */
+.note-head, .note-resize, .fw-head { touch-action: none; }
 
 /* floating + add-note button + cluster */
 .fab-cluster { position: fixed; right: 22px; bottom: 22px; z-index: 45; display: flex; align-items: center; gap: 10px; }
@@ -300,6 +303,7 @@ input.field:focus, select.field:focus, textarea.field:focus { border-color: var(
 .side-panel { width: 0; flex-shrink: 0; border-left: 1px solid var(--line); background: var(--paper); overflow: hidden; transition: width 200ms var(--ease); }
 .side-panel.open { width: 280px; }
 .side-inner { width: 280px; padding: 16px; }
+.side-phead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .side-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
 .side-tab { flex: 1; font-size: 12.5px; font-weight: 500; padding: 7px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--paper); color: var(--ink-soft); transition: all var(--t) var(--ease); }
 .side-tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
@@ -516,6 +520,16 @@ textarea.lesson-notes:focus, textarea.reflect:focus { border-color: var(--blue);
 #fmt-bar button:hover { background: rgba(255,255,255,.2); }
 #fmt-bar .swatch { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.5); }
 
+/* ═══════════════════════ MOBILE BOTTOM NAV ═══════════════════════ */
+#mobilenav { display: none; }   /* shown only on phones (below) */
+.mnav-link {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  padding: 8px 4px; color: var(--ink-faint); font-size: 10.5px; font-weight: 500;
+  background: none; border: 0; text-decoration: none; -webkit-tap-highlight-color: transparent;
+}
+.mnav-link svg { width: 22px; height: 22px; }
+.mnav-link.active { color: var(--ink); }
+
 /* ═══════════════════════ RESPONSIVE (iPad / phone) ═══════════════════════ */
 @media (max-width: 920px) {
   .lesson-split { grid-template-columns: 1fr; }
@@ -524,19 +538,37 @@ textarea.lesson-notes:focus, textarea.reflect:focus { border-color: var(--blue);
   .ix-link { white-space: nowrap; margin-bottom: 0; }
 }
 @media (max-width: 760px) {
-  #topbar { grid-template-columns: 1fr auto; gap: 8px 12px; padding: 10px 16px; }
-  #topdate { grid-column: 1 / -1; grid-row: 2; text-align: left; order: 3; }
-  #nav { font-size: 13px; gap: 7px; flex-wrap: wrap; }
-  .work-wrap { padding: 20px 16px 80px; }
+  /* top bar: keep brand + settings only; route nav moves to the bottom bar */
+  #topbar { grid-template-columns: 1fr auto; gap: 4px 12px; padding: 10px 16px; }
+  #nav { font-size: 14px; gap: 7px; }
+  #nav .nav-link, #nav .nav-slash, #nav .nav-sep { display: none; }   /* hide inline routes on phone */
+  #topdate { grid-column: 1 / -1; grid-row: 2; text-align: left; font-size: 12px; }
+  #topright { grid-row: 1; }
+
+  .work-wrap { padding: 20px 16px 96px; }
   .work-head h1 { font-size: 22px; }
-  .lesson-pane { padding: 20px 18px; }
+  .lesson-pane { padding: 20px 16px; }
   .feed { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
   .personal-body { flex-direction: column; min-height: 0; }
   .cal-drawer { width: 100%; border-right: 0; border-bottom: 1px solid var(--line); }
-  .canvas-surface { min-height: 70vh; }
-  .side-panel.open { width: 100%; position: fixed; right: 0; top: 0; bottom: 0; z-index: 80; box-shadow: var(--shadow-lg); }
+
+  /* canvases: give them a real, finite height so the page scrolls past them to the nav */
+  .canvas-surface { min-height: 64vh; }
+  .canvas-surface.tall { min-height: 1100px; }
+
+  .side-panel.open { width: 100%; position: fixed; right: 0; top: 0; bottom: 0; z-index: 90; box-shadow: var(--shadow-lg); }
   .side-inner { width: 100%; }
-  .add-fab { right: 16px; bottom: 16px; }
+
+  /* show the bottom tab bar; lift floating buttons above it */
+  #mobilenav {
+    display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 85;
+    background: rgba(255,255,255,.92); backdrop-filter: saturate(180%) blur(12px);
+    border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  #view { padding-bottom: 64px; }   /* don't let content hide behind the bar */
+  .fab-cluster { bottom: calc(70px + env(safe-area-inset-bottom, 0)); right: 16px; }
+  .modal-box { max-height: 82vh; }
 }
 @media (hover: none) {
   .note-resize { opacity: .5; }
