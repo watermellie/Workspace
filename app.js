@@ -136,8 +136,21 @@
       version: 2,
       canvas: { dashboard: {}, personal: {} },     // { [dateKey]: [note] }
       doodles: { dashboard: {}, personal: {} },    // { [dateKey]: [stroke] }
+      stickers: { dashboard: {}, personal: {} },   // { [dateKey]: [sticker] }
       work: { lessons: {}, customLessons: [], entries: [] },
-      meta: { catImage: '', focusPos: { x: 26, y: 20 }, weather: null, coords: null, recurring: ['gym'], mood: {}, delight: true, collected: [] },
+      meta: {
+        catImage: '', focusPos: { x: 26, y: 20 }, weather: null, coords: null,
+        recurring: ['gym'], mood: {}, delight: true, collected: [], digestPos: null,
+        name: 'neli', nicknames: ['dani', 'dania', 'neli', 'nellie'],
+        theme: 'cream', accent: '',
+        pets: [
+          { id: 'cat', emoji: '🐱', name: 'mochi', on: true },
+          { id: 'bun', emoji: '🐰', name: 'pancake', on: true },
+          { id: 'mel', emoji: '🍉', name: 'melly', on: true },
+          { id: 'duck', emoji: '🐥', name: 'pip', on: true },
+        ],
+        affirmations: [], affirmVibe: ['gentle', 'hype'],
+      },
     };
 
     /* shape-guard ANY payload (fresh / localStorage / synced / imported) so older
@@ -146,6 +159,7 @@
       d = d || structuredClone(blank);
       d.canvas ||= {}; d.canvas.dashboard ||= {}; d.canvas.personal ||= {};
       d.doodles ||= {}; d.doodles.dashboard ||= {}; d.doodles.personal ||= {};
+      d.stickers ||= {}; d.stickers.dashboard ||= {}; d.stickers.personal ||= {};
       d.work ||= {}; d.work.lessons ||= {}; d.work.customLessons ||= []; d.work.entries ||= [];
       d.meta ||= {}; d.meta.focusPos ||= { x: 26, y: 20 };
       if (!('catImage' in d.meta)) d.meta.catImage = '';
@@ -154,6 +168,14 @@
       if (d.meta.delight === undefined) d.meta.delight = true;
       if (!Array.isArray(d.meta.collected)) d.meta.collected = [];
       d.meta.digestPos ||= null;
+      // personalization
+      d.meta.name ||= 'neli';
+      if (!Array.isArray(d.meta.nicknames) || !d.meta.nicknames.length) d.meta.nicknames = ['dani', 'dania', 'neli', 'nellie'];
+      d.meta.theme ||= 'cream';
+      if (typeof d.meta.accent !== 'string') d.meta.accent = '';
+      if (!Array.isArray(d.meta.pets) || !d.meta.pets.length) d.meta.pets = structuredClone(blank.meta.pets);
+      if (!Array.isArray(d.meta.affirmations)) d.meta.affirmations = [];
+      if (!Array.isArray(d.meta.affirmVibe)) d.meta.affirmVibe = ['gentle', 'hype'];
       for (const view of ['dashboard', 'personal']) {
         for (const k of Object.keys(d.canvas[view])) {
           d.canvas[view][k] = (d.canvas[view][k] || []).map(normalizeNote);
@@ -168,12 +190,13 @@
         board.board.push(...board[k]);
         delete board[k];
       }
-      // same fold for dashboard doodles
-      const bd = d.doodles.dashboard;
-      bd.board ||= [];
-      for (const k of Object.keys(bd)) {
-        if (k === 'board' || !/^\d{4}-\d{2}-\d{2}$/.test(k)) continue;
-        bd.board.push(...bd[k]); delete bd[k];
+      // same fold for dashboard doodles + stickers
+      for (const bucket of [d.doodles.dashboard, d.stickers.dashboard]) {
+        bucket.board ||= [];
+        for (const k of Object.keys(bucket)) {
+          if (k === 'board' || !/^\d{4}-\d{2}-\d{2}$/.test(k)) continue;
+          bucket.board.push(...bucket[k]); delete bucket[k];
+        }
       }
       return d;
     }
@@ -214,6 +237,7 @@
       replaceAll(next) { data = guard(next); localStorage.setItem(LS_KEY, JSON.stringify(data)); },
       notes(view, key) { return (data.canvas[view][key] ||= []); },
       doodles(view, key) { return (data.doodles[view][key] ||= []); },
+      stickers(view, key) { return (data.stickers[view][key] ||= []); },
       datesWithNotes(view) {
         return Object.keys(data.canvas[view]).filter(k => (data.canvas[view][k] || []).length).sort((a,b) => b.localeCompare(a));
       },
