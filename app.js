@@ -388,6 +388,7 @@
   /* floating + add-note button */
   const addFab = (onClick) => el('button', { class:'add-fab', title:'add note', 'aria-label':'add note', html: svg('plus'), onclick: onClick });
   const penFab = () => { const b = el('button', { class:'fab-mini', title:'draw', 'aria-label':'draw', html: svg('pen'), onclick: () => b.classList.toggle('on', Draw.toggle()) }); return b; };
+  const stickerFab = () => { const b = el('button', { class:'fab-mini', title:'stickers', 'aria-label':'stickers', html: svg('sticker'), onclick: () => b.classList.toggle('on', Stickers.toggle()) }); return b; };
 
   /* ==========================================================
      4 · Weather (Open-Meteo + reverse geocode, cached & auto-refresh)
@@ -719,7 +720,7 @@
      ========================================================== */
   const Canvas = (() => {
     let active = null;
-    function teardown() { active = null; Draw.teardown(); }
+    function teardown() { active = null; Draw.teardown(); Stickers.teardown(); }
 
     function build({ view, dateKey, readonly, tags = false, onChange = () => {}, tall = false }) {
       const surface = el('div', { class:'canvas-surface dotgrid' + (tall ? ' tall' : ''), role:'application', 'aria-label':`${view} canvas` });
@@ -727,6 +728,7 @@
       active = { surface, ctx };
       paint();
       Draw.attach(surface, view, dateKey, readonly);   // doodle layer (under notes until pen mode)
+      Stickers.attach(surface, view, dateKey, readonly); // emoji decorations behind notes
       return surface;
     }
 
@@ -898,6 +900,77 @@
   })();
 
   /* ==========================================================
+     7c · Stickers — placeable emoji decorations on a canvas
+     ========================================================== */
+  const Stickers = (() => {
+    const PALETTE = ['🍉','🍓','🌸','🌷','🌿','⭐','✨','🩷','💛','☀️','🌙','☁️','🦋','🐾','🧸','🎀','☕','📌','🌈','🍄'];
+    let layer = null, view = null, key = null;
+
+    function attach(surf, v, k, readonly) {
+      view = v; key = k;
+      layer = el('div', { class:'sticker-layer' });
+      surf.appendChild(layer);
+      renderAll(readonly);
+    }
+    function renderAll(readonly) {
+      if (!layer) return;
+      layer.innerHTML = '';
+      Store.stickers(view, key).forEach(s => layer.appendChild(makeEl(s, readonly)));
+    }
+    function makeEl(s, readonly) {
+      const w = el('button', { class:'sticker', style:`left:${s.x}px; top:${s.y}px; font-size:${(s.scale || 1) * 38}px`, text: s.emoji });
+      if (!readonly) {
+        w.addEventListener('pointerdown', (e) => drag(e, w, s));
+        w.appendChild(el('span', { class:'sticker-x', text:'✕', title:'remove',
+          onclick: (e) => { e.stopPropagation(); removeOne(s.id, readonly); } }));
+      }
+      return w;
+    }
+    function drag(e, w, s) {
+      if (e.target.classList?.contains('sticker-x')) return;
+      e.preventDefault(); e.stopPropagation();
+      const r = layer.getBoundingClientRect();
+      const offX = e.clientX - r.left - s.x, offY = e.clientY - r.top - s.y;
+      w.setPointerCapture?.(e.pointerId); w.classList.add('grab');
+      const move = (ev) => {
+        s.x = Math.round(clamp(ev.clientX - r.left - offX, 0, r.width - 20));
+        s.y = Math.round(clamp(ev.clientY - r.top - offY, 0, 6000));
+        w.style.left = s.x + 'px'; w.style.top = s.y + 'px';
+      };
+      const up = () => { w.classList.remove('grab'); document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); Store.save(true); };
+      document.addEventListener('pointermove', move); document.addEventListener('pointerup', up);
+    }
+    function add(emoji) {
+      if (!layer) return;
+      const r = layer.getBoundingClientRect();
+      const s = { id: uid(), emoji, x: Math.round(clamp(r.width / 2 - 20 + (Math.random() * 80 - 40), 0, r.width - 40)), y: Math.round(110 + Math.random() * 90), scale: 1 };
+      Store.stickers(view, key).push(s); Store.save(true);
+      layer.appendChild(makeEl(s, false));
+    }
+    function removeOne(id) {
+      const list = Store.stickers(view, key);
+      const i = list.findIndex(x => x.id === id);
+      if (i >= 0) { list.splice(i, 1); Store.save(true); renderAll(false); layer.classList.add('editing'); }
+    }
+    function openTray() {
+      if (!layer) return false;
+      $('#sticker-bar')?.remove();
+      layer.classList.add('editing');
+      const grid = el('div', { class:'sticker-grid' }, PALETTE.map(em =>
+        el('button', { class:'sticker-pick', text: em, onclick: () => add(em) })));
+      const done = el('button', { class:'btn primary sm', text:'done', onclick: () => closeTray() });
+      document.body.append(el('div', { id:'sticker-bar' }, [
+        el('div', { class:'sticker-bar-hint', text:'tap to place · drag to move · ✕ to remove' }), grid, done ]));
+      return true;
+    }
+    function closeTray() { $('#sticker-bar')?.remove(); layer?.classList.remove('editing'); return false; }
+    function toggle() { return $('#sticker-bar') ? closeTray() : openTray(); }
+    function teardown() { $('#sticker-bar')?.remove(); layer = null; }
+
+    return { attach, toggle, teardown };
+  })();
+
+  /* ==========================================================
      8 · Dashboard
      ========================================================== */
   const Dashboard = (() => {
@@ -922,6 +995,7 @@
 
       // floating cluster: draw · archive · + note  (dashboard notes persist; no daily reset)
       wrap.append(el('div', { class:'fab-cluster' }, [
+        stickerFab(),
         penFab(),
         el('button', { class:'fab-mini', title:'archived notes', 'aria-label':'archived notes', html: svg('archive'), onclick: () => togglePanel() }),
         addFab(() => Canvas.addNote()),
@@ -1532,6 +1606,7 @@
       body.append(drawer, right);
       root.append(body);
       if (!readonly) body.append(el('div', { class:'fab-cluster' }, [
+        stickerFab(),
         penFab(),
         addFab(() => { Canvas.addNote(); refreshCal(); }),
       ]));
