@@ -91,6 +91,13 @@ mark { background: var(--yellow); color: var(--ink); padding: 0 2px; border-radi
 #topdate { font-size: 13px; color: var(--ink-soft); text-align: center; letter-spacing: -.01em; }
 #topdate .clock { color: var(--ink-faint); font-variant-numeric: tabular-nums; }
 #topright { justify-self: end; display: flex; align-items: center; gap: 8px; }
+#sync-badge { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px var(--green-soft); }
+#sync-badge[data-status="syncing"] { background: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+#sync-badge[data-status="error"] { background: var(--red); box-shadow: 0 0 0 3px var(--red-soft); }
+.sync-block .sync-status { font-size: 12px; margin: 6px 0 2px; }
+.sync-block .sync-status.ok { color: var(--green); }
+.sync-block .sync-status.error { color: var(--red); }
+.sync-block .sync-status.off, .sync-block .sync-status.idle { color: var(--ink-faint); }
 
 /* ───────────────────────── Shared bits ───────────────────────── */
 #view { position: relative; }
