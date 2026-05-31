@@ -166,8 +166,12 @@
       };
     }
 
-    let timer;
-    const flush = () => { try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch (e) { console.error(e); toast('storage full — could not save'); } };
+    let timer, afterSave = null;
+    const flush = () => {
+      data.meta.updatedAt = Date.now();
+      try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch (e) { console.error(e); toast('storage full — could not save'); }
+      try { afterSave && afterSave(); } catch (e) { console.error(e); }
+    };
     const save = (immediate = false) => {
       if (immediate) { clearTimeout(timer); flush(); return; }
       clearTimeout(timer); timer = setTimeout(flush, 300);
@@ -175,6 +179,8 @@
 
     return {
       get: () => data, save, normalizeNote,
+      onSave(fn) { afterSave = fn; },
+      replaceAll(next) { data = next; localStorage.setItem(LS_KEY, JSON.stringify(data)); },
       notes(view, key) { return (data.canvas[view][key] ||= []); },
       datesWithNotes(view) {
         return Object.keys(data.canvas[view]).filter(k => (data.canvas[view][k] || []).length).sort((a,b) => b.localeCompare(a));
