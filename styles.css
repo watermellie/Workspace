@@ -726,6 +726,43 @@ textarea.lesson-notes:focus, textarea.reflect:focus { border-color: var(--blue);
   color: var(--red); font-size: 16px; animation: heart-rise .9s var(--ease) forwards;
 }
 @keyframes heart-rise { 0% { opacity: 1; transform: translate(-50%, 0) scale(.7); } 100% { opacity: 0; transform: translate(-50%, -36px) scale(1.1); } }
+
+/* ═══════════════════════ STICKERS ═══════════════════════ */
+.sticker-layer { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+.sticker {
+  position: absolute; line-height: 1; padding: 0; border: none; background: none;
+  cursor: grab; user-select: none; pointer-events: auto; -webkit-tap-highlight-color: transparent;
+  filter: drop-shadow(0 3px 5px rgba(0,0,0,.12));
+  transition: transform .15s var(--ease); animation: stickpop .22s var(--ease);
+}
+.sticker:hover { transform: rotate(-4deg) scale(1.08); }
+.sticker.grab { cursor: grabbing; transform: scale(1.14); transition: none; z-index: 5; }
+.sticker-x {
+  position: absolute; top: -7px; right: -7px; width: 17px; height: 17px; border-radius: 50%;
+  display: none; align-items: center; justify-content: center;
+  font-size: 9px; color: #fff; background: var(--red); box-shadow: 0 1px 3px rgba(0,0,0,.25);
+}
+.sticker-layer.editing .sticker { animation: stickwiggle 1.4s var(--ease) infinite; }
+.sticker-layer.editing .sticker-x { display: inline-flex; }
+#sticker-bar {
+  position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 8px; align-items: center;
+  background: var(--paper); padding: 12px 14px; max-width: min(92vw, 420px); z-index: 80;
+  border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,.16);
+  animation: stickbar .18s var(--ease);
+}
+.sticker-bar-hint { font-size: 11px; color: var(--ink-soft); }
+.sticker-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+.sticker-pick {
+  font-size: 22px; line-height: 1; padding: 5px; border-radius: 8px;
+  border: 1px solid transparent; background: none; cursor: pointer;
+  transition: background .12s var(--ease), transform .12s var(--ease);
+}
+.sticker-pick:hover { background: var(--wash); transform: scale(1.18); }
+@keyframes stickpop { from { transform: scale(0); } 70% { transform: scale(1.2); } to { transform: scale(1); } }
+@keyframes stickwiggle { 0%,100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes stickbar { from { transform: translateX(-50%) translateY(8px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+@media (max-width: 560px) { .sticker-grid { grid-template-columns: repeat(7, 1fr); } #sticker-bar { bottom: calc(70px + env(safe-area-inset-bottom, 0)); } }
 @media (prefers-reduced-motion: reduce) { .pet { transition: none; } .pet.hop, .pet-heart { animation: none; } }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .001ms !important; animation-duration: .001ms !important; } .spark, .floatie { display: none !important; } }
