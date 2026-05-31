@@ -1,3 +1,6 @@
+# Claude Code / harness internals
+.claude/
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db
