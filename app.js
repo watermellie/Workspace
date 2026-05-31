@@ -901,20 +901,17 @@
      8 · Dashboard
      ========================================================== */
   const Dashboard = (() => {
-    let panelOpen = false, panelTab = 'archive', viewDate = todayKey();
-    function reset() { viewDate = todayKey(); }
+    let panelOpen = false;
+    const KEY = 'board';                 // fixed key — dashboard notes persist (no 3am reset)
+    function reset() {}
 
-    function mount(root, sub = []) {
-      if (sub[0] && DATE_RE.test(sub[0]) && sub[0] <= todayKey()) viewDate = sub[0];
-      const readonly = viewDate !== todayKey();
+    function mount(root) {
       const wrap = el('div', { class:'dash-wrap' });
-
-      if (readonly) wrap.append(el('div', { class:'canvas-bar' }, el('span', { class:'read-only-flag', text:`● ${viewDate} · read-only` })));
 
       const body = el('div', { class:'dash-body' });
       const canvasCol = el('div', { class:'dash-canvas' });
-      const surface = Canvas.build({ view:'dashboard', dateKey: viewDate, readonly, onChange: refreshPanel, tall: true });
-      if (!readonly) { surface.prepend(focusWidget()); surface.prepend(digestCard()); }
+      const surface = Canvas.build({ view:'dashboard', dateKey: KEY, readonly: false, onChange: refreshPanel, tall: true });
+      surface.prepend(focusWidget()); surface.prepend(digestCard());
       canvasCol.append(surface);
 
       const panel = el('aside', { class:'side-panel' + (panelOpen ? ' open':''), id:'dash-panel' });
@@ -1059,19 +1056,6 @@
         el('div', { class:'arch-text', html: n.html || '(empty)' }),
         el('div', { class:'arch-row' }, [ el('span', { text:new Date(n.timestamp).toLocaleDateString() }), iconBtn('restore','restore',() => Canvas.restore(n.id)) ]),
       ])));
-      return box;
-    }
-    function historyList() {
-      const box = el('div'); const dates = Store.datesWithNotes('dashboard'); const tk = todayKey();
-      if (!dates.includes(tk)) dates.unshift(tk);
-      dates.forEach(k => {
-        const count = Store.notes('dashboard', k).filter(n => !n.archived).length;
-        box.append(el('button', { class:'hist-item' + (k===viewDate?' active':''), onclick:() => {
-          viewDate = k; panelOpen = true; panelTab = 'history';
-          const r = $('#view'); r.innerHTML=''; Canvas.teardown(); mount(r);
-        } }, [ el('span', { text: k===tk ? `${k} · today` : k }), el('span', { class:'count', text:`${count}` }) ]));
-      });
-      box.append(el('div', { class:'empty-line', style:'margin-top:8px', text:'past pages are read-only · new page at 3:00 am' }));
       return box;
     }
     return { mount, reset };
