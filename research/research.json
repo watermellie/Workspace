@@ -1,0 +1,1530 @@
+{
+      "williamsSonoma": {
+        "brand": "Williams-Sonoma (the flagship culinary banner of Williams-Sonoma, Inc., founded 1956 in Sonoma, CA by Chuck Williams; CEO Laura Alber). Parent is a self-described omni-channel, \"digital-first, design-led\" home retailer whose nine-brand portfolio also includes Pottery Barn, Pottery Barn Kids, Pottery Barn Teen, West Elm, Williams Sonoma Home, Rejuvenation, Mark and Graham, and GreenRow. Parent reported ~$7.71B revenue in fiscal 2024 with a record ~17.9% operating margin and ~$8.50 EPS.",
+        "positioning": "Premium/aspirational specialty retailer positioned as a \"culinary authority\" for serious and aspiring home cooks and entertainers. It pairs prestige branded cookware (Le Creuset, All-Clad, Staub, Breville) with W-S private-label goods, gourmet/pantry foods, in-store cooking classes/demos, and a strong recipe-content arm. The brand explicitly sells expertise, inspiration, and lifestyle, then connects that to commerce; its CTO frames the AI strategy as \"AI works well when you have category authority... expertise,\" and Olive's stated job is to \"connect the dots between inspiration, guidance and ultimately shopping.\" Parent runs a \"house of brands\" strategy targeting distinct home/cooking segments.",
+        "pricePoint": "Mid-to-high / premium. Verified example: Le Creuset Signature Round (Enameled Cast Iron) Dutch Oven at williams-sonoma.com lists 7.25-qt at a suggested $460 (recently on sale ~$368); across sizes the line runs roughly $150-$570 MSRP (sale ~$120-$348). Entry kitchen tools/gadgets run ~$10-$50, but flagship cookware, electrics, and All-Clad/Le Creuset sets routinely run $300-$1,000+, anchoring the brand at a premium tier. Williams Sonoma's product pages are heavily JavaScript-gated, so direct on-page price fetches were blocked; the $460 figure is corroborated via search snippets of the W-S PDP. All-Clad D3 10-piece set exact price is unverified.",
+        "targetConsumer": "Demographic: affluent, educated homeowners roughly ages 30-65 with household income ~$100k-$250k+, urban and suburban, with a female-skewing core plus engaged-cook and gift-buyer segments; parent is also courting Gen Z for small-space decor across sister brands. Psychographic: design-forward, omni-channel \"culinary enthusiasts\" and entertainers who treat cooking as a craft, value quality/durability/design over price, are brand- and provenance-conscious, lean into recipes/classes/lifestyle content, and are heavy registry/gifting and seasonal/holiday buyers. (Income/age ranges per third-party market analyses such as MatrixBCG/Latterly; treat exact bands as approximate.)",
+        "aiUsage": "Multi-pronged and rapidly evolving. (1) OLIVE - an AI culinary assistant/\"sous chef\" agent built and scaled on Salesforce Agentforce 360 (with Data 360), announced broadly at Dreamforce/October 2025. It plans menus, generates recipes and shopping lists, recommends W-S tools/foods/table decor, and factors in items the customer already owns from past purchases. NOTE on timing: some press paraphrases say W-S \"launched [it] last fall,\" while CX Dive's Sept 2025 reporting describes the culinary companion as being prepared to launch around the Q2 2025 earnings call - so the precise first-launch date is ambiguous/unverified (the Salesforce-built agentic version is Oct 2025). (2) CUSTOMER-SERVICE AGENTS - Agentforce AI agents rolled out from a Pottery Barn Kids pilot (summer 2025) across all brands (Williams Sonoma, Pottery Barn, West Elm) for 24/7 support, targeting >60% autonomous resolution of chat inquiries. (3) GENERATIVE PRODUCT DISCOVERY - W-S joined OpenAI's ChatGPT Ad Pilot Program (announced Feb 2026) to test contextual ads/product discovery inside ChatGPT, separate from the Salesforce-powered Olive. Plus standard retail personalization, search, and fulfillment AI.",
+        "physicalVsDigital": "Heavily digital-tilted omni-channel. E-commerce/direct represents roughly two-thirds of parent net revenue (~65-66%; retail stores ~34% in fiscal 2023). The physical fleet is ~512-518 stores (all banners) and trending slightly smaller year over year, functioning as showroom, brand experience, cooking classes/demos, and registry/gifting touchpoints that feed the digital funnel rather than serving as the primary sales channel. W-S is also extending AI into stores by equipping associates with design/service tools. The website + catalog + recipe content + Olive/AI are the dominant discovery-to-purchase engine; stores add tactile, premium reassurance for high-ticket cookware.",
+        "journey": [
+          {
+            "stage": "Discovery",
+            "notes": "Entry via branded/organic search, the recipe content hub and buying guides, email/catalog, social, and increasingly AI: Olive conversational discovery on-site plus generative discovery via the OpenAI/ChatGPT ad pilot. Content-to-commerce SEO pulls aspiring cooks in and routes to product.",
+            "friction": [
+              "Olive is largely a separate destination centered on menu/holiday-planning rather than surfaced contextually across the whole site",
+              "Recipe/guide content and the shop are loosely stitched; jumping from inspiration to the exact buyable products is not reliably one click",
+              "Premium framing can feel exclusionary to price-sensitive first-timers"
+            ]
+          },
+          {
+            "stage": "Browse",
+            "notes": "Category/collection pages with brand and price filters; curated assortment emphasizes flagship brands and W-S exclusives, supplemented by buying guides.",
+            "friction": [
+              "Site is heavily JavaScript-dependent (pages return JS-required shells to non-JS/bot clients), signaling heavy front-end load that can hurt performance, accessibility, and SEO/scrape-resilience",
+              "Large premium catalog can create sticker shock without enough mid-tier/value framing",
+              "Cross-brand comparison (e.g., All-Clad vs. exclusive line) is not always easy"
+            ]
+          },
+          {
+            "stage": "Product detail",
+            "notes": "PDPs carry rich imagery, specs, size/color variant pickers (e.g., Dutch oven by quart and color), reviews, sale pricing, and related content/storytelling around materials and provenance.",
+            "friction": [
+              "Variant (size/color) price ladder requires interaction to surface fully",
+              "Shipping cost/timeline and oversized-item surcharges are not obvious on the PDP",
+              "JS gating can make price/content slow or invisible if scripts fail"
+            ]
+          },
+          {
+            "stage": "Cart",
+            "notes": "Standard cart with quantity edits, promo entry, shipping estimate, and complementary cross-sell.",
+            "friction": [
+              "Reviewers report shipping fees and tax-on-shipping revealed late, with flat shipping charged even on $200+ orders (e.g., ~$45 shipping cited on a ~$70 apron) - a major transparency complaint",
+              "Loyalty/credit-card value unclear at cart",
+              "High premium ticket sizes plus late fees elevate abandonment risk"
+            ]
+          },
+          {
+            "stage": "Checkout",
+            "notes": "Account or guest checkout, address/payment, registry and gifting options, loyalty/credit-card integration.",
+            "friction": [
+              "Multiple customer reviews say true total (shipping + tax) was not visible until the order was completed/paid - a serious trust issue",
+              "Account-creation and registry prompts add steps/distraction for a simple single-item purchase",
+              "Express/wallet checkout efficiency on mobile is unverified"
+            ]
+          },
+          {
+            "stage": "Post-purchase",
+            "notes": "Order confirmation, shipping/tracking, returns, and lifecycle marketing (recipes, classes, loyalty). New Agentforce service agents aim to handle 24/7 support and >60% of chat inquiries.",
+            "friction": [
+              "Returns/exchanges on heavy or premium items can be costly/cumbersome (return shipping on oversized goods)",
+              "Post-purchase rarely loops the buyer back to Olive or to recipes using the just-bought item (missed retention hook)",
+              "Service-agent automation risks deflecting nuanced premium-customer issues if human hand-off is weak"
+            ]
+          }
+        ],
+        "topFriction": [
+          "Late-revealed total cost: multiple customer reviews report shipping fees and tax-on-shipping appearing only at or after payment, with flat shipping even on large orders (e.g., ~$45 shipping on a ~$70 item) - the most damaging, repeatedly-cited friction on premium tickets.",
+          "Pervasive JavaScript gating: core pages (PDPs, prices, Olive) return JS-required shells to limited/bot clients, raising performance, accessibility, and SEO/resilience concerns.",
+          "Olive is siloed and catalog-bound: it lives mainly as a menu/holiday-planning destination rather than being embedded across PDPs, recipes, search, and post-purchase, and it recommends from W-S inventory even when that inventory has gaps (W-S does not stock some basic ingredients like garlic).",
+          "Content-to-commerce gap: rich recipes/guides and the shop are loosely linked; moving from inspiration or an Olive suggestion to a complete shoppable basket isn't reliably one click.",
+          "Registry/account upsell friction: account-creation and registry prompts add steps for shoppers who just want a fast single-item checkout."
+        ],
+        "notableFeatures": [
+          "OLIVE - AI culinary assistant/'sous chef' agent (CONFIRMED to exist via Williams-Sonoma earnings commentary, Salesforce's Oct 2025 Agentforce press release, and hands-on press tests). Built/scaled on Salesforce Agentforce 360 + Data 360. Capabilities: conversational menu planning, recipe generation, auto-built shopping lists, and recommendations of W-S cookware, gourmet foods, and table decor, including awareness of items the customer already owns from past purchases. WHERE GUIDED DISCOVERY SUCCEEDS (per hands-on testing by Opus Research/diginomica): natural-language intent capture for occasions like hosting Thanksgiving; after a few prompts it produced a coherent menu with relevant details and paired tools - a strong inspiration-to-plan hook. WHERE THE CONVERSATION BREAKS DOWN (verified in Opus Research hands-on test): it initially failed to provide ingredient quantities/weights; it initially did not understand what 'fresh garlic' was; and it exposes catalog gaps - W-S does not sell garlic (though it sells, e.g., soy sauce in gourmet foods), so the recipe-to-shoppable-cart loop is incomplete and biased toward what W-S happens to stock. Commercial bias (steering to W-S SKUs) and siloed placement are additional limits. LAUNCH DATE is ambiguous: press variously says 'launched last fall' (implying 2024) vs. 'preparing to launch' as of the Sept 2025 earnings call - exact first-launch date unverified.",
+          "Generative product discovery via OpenAI/ChatGPT: W-S joined OpenAI's Ad Pilot Program (announced Feb 2026) to test contextual ads/product discovery in ChatGPT - separate from the Salesforce-powered Olive.",
+          "Customer-service AI agents (Agentforce) rolled out from a Pottery Barn Kids pilot across Williams Sonoma, Pottery Barn, and West Elm for 24/7 support, targeting >60% autonomous chat resolution.",
+          "Recipe content hub + buying guides powering content-to-commerce SEO; W-S also runs a shipping-membership program and a recipe app.",
+          "Curated premium + exclusive assortment (Le Creuset, All-Clad, Staub, Breville plus private label); registry/gifting and loyalty/credit-card programs; in-store cooking classes/demos.",
+          "Omni-channel scale: ~512-518 stores across banners with ~65-66% of parent revenue from e-commerce."
+        ],
+        "sources": [
+          {
+            "title": "Dreamforce 25 - 'Olive' the agentic sous chef adds to Williams Sonoma's menu of AI use cases (diginomica)",
+            "url": "https://diginomica.com/dreamforce-25-olive-agentic-sous-chef-set-add-williams-sonomas-menu-ai-use-cases"
+          },
+          {
+            "title": "Retail's AI Companions: Williams-Sonoma Joins Walmart in Reimagining Shopping (Opus Research, hands-on Olive test: garlic/ingredient-quantity findings)",
+            "url": "https://opusresearch.net/2025/09/08/retails-ai-companions-williams-sonoma-joins-walmart-in-reimagining-shopping/"
+          },
+          {
+            "title": "Williams-Sonoma to launch AI-powered 'culinary companion' (Retail Dive)",
+            "url": "https://www.retaildive.com/news/williams-sonoma-ai-customer-service-product-discovery/759072/"
+          },
+          {
+            "title": "Williams-Sonoma scales AI customer service assistant across portfolio (CX Dive, Sept 2025 - 'preparing to launch' culinary companion)",
+            "url": "https://www.customerexperiencedive.com/news/williams-sonoma-ai-customer-service-product-discovery/759050/"
+          },
+          {
+            "title": "Williams-Sonoma, Inc. Deploys Salesforce Agentforce 360 Across Its Brand Portfolio (Salesforce press release, Oct 14 2025)",
+            "url": "https://www.salesforce.com/news/press-releases/2025/10/14/williams-sonoma-inc-agentforce-customer-support/"
+          },
+          {
+            "title": "Williams-Sonoma aims to infuse its product authority in AI experiences (CX Dive - CTO category-authority quote, Olive)",
+            "url": "https://www.customerexperiencedive.com/news/williams-sonoma-product-authority-ai-experience/815133/"
+          },
+          {
+            "title": "Williams-Sonoma to test ads in ChatGPT (Retail Dive, Feb 2026 OpenAI ad pilot)",
+            "url": "https://www.retaildive.com/news/williams-sonoma-tests-ads-chatgpt-generative-ai-product-discovery/812107/"
+          },
+          {
+            "title": "Williams-Sonoma partners with OpenAI (Business of Home, ChatGPT Ad Pilot, Feb 2026)",
+            "url": "https://businessofhome.com/articles/williams-sonoma-partners-with-openai"
+          },
+          {
+            "title": "Customer Demographics and Target Market of Williams-Sonoma (MatrixBCG analysis)",
+            "url": "https://matrixbcg.com/blogs/target-market/williams-sonomainc"
+          },
+          {
+            "title": "Williams-Sonoma Marketing Strategy 2025: A Case Study (Latterly)",
+            "url": "https://www.latterly.org/williams-sonoma-marketing-strategy/"
+          },
+          {
+            "title": "Ecommerce earnings recap: Williams-Sonoma fiscal results, store count & e-comm mix (Digital Commerce 360)",
+            "url": "https://www.digitalcommerce360.com/2024/11/25/ecommerce-earnings-recap-what-you-missed-from-williams-sonoma-the-gap-and-more/"
+          },
+          {
+            "title": "Williams-Sonoma, Inc. - Wikipedia (brands, ~$7.71B revenue, stores, founding, CEO)",
+            "url": "https://en.wikipedia.org/wiki/Williams-Sonoma,_Inc."
+          },
+          {
+            "title": "Le Creuset Signature Round Dutch Oven (Williams Sonoma PDP, price reference)",
+            "url": "https://www.williams-sonoma.com/products/le-creuset-signature-round-dutch-oven/"
+          },
+          {
+            "title": "Williams Sonoma customer reviews on shipping cost/transparency friction (Trustpilot)",
+            "url": "https://www.trustpilot.com/review/www.williams-sonoma.com"
+          },
+          {
+            "title": "WILLIAMS SONOMA INC - Form 10-K FY2024 (SEC: omni-channel, brands, store/financials)",
+            "url": "https://www.sec.gov/Archives/edgar/data/0000719955/000162828024012221/wsm-20240128.htm"
+          }
+        ]
+      },
+      "westElm": {
+        "brand": "West Elm (wholly owned brand/subsidiary of Williams-Sonoma, Inc.)",
+        "positioning": "Design-led modern home-furnishings brand founded in Brooklyn (DUMBO) in 2002. Positions itself as \"approachable, affordable and sustainably produced\" modern design, blending contemporary and mid-century-modern aesthetics (clean lines, warm/dark woods, geometric shapes, natural materials, rich textures like velvet and rattan). It is widely recognized as a go-to mid-century-modern destination. Price/market tier: accessible-premium mid-tier, above IKEA and below high-end contemporary; historically self-described as \"a specialty version of IKEA\" going after \"the upper tier of the mass market.\" Brand operates on a \"Good By Design\" philosophy with three pillars (product value + customer values): sustainability (first home retailer to join Fair Trade USA; ~60% of products support at least one sustainability initiative; FSC-certified wood, organic/recycled materials), local + handcrafted/artisan maker collaborations, and community/social engagement (incl. a 2020 commitment to source 15%+ from Black-owned businesses). Parent Williams-Sonoma, Inc. brands itself \"the world's largest digital-first, design-led and sustainable home retailer.\" Recent brand moves: Pierce & Ward designer collaboration (launched March 31, 2025, 100+ items blending vintage charm and modern elegance) and a 2026 \"West Elm Office\" launch (plus a long-running Steelcase x West Elm contract-office partnership). West Elm was WSI's fastest-growing brand in 2019-20.",
+        "pricePoint": "Accessible mid-range / \"affordable premium,\" with frequent promotional discounting (sales 20-70% off) and a large resale/secondary market. VERIFIED example prices: Sectionals/sofas generally ~$1,800-$3,500+ (Andes sectional ~$1,839; Harmony sofa ~$2,718; Haven sectional ~$2,798; a larger config ~$3,518; several of these sofa figures originate from a 2022 editor article and current 2026 prices may differ). Dining table example: Avery table ~$980 (2022 source). Pierce & Ward collaboration (2025) spans ~$29 (bed linens) up to several thousand dollars (sofas, beds, large furniture), illustrating the brand's full ladder. Decor/textiles (throw pillows, throws, small decor) commonly fall roughly $20-$150 (range; not all pinned to a verified live SKU). So furniture is the high-ticket anchor (~$1k-$4k+) while decor/accessories supply entry price points. Note: westelm.com category/PDP pages returned HTTP 403 to the fetch tool this session, so exact current per-SKU prices were verified via search snippets and reputable third-party articles, not the live PDP.",
+        "targetConsumer": "Core: Millennials and \"Millennial-minded\" consumers — Williams-Sonoma, Inc. publicly credits West Elm with a \"deep understanding\" of this group, and trade press says it \"clicks with Millennials like no other home brand.\" Demographics: young, design-conscious, originally urban/downtown condo-and-loft dwellers (now broadening to suburban move-up homeowners and families), skewing female, relatively affluent — frequently described as HENRYs (High Earners, Not Rich Yet). Data point: per Statista (2018), 9% of respondents in $100k+ households owned West Elm furniture. Psychographics: values-driven shoppers who care about aesthetics and self-expression, sustainability/ethical sourcing/fair trade, and local-community and conscious-business practices; mobile- and digital-first researchers responsive to lifestyle/editorial content and social proof (Instagram, Pinterest). Specific age/income brackets beyond the cited data are industry-typical estimates.",
+        "aiUsage": "VERIFIED and substantial, primarily via parent Williams-Sonoma, Inc. (WSI). (1) AGENTIC AI INTERIOR DESIGN AGENTS (2025): WSI is developing AI design agents that understand a customer's style preferences AND their actual home space to help design and complete an entire room — explicitly to prevent costly mistakes (wrong sofa dimensions, inadequate door clearance, mismatched rug sizes) and to drive higher average order values; CTO Sameer Hassan framed it as not just choosing the right product but \"making sure it's designed in the right way.\" This is the digital extension of West Elm's human Design Crew service. (2) CUSTOMER-SERVICE AI: WSI deployed Salesforce Agentforce 360 to run AI support agents across its portfolio (Williams Sonoma, West Elm, Pottery Barn) for 24/7 support, expecting AI agents to handle MORE THAN 60% of chat inquiries, and is using AI partly to curb headcount growth and cut costs. (3) PERSONALIZATION: WSI uses Salesforce Data Cloud + Marketing Cloud for a unified single-customer view across brands, powering customized homepages, personalized recommendations/marketing, and optimized sales/delivery speed; CEO Laura Alber says the company believes it \"will be a leader in the use of AI in our operations and in our industry.\" (4) INTERNAL agentic AI spans product development, supply chain, merchandising, photography, and visualization. (5) HISTORICAL: in July 2017 West Elm launched an AI \"Pinterest Style Finder\" (powered by Clarifai image-recognition AI) that analyzed a user's Pinterest boards to build a style profile and surface purchasable products in ~10 seconds. Note: some AI features are portfolio-level rather than West Elm-exclusive.",
+        "physicalVsDigital": "Strongly omnichannel; WSI is \"digital-first\" (e-commerce is the dominant transactional channel portfolio-wide), yet physical stores remain central to West Elm's furniture model. West Elm operates 100+ stores worldwide across the US, Canada, Mexico (~10 as of Jan 2024), Australia, UK, Saudi Arabia, UAE, India and more. Stores serve as showrooms (touch/feel fabrics, judge scale on high-ticket furniture), in-store-pickup points, and anchors for the free Design Crew service. Physical influence is extended digitally and into the home via three Design Crew modes: in-store, virtual (video chat + customer-shared room photos), and IN-HOME consultations (a design expert visits homes within a 60-mile radius of a store). The free cross-brand Design Crew Room Planner and the developing AI design agents bridge the physical and digital layers. Net: digital drives discovery and transactions; stores drive purchase confidence on furniture and design-service relationships.",
+        "journey": [
+          {
+            "stage": "Discovery",
+            "notes": "Entry via organic/paid search, heavy visual social (Instagram @westelm, Pinterest), email, editorial 'Ideas & Advice' content, designer collaborations (Pierce & Ward, March 2025), and physical-store/brand awareness. AI now personalizes some entry points (customized homepages via Salesforce Data Cloud; historical Pinterest Style Finder for style-to-product).",
+            "friction": [
+              "Near-constant 20-70%-off promotional messaging can obscure 'real' price and create discount fatigue/urgency confusion",
+              "Crowded modern-furniture field (CB2, Article, Crate & Barrel, AllModern) makes differentiation beyond sustainability/Millennial branding hard to perceive"
+            ]
+          },
+          {
+            "stage": "Browse / Category",
+            "notes": "Navigation by room (Living, Bedroom, Dining, Office incl. new West Elm Office, Outdoor) and product type, plus collections (e.g., Mid-Century Collection), Sale, and inspiration content; filtering by color/material/size/price. Free cross-brand Design Crew Room Planner (account required) builds a to-scale 2D/3D room and drag-drops furniture from West Elm, Pottery Barn, PB Kids/Teen, and Williams Sonoma Home.",
+            "friction": [
+              "Large catalog plus made-to-order/upholstery options can overwhelm",
+              "In-stock vs. backorder/'drop ship' status not obvious until deeper in funnel (some drop-ship items made in Vietnam/Philippines)",
+              "Room Planner is gated behind mandatory free-account creation and has a learning curve (reviewers liken setup to 'The Sims' with manual measuring)"
+            ]
+          },
+          {
+            "stage": "Product Detail (PDP)",
+            "notes": "Rich imagery, fabric/swatch selection, dimensions, materials and sustainability badges (Fair Trade, FSC), customer reviews, and coordinating-item cross-sell. Free fabric-swatch ordering historically offered for upholstery.",
+            "friction": [
+              "Shipping/freight and white-glove cost + realistic timeframe often not clear on PDP, surfacing later",
+              "Made-to-order upholstery lead times (many weeks-to-months) can surprise",
+              "Stock/availability accuracy a recurring complaint (items shown 'in stock / ~1 week' arriving months later)",
+              "AR 'View in Your Room' is NOT currently available in the West Elm app (per app-store reviews/West Elm responses it was removed; remains in the Pottery Barn app) — a visualization regression vs. competitors"
+            ]
+          },
+          {
+            "stage": "Cart",
+            "notes": "Shows items, estimated delivery, promo-code field, financing/loyalty messaging. Payment ladder is broad: credit cards (Visa/MC/Amex/Discover), PayPal, Affirm (incl. Pay-in-4 0% APR), gift cards; West Elm Key Rewards Visa (Capital One) offers up to 10% back for first 30 days then 5%; zero-interest promo financing on purchases $750+ over 12 months (else 29.24% variable APR).",
+            "friction": [
+              "Furniture freight surcharges surface at cart/checkout causing sticker shock (an 'Unlimited Flat Rate' truck-delivery fee applies; some customers report advertised flat rates climbing higher; +$26 next-day, +$20 to AK/HI/territories)",
+              "Promo exclusions on furniture/sale items conflict with heavy discount marketing"
+            ]
+          },
+          {
+            "stage": "Checkout",
+            "notes": "Standard multi-step checkout with guest option, address, delivery method (Front Door small-parcel vs. truck/white-glove freight), payment incl. financing, and registry integration.",
+            "friction": [
+              "Delivery timelines shown at checkout reported as unreliable by reviewers",
+              "High freight/white-glove fees finalized only here",
+              "Limited/rigid scheduling for large-item delivery"
+            ]
+          },
+          {
+            "stage": "Post-Purchase",
+            "notes": "Order confirmation, tracking, freight scheduling, returns, and customer service (increasingly AI-assisted via Agentforce, targeted to handle 60%+ of chats). Design-service follow-up (mood boards, swatches, room plans, cost estimates). Returns: 30 days for most items (7 days for Quick Ship upholstery); mail-return shipping fees may be deducted unless item was damaged/incorrect.",
+            "friction": [
+              "Severe, current (2025-2026) delivery delays: orders placed Nov/Dec 2025 arriving Apr 2026; drop-ship items quoted 2-4 additional months",
+              "Damaged-in-transit furniture, missing hardware/legs, pilling/sagging/bubbling-veneer quality complaints; missing parts reportedly shipped slowly by boat",
+              "Returns can incur return-shipping charges; restocking specifics unclear",
+              "Customer service widely reported as unresponsive/inconsistent with conflicting timelines; low third-party ratings (PissedConsumer ~1.8/5, Yelp brand ~2.3/5)"
+            ]
+          }
+        ],
+        "topFriction": [
+          "Unreliable, slow delivery is the dominant pain point: current (2025-2026) reports of orders placed Nov/Dec 2025 arriving Apr 2026 and drop-ship items quoted 2-4 extra months (made in Vietnam/Philippines), despite shorter promised windows; poor coordination and many follow-up contacts required",
+          "Quality and fulfillment defects on high-priced items: damaged-in-transit, missing hardware/legs, pilling/sagging sofas, bubbling veneer; replacement cycles that don't resolve",
+          "Shipping/freight sticker shock surfacing late: truck-delivery flat-rate and white-glove fees (plus +$26 next-day, +$20 AK/HI/territories) and possible mail return-shipping deductions revealed at cart/checkout",
+          "Stock/availability inaccuracy on PDPs (items shown in-stock that are actually backordered/drop-ship)",
+          "Unresponsive/inconsistent customer service with conflicting timelines from different reps; low third-party ratings (PissedConsumer ~1.8/5, Yelp ~2.3/5)",
+          "Visualization gaps and gates: AR 'View in Your Room' removed from the West Elm app (kept on Pottery Barn), and the Room Planner requires mandatory account creation plus a learning curve",
+          "Promotional confusion: constant 20-70% discounting paired with furniture/sale-item promo exclusions"
+        ],
+        "notableFeatures": [
+          "Design Crew Room Planner: free, account-gated, cross-brand (West Elm, Pottery Barn, PB Kids/Teen, Williams Sonoma Home) 2D/3D to-scale room layout tool — measure your space and drag-and-drop furniture; no purchase required (launched 2018 by Williams-Sonoma, Inc.)",
+          "Free Design Crew design services in three modes: in-store, virtual (video + customer-shared room photos), and in-home (designer visits within a 60-mile store radius); deliverables include mood boards, swatches, product recs, room plans, and cost estimates",
+          "Free fabric/material swatch ordering for upholstery",
+          "Developing AGENTIC AI interior-design agents (2025) that understand customer style + actual room dimensions to design a whole space and prevent fit/clearance/rug-size mistakes — the AI extension of Design Crew",
+          "Salesforce Agentforce 360 AI customer-service agents across the portfolio (targeting 60%+ of chat inquiries)",
+          "Historical 2017 West Elm 'Pinterest Style Finder' AI (powered by Clarifai image recognition) that turned Pinterest boards into purchasable product shortlists in ~10 seconds",
+          "Sustainability credentials as differentiators: Fair Trade USA (first home retailer to join), FSC-certified wood, organic/recycled materials, ~60% of products in a sustainability program; 15% Black-owned-business sourcing commitment",
+          "Designer and maker collaborations (Pierce & Ward, March 2025, 100+ items) and local + handmade artisan partnerships",
+          "West Elm Office (2026) and Steelcase x West Elm contract-office partnership",
+          "Broad payments/financing: credit cards, PayPal, Affirm (Pay-in-4 0% APR), gift cards; West Elm Key Rewards Visa (up to 10% back first 30 days, 5% after) and zero-interest promo financing on $750+ over 12 months (else 29.24% variable APR)",
+          "Wedding/home registry integration",
+          "CAVEAT: AR 'View in Your Room' is NOT currently in the West Elm app (removed; remains in Pottery Barn app)"
+        ],
+        "sources": [
+          {
+            "title": "West Elm - Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/West_Elm"
+          },
+          {
+            "title": "W-S: West Elm clicks with Millennials like no other home brand - Home Textiles Today",
+            "url": "https://www.hometextilestoday.com/industry-news/w-s-west-elm-clicks-millennials-no-other-home-brand/"
+          },
+          {
+            "title": "West Elm eyes mass-market upper crust - The Globe and Mail",
+            "url": "https://www.theglobeandmail.com/report-on-business/west-elm-eyes-mass-market-upper-crust/article954931/"
+          },
+          {
+            "title": "Americans who own West Elm furniture 2018, by income - Statista",
+            "url": "https://www.statista.com/statistics/686179/affluent-americans-who-owned-west-elm-furniture/"
+          },
+          {
+            "title": "Williams-Sonoma uses agentic AI to enhance customer experience - Digital Commerce 360",
+            "url": "https://www.digitalcommerce360.com/2025/10/13/williams-sonoma-agentic-ai-customer-experience-agentforce/"
+          },
+          {
+            "title": "Williams-Sonoma deploys AI agents across its brand portfolio - CX Dive",
+            "url": "https://www.customerexperiencedive.com/news/williams-sonoma-ai-agents-portfolio/802914/"
+          },
+          {
+            "title": "Williams-Sonoma turns to AI to curb headcount growth - Retail Dive",
+            "url": "https://www.retaildive.com/news/williams-sonoma-AI-curb-headcount-growth-cost-savings/743525/"
+          },
+          {
+            "title": "WEST ELM LAUNCHES NEW AI TOOLS TO SCAN PINTEREST BOARDS (2017) - Williams-Sonoma IR / Business Wire",
+            "url": "https://www.businesswire.com/news/home/20170718005466/en/WEST-ELM-LAUNCHES-NEW-AI-TOOLS-TO-SCAN-PINTEREST-BOARDS-TRANSFORMING-CUSTOMER-INSPIRATION-INTO-PRODUCTS-FOR-PURCHASE"
+          },
+          {
+            "title": "Williams-Sonoma, Inc. Puts Professional Design Services in Hands of Customers with Design Crew Room Planner (2018) - WSI IR",
+            "url": "https://ir.williams-sonomainc.com/investor-information/news-releases/news-release-details/2018/Williams-Sonoma-Inc-Puts-the-Power-of-Professional-Design-Services-in-the-Hands-of-Customers-with-Design-Crew-Room-Planner/default.aspx"
+          },
+          {
+            "title": "West Elm Room Planner Tool Review 2024 - Apartment Therapy",
+            "url": "https://www.apartmenttherapy.com/west-elm-room-planner-layout-tool-review-37437419"
+          },
+          {
+            "title": "Room Planner - West Elm",
+            "url": "https://www.westelm.com/pages/ideas-and-advice/room-planner/"
+          },
+          {
+            "title": "Free Design Services - Design Crew - West Elm",
+            "url": "https://www.westelm.com/appointments/"
+          },
+          {
+            "title": "West Elm App - Apple App Store (AR 'View in Room' status in reviews/responses)",
+            "url": "https://apps.apple.com/us/app/west-elm/id867468341"
+          },
+          {
+            "title": "Editor-Tested West Elm Sofas and Dining Tables (example prices) - Apartment Therapy",
+            "url": "https://www.apartmenttherapy.com/editor-favorite-west-elm-sofas-and-dining-table-37135135"
+          },
+          {
+            "title": "Andes 3 Piece Chaise Sectional - West Elm (product/pricing)",
+            "url": "https://www.westelm.com/products/andes-3-piece-chaise-sectional-h1815/"
+          },
+          {
+            "title": "West Elm Reviews - Trustpilot",
+            "url": "https://www.trustpilot.com/review/westelm.com"
+          },
+          {
+            "title": "West Elm Reviews and Complaints - PissedConsumer",
+            "url": "https://west-elm.pissedconsumer.com/review.html"
+          },
+          {
+            "title": "West Elm Reviews 2026 - Thingtesting",
+            "url": "https://thingtesting.com/brands/west-elm/reviews"
+          },
+          {
+            "title": "Shipping + Delivery / Help Topics - West Elm Customer Service",
+            "url": "https://www.westelm.com/customer-service/faq.html"
+          },
+          {
+            "title": "West Elm Key Rewards Visa - Capital One",
+            "url": "https://www.capitalone.com/credit-cards/westelm/"
+          },
+          {
+            "title": "West Elm financing with Affirm",
+            "url": "https://www.affirm.com/shopping/stores/west-elm"
+          },
+          {
+            "title": "WEST ELM LAUNCHES COLLABORATION WITH PIERCE & WARD (2025) - WSI IR / Nasdaq",
+            "url": "https://www.nasdaq.com/press-release/west-elm-launches-collaboration-popular-interior-design-duo-pierce-ward-2025-03-31"
+          },
+          {
+            "title": "WEST ELM LAUNCHES WEST ELM OFFICE (2026) - WSI IR",
+            "url": "https://ir.williams-sonomainc.com/investor-information/news-releases/news-release-details/2026/WEST-ELM-LAUNCHES-WEST-ELM-OFFICE/default.aspx"
+          },
+          {
+            "title": "West Elm Office Furniture - Steelcase",
+            "url": "https://www.steelcase.com/brands/west-elm/"
+          },
+          {
+            "title": "Store Locations - West Elm",
+            "url": "https://www.westelm.com/stores/"
+          }
+        ]
+      },
+      "potteryBarn": {
+        "brand": "Pottery Barn (a brand of Williams-Sonoma, Inc. / WSM)",
+        "positioning": "Pottery Barn positions itself as a \"trusted taste-maker\" in premium-mainstream home furnishings, built on \"American casual style, timeless palettes, and exclusive collections\" with heritage dating to 1949. It competes on premium value, consistent quality, craftsmanship, durability, sustainability, and service-led selling (free design consultations, white-glove delivery) rather than lowest price, using \"good-better-best\" tiered pricing so customers can ladder up by budget/materials. Within the Williams-Sonoma portfolio it occupies the upper-middle tier: more classic/heritage than West Elm (modern), below Williams Sonoma Home. A defining differentiator is its complimentary \"Design Crew\" service, used both as a customer benefit and a lead-generation funnel. The brand is actively extending toward younger (Millennial/Gen Z) and sustainability-minded buyers with more modern and lower-entry options. (Latterly, Osum, MatrixBCG.)",
+        "pricePoint": "Premium-mainstream / \"affordable luxury\" -- above mass retailers (IKEA, Target, Wayfair), below high-end designer lines and Williams Sonoma Home. Category order values cited at roughly $150-$300 for decor/textiles and $1,500+ for casegoods/upholstery (Latterly). Example product prices (from 2025 reviews/aggregators; the brand's PDPs blocked direct fetch, so treat exact figures as approximate and fabric/size dependent): PB Comfort sofa commonly cited around $1,599 (bestseller), with the broader PB Comfort line roughly $800-$4,500 depending on size/fabric; a customer-cited premium sofa at $4,300; sofas generally starting near $1,000; dining tables starting around $700 with extendable/signature pieces (e.g., Benchwright) ranging ~$800-$4,500 and one extendable example at $1,499. (Apartment Therapy, Dweva, AptDeco, Latterly.)",
+        "targetConsumer": "Core demographic: homeowners roughly 30-55, professionals and families, affluent (income skewing middle/upper-middle, commonly ~$100K+), college-educated, urban and suburban; skews female as primary purchaser but markets to households. Segments cited: new nesters/first-time homeowners seeking foundational pieces and guidance; growing families prioritizing performance fabrics and storage; \"upgraders\" replacing fast furniture with investment pieces; and style-forward design enthusiasts responding to seasonal stories and curated vignettes. Psychographic: design-conscious but not avant-garde; value longevity, repairability, resale potential, quality, trust, and sustainability; aspirational, project-planning \"holistic room\" thinkers willing to pay a premium for cohesion and service. Brand is expanding toward younger/eco-conscious buyers. (Latterly, Osum, Placer.ai.)",
+        "aiUsage": "Williams-Sonoma has made AI a stated strategic priority (FY2025 and Q1 FY2026 earnings; CX Dive, Nasdaq coverage). VERIFIED uses: (1) AI improves personalization and product discovery on e-commerce sites, lifting relevance, monetization, and engagement (CEO Laura Alber); (2) WSI launched \"Olive,\" an AI culinary assistant/authority on the Williams Sonoma side connecting inspiration, guidance, and shopping; (3) AI agents in customer service reduce call-center escalations and accommodation costs; (4) AI drove \"industry-leading progress\" in on-time and damage-free delivery and supply-chain metrics; (5) planned/ongoing AI tools to equip in-store associates to elevate the free interior-design (Design Crew) services -- notable because over half of FY2025 retail sales involved design appointments, contributing to 6.4% comp growth; (6) AI-enabled cost savings in engineering, care-center payroll, and creative. CTO Sameer Hassan: \"AI works well when you have category authority... when you have expertise.\" Q1 FY2026 confirmed continued scaling of personalization, product discovery, and design tools. NOTE: \"Olive\" is a Williams Sonoma (culinary) assistant; a Pottery-Barn-specific named generative AI design bot is UNVERIFIED.",
+        "physicalVsDigital": "Strongly digital-led with strategically critical stores (omnichannel). E-commerce was ~66% of WSI net revenue in fiscal 2024 and ~65% in fiscal 2025 (CFO has guided ~66% ongoing); for Pottery Barn specifically, analyses estimate digital at ~65-68% of brand revenue in 2024. WSI operates 500+ stores (~190+ for Pottery Barn in North America per one analysis) acting as showrooms, swatch/fabric touchpoints, design-consult venues, and fulfillment nodes (ship-from-store, BOPIS, scheduled delivery). Stores feed content back into digital channels, and ~75% of 2024 capex went to e-commerce/supply chain. The Design Crew program deliberately bridges channels (in-home, virtual, in-store), and the 2025-26 AI roadmap adds tools to both the storefront and store associates. (Digital Commerce 360, WSI earnings, Latterly, CX Dive.) Note: Pottery Barn brand comps were soft (down 2.3% in Q4 FY2025) even as other banners grew.",
+        "journey": [
+          {
+            "stage": "Discovery",
+            "notes": "Entry via paid/organic search, email, social, print catalogs, The Key loyalty program, and cross-traffic among WSI brands (West Elm, Williams Sonoma, PB Kids/Teen). Strong SEO on category and styling content; free Design Crew consults and catalogs act as lead-gen hooks. AI increasingly personalizes discovery (FY2025/FY2026 earnings).",
+            "friction": [
+              "Cross-brand navigation can blur which WSI banner a shopper is on",
+              "Aspirational lifestyle imagery sets expectations that premium pricing later breaks",
+              "Catalog-to-site product lookup not always seamless"
+            ]
+          },
+          {
+            "stage": "Browse",
+            "notes": "Room- and category-based navigation, curated/coordinated collections, 'shop the look' modules, filters (price, color, material, fabric), and AI-assisted recommendations atop rich lifestyle photography (photoreal 3D imagery via the Outward acquisition).",
+            "friction": [
+              "Large assortment with many configurable options can overwhelm",
+              "In-stock vs. made-to-order/backordered status often unclear up front",
+              "Sticker shock moving from inspiration imagery to actual SKUs"
+            ]
+          },
+          {
+            "stage": "Product detail (PDP)",
+            "notes": "Detailed PDPs with fabric/finish swatches, dimensions, materials, sustainability cues, free swatch ordering, coordinating cross-sell, a 3D Room Planner / AR 'view in your room' visualization (1,500+ products), and a design-help CTA.",
+            "friction": [
+              "Long made-to-order/custom lead times (often weeks) surprise buyers",
+              "Variant/fabric complexity; price changes by fabric grade",
+              "Delivery cost and white-glove fees not transparent at PDP",
+              "Backorder/ship dates that shift"
+            ]
+          },
+          {
+            "stage": "Cart",
+            "notes": "Cart shows items, fabric/finish selections, estimated delivery, promo/loyalty entry, and upsell of protection plans and coordinating products.",
+            "friction": [
+              "White-glove/oversized surcharges ($250-$329 cited) and added ~$40 delivery fees clarify late",
+              "Mixed ship dates across items in one order",
+              "Inability to opt for cheaper doorstep shipping even on lighter items (e.g., a 50-lb planter)"
+            ]
+          },
+          {
+            "stage": "Checkout",
+            "notes": "Multi-step checkout with delivery scheduling for furniture, payment incl. financing/branded credit card, and loyalty enrollment; guest checkout typically available.",
+            "friction": [
+              "High order values make any added fee or tax feel large",
+              "Customers report being forced into white-glove they didn't request",
+              "Financing/loyalty/account-creation upsells add friction"
+            ]
+          },
+          {
+            "stage": "Post-purchase",
+            "notes": "Order tracking, white-glove delivery coordination, returns, loyalty points (The Key), and Design Crew follow-up (mood boards, room plans, product recs, cost estimates).",
+            "friction": [
+              "Furniture delivery delays, rescheduling, lost/damaged items, and refused assembly are recurring complaints (Trustpilot, ConsumerAffairs, PissedConsumer)",
+              "Returns on large/made-to-order items restrictive or costly",
+              "Customer-service responsiveness can lag; durability complaints (e.g., pilling on a $4,300 sofa within 30 days)"
+            ]
+          }
+        ],
+        "topFriction": [
+          "Delivery cost/process opacity and pain: white-glove/oversized surcharges ($250-$329) plus extra ~$40 fees surface late, customers sometimes forced into white-glove they didn't request, and post-purchase complaints of delays, lost/damaged items, and refused assembly are widespread",
+          "Price-vs-expectation gap: aspirational discovery/browse imagery collides with premium, fabric-grade-dependent SKU prices on the PDP",
+          "Made-to-order/backorder complexity: weeks-long custom lead times, shifting ship dates, mixed delivery dates per order, and restrictive returns on large/custom items",
+          "Configurator overload: fabric/finish/grade choices change price and lead time, overwhelming shoppers",
+          "Cross-brand confusion across the WSI portfolio during discovery/navigation",
+          "Design Crew intake front-loads user effort (dimensions, photos, style/Pinterest) and routes to a delayed human follow-up (~within 48 hours) rather than instant self-serve scheduling/output"
+        ],
+        "notableFeatures": [
+          "DESIGN CREW / FREE DESIGN SERVICES (verified core mechanics): Complimentary design help booked online at potterybarn.com/design-services/. THREE CHANNELS: (1) IN-HOME visit by a design expert for customers within a 60-mile radius of a store -- the expert takes photos, gathers measurements, and explores swatches on site; (2) VIRTUAL/online video appointment; (3) IN-STORE appointment. INTAKE FUNNEL: user starts at /design-services/, picks a channel, and submits an appointment request form (e.g., /appointments/request-form/ and /appointments/virtual-choice/) with contact info and project goals; PB then follows up to schedule (reported ~within 48 hours per search summaries, though I could not load the form directly to confirm the exact field list/timeframe). For virtual/in-store, the user shares ROOM DIMENSIONS/MEASUREMENTS, PHOTOS of the space, and STYLE PREFERENCES/inspiration (Pinterest boards accepted) and discusses budget on the call. DELIVERABLES: personalized mood board, product recommendations, a customized room plan showing furniture placement, a shoppable list, and cost estimates -- all free. A self-serve 3D Room Planner tool, a DIY path (/design-services/DIY/), and saved 'My Design Boards' (/my-boards/) support the funnel. Verified via first-person reviews (The Zoe Report virtual; Jessica Chinyelu PB Kids in-home: 3 virtual + 3 in-person meetings, all free). Available across PB, PB Kids, PB Teen.",
+          "3D Room Planner / AR 'view in your room' (life-sized rendering, 1,500+ products, save/share/shop; powered partly by 2017 Outward, Inc. acquisition)",
+          "Free fabric/upholstery swatch ordering from PDPs",
+          "The Key cross-brand WSI loyalty program",
+          "Room-based 'shop the look' coordinated collections and seasonal vignettes",
+          "AI-assisted product discovery/personalization plus planned AI tools for in-store designers (FY2025/FY2026 earnings)",
+          "Branded credit card / financing at checkout",
+          "White-glove delivery, ship-from-store, and BOPIS omnichannel fulfillment",
+          "Customer data platform enabling first-party personalization"
+        ],
+        "sources": [
+          {
+            "title": "Free Design Services - Design Crew | Pottery Barn",
+            "url": "https://www.potterybarn.com/design-services/"
+          },
+          {
+            "title": "Design Crew Appointment Request Form | Pottery Barn",
+            "url": "https://www.potterybarn.com/appointments/request-form/"
+          },
+          {
+            "title": "Design Crew Virtual Appointment | Pottery Barn",
+            "url": "https://www.potterybarn.com/appointments/virtual-choice/"
+          },
+          {
+            "title": "Pottery Barn DIY Design Services & My Design Boards",
+            "url": "https://www.potterybarn.com/design-services/DIY/"
+          },
+          {
+            "title": "Pottery Barn Room Planner tool",
+            "url": "https://www.potterybarn.com/tips-and-ideas/room-planner-tool/"
+          },
+          {
+            "title": "Pottery Barn's Design Crew Service Review | The Zoe Report",
+            "url": "https://www.thezoereport.com/living/pottery-barn-design-crew-service-review"
+          },
+          {
+            "title": "10 Reasons to Use Pottery Barn Kids Design Crew (first-person) | Jessica Chinyelu",
+            "url": "https://www.jessicachinyelu.com/blog/10-reasons-why-you-need-to-use-pottery-barn-kids-design-services"
+          },
+          {
+            "title": "Williams-Sonoma aims to infuse its product authority in AI experiences | CX Dive",
+            "url": "https://www.customerexperiencedive.com/news/williams-sonoma-product-authority-ai-experience/815133/"
+          },
+          {
+            "title": "Williams-Sonoma Raises Outlook on AI | Nasdaq",
+            "url": "https://www.nasdaq.com/articles/williams-sonoma-raises-outlook-ai"
+          },
+          {
+            "title": "Williams-Sonoma WSM Q1 2026 Earnings Transcript | The Motley Fool",
+            "url": "https://www.fool.com/earnings/call-transcripts/2026/05/21/williams-sonoma-wsm-q1-2026-earnings-transcript/"
+          },
+          {
+            "title": "Williams-Sonoma ecommerce 66% of total revenue | Digital Commerce 360",
+            "url": "https://www.digitalcommerce360.com/2023/03/21/williams-sonoma-ecommerce-66-of-total-revenue-in-fiscal-22/"
+          },
+          {
+            "title": "Pottery Barn Marketing Strategy 2025 | Latterly",
+            "url": "https://www.latterly.org/pottery-barn-marketing-strategy/"
+          },
+          {
+            "title": "The Key to Pottery Barn's Brand Positioning | Osum",
+            "url": "https://blog.osum.com/pottery-barn-brand-positioning/"
+          },
+          {
+            "title": "Is Pottery Barn Worth It? 2025 | Apartment Therapy",
+            "url": "https://www.apartmenttherapy.com/is-pottery-barn-worth-it-37493349"
+          },
+          {
+            "title": "Pottery Barn Sofa Reviews | Dweva",
+            "url": "https://dweva.com/blogs/sofas/pottery-barn-sofas-reviews"
+          },
+          {
+            "title": "Pottery Barn AR app launch | Retail Dive",
+            "url": "https://www.retaildive.com/news/pottery-barn-launches-ar-app-for-ios/511949/"
+          },
+          {
+            "title": "Pottery Barn customer reviews/complaints | ConsumerAffairs",
+            "url": "https://www.consumeraffairs.com/furniture/pottery_barn.html"
+          },
+          {
+            "title": "Pottery Barn reviews | Trustpilot",
+            "url": "https://www.trustpilot.com/review/www.potterybarn.com"
+          },
+          {
+            "title": "Sales and Marketing Strategy of Williams-Sonoma | MatrixBCG",
+            "url": "https://matrixbcg.com/blogs/marketing-strategy/williams-sonomainc"
+          },
+          {
+            "title": "Pottery Barn (WSM) Chain Demographics | Placer.ai",
+            "url": "https://www.placer.ai/free-tools/chains/pottery-barn"
+          }
+        ]
+      },
+      "corporate": {
+        "brand": "Williams-Sonoma, Inc. (NYSE: WSM) — corporate parent of a multi-brand \"house of brands\" portfolio: Williams Sonoma (and Williams Sonoma Home, Williams Sonoma B2B/Business-to-Business), Pottery Barn, Pottery Barn Kids, Pottery Barn Teen (PBteen), West Elm, Rejuvenation, Mark & Graham, plus newer brands GreenRow (launched 2023) and Dormify. CEO: Laura Alber. The company describes itself as \"the world's largest digital-first, design-led and sustainable home furnishings retailer.\"",
+        "positioning": "Premium, design-led, vertically integrated, digital-first omnichannel home retailer operating a multi-brand portfolio where each brand targets a distinct aesthetic and life stage. Roughly 65% of fiscal 2025 net revenues were digital-first (e-commerce), which the company cites as a source of customer-data advantage. Strategy emphasizes full-price selling, proprietary in-house product design, and cross-brand loyalty (The Key Rewards). Brands are marketed via e-commerce, catalogs, retail stores, and B2B/contract.",
+        "pricePoint": "Mid-premium to aspirational. Williams Sonoma = premium cookware/culinary; Pottery Barn = premium classic furniture; West Elm = accessible-modern (typically a lower entry price than Pottery Barn); Rejuvenation = premium lighting/hardware; Mark & Graham = premium personalized gifts; Pottery Barn Kids/Teen = premium children's/teen. Affirm \"buy now, pay later\" monthly financing is offered to spread cost at checkout. (Exact per-product price bands not individually verified.)",
+        "targetConsumer": "Affluent / upper-middle-income, design-conscious homeowners and gift buyers. Sub-brand targeting: Williams Sonoma = home cooks/culinary enthusiasts; Pottery Barn = established families wanting classic style; West Elm = younger urban/modern shoppers (millennials); Pottery Barn Kids/Teen = parents and teens; Rejuvenation = renovation/restoration-minded homeowners; Mark & Graham = personalized-gift shoppers. (Sub-brand demographic framing is reasonable inference from brand positioning, not a single sourced statement.)",
+        "aiUsage": "VERIFIED, multiple 2025-2026 AI initiatives. (1) OpenAI advertising pilot: On Feb 11, 2026 WSI announced it joined OpenAI's Ad Pilot Program to test ads in ChatGPT — among the first retailers, alongside Target, Adobe, Audible, HelloFresh, Ford and Albertsons. Ads appear only for adult users on ChatGPT's Free and Go tiers (not Plus/Pro/Business/Enterprise/Education), are clearly labeled, separated from organic responses, and per OpenAI's principles do not influence ChatGPT's answers; brands get performance metrics (views/clicks) but not user conversations. CEO Laura Alber framed it as helping develop a contextual advertising approach for AI product discovery. (2) Proprietary/agentic AI assistants: WSI deployed Salesforce Agentforce 360 across its portfolio (announced ~Oct 14-15, 2025) for 24/7 AI customer-service support across Williams Sonoma, West Elm, Pottery Barn, etc., projected to handle 60%+ of chat inquiries; a customer-service assistant first piloted at Pottery Barn Kids in summer 2025 then scaled. (3) \"Olive\" — a culinary sous-chef AI assistant built on Agentforce 360, launched fall 2025, that plans menus, builds shopping lists, recommends kitchen tools and recipes based on past purchases. (4) AI also used for e-commerce personalization/product discovery, supply-chain/delivery improvements, and planned in-store associate tools to augment free interior-design services; CTO/Chief Digital Officer is Sameer Hassan (\"AI works well when you have category authority... expertise\").",
+        "physicalVsDigital": "Digital-first omnichannel: ~65% of fiscal 2025 net revenues were e-commerce/digital-first; the remainder is physical retail (one source cites ~625 brick-and-mortar stores; store-count not confirmed in primary filings here), plus a growing B2B/contract business and international franchise reach (distributes to 60+ countries). Large furniture is sold with white-glove/scheduled delivery; smaller goods ship via parcel; Affirm financing and The Key Rewards span the channel.",
+        "journey": [
+          {
+            "stage": "Discovery / cross-brand entry",
+            "notes": "WSI runs separate branded sites (williams-sonoma.com, westelm.com, potterybarn.com, rejuvenation.com, markandgraham.com). Sites cross-link to sister brands (e.g., a 'Featured Brands' / brand-shop hub and footer 'GlobalLinks'), so a cross-brand utility/global nav linking the family does exist, but clicking a sister brand routes you to that brand's own separate site rather than a single merged storefront.",
+            "friction": [
+              "Each brand is a separate destination with its own site and cart; the cross-brand bar is navigational, not a merged catalog",
+              "Discovery is fragmented across distinct branded storefronts"
+            ]
+          },
+          {
+            "stage": "Account / loyalty",
+            "notes": "The Key Rewards is a genuinely unified cross-brand loyalty + co-branded credit card program spanning Williams Sonoma, Williams Sonoma Home, Pottery Barn, Pottery Barn Kids, Pottery Barn Teen, West Elm, Mark & Graham, and (added Sept 2024) Rejuvenation. Free members earn 2% back (Silver) via registered phone number; cardmembers earn 5% back (Gold). Rewards and gift cards are pooled across brands (a Pottery Barn rug and a Williams Sonoma mixer accrue to one balance).",
+            "friction": [
+              "Loyalty/gift cards unify across brands even though carts/checkout appear not to"
+            ]
+          },
+          {
+            "stage": "Cart / checkout",
+            "notes": "KEY FINDING: Evidence indicates there is NO single merged multi-brand cart — each brand maintains its own cart and checkout, so buying West Elm + Williams Sonoma items appears to require separate orders per brand. The unifying layer is The Key Rewards and cross-brand gift cards (any Williams-Sonoma brand gift card is accepted at, e.g., West Elm), plus a shared cross-brand registry (add gifts from Williams Sonoma, Pottery Barn and West Elm in one registry). Note: the 'separate cart' conclusion is drawn from brand-hub pages routing to separate sites and an AI reading of those pages, not from an explicit verbatim policy statement (FAQ pages returned 403 to the fetcher) — treat as strongly indicated, not 100% verbatim-confirmed.",
+            "friction": [
+              "Cannot combine items from different brands into one cart/checkout — separate transactions likely required",
+              "Separate orders mean separate shipping/handling per brand"
+            ]
+          },
+          {
+            "stage": "Payment / financing",
+            "notes": "VERIFIED: Affirm monthly financing is offered at checkout across Williams Sonoma, West Elm, Pottery Barn, Pottery Barn Kids/Teen and Mark & Graham, with real-time eligibility and no late/hidden fees; Affirm expanded to Canada with WSI in May 2025. West Elm also accepts Visa/MC/Amex/Discover, PayPal, and any Williams-Sonoma-brand gift card. The Key co-branded credit card earns 5% back.",
+            "friction": [
+              "Financing/payment is per-order, so multi-brand purchases mean multiple financing/payment flows"
+            ]
+          },
+          {
+            "stage": "Delivery / fulfillment",
+            "notes": "Parcel shipping for small goods plus white-glove/scheduled delivery for large furniture; the company reported AI-driven improvements in on-time and damage-free delivery rates in FY2025. Specific fee schedules not individually verified here.",
+            "friction": [
+              "Large-item furniture delivery (scheduling, fees) is a common friction area for furniture e-tail generally",
+              "Multi-brand orders ship separately"
+            ]
+          }
+        ],
+        "topFriction": [
+          "No unified multi-brand cart/checkout: buying West Elm + Williams Sonoma in one transaction appears NOT possible — each brand has its own cart, requiring separate orders (strongly indicated; explicit verbatim policy not captured because FAQ pages blocked the fetcher)",
+          "Cross-brand experience is unified only at the loyalty (The Key Rewards), gift-card, and registry layers — not at the cart/checkout/shipping layer, which can surprise households shopping across brands",
+          "Separate per-brand orders mean separate shipping, separate Affirm/payment flows, and separate delivery scheduling",
+          "AI-ad pilot (ChatGPT) is brand-new (Feb 2026) and unproven; ads only reach Free/Go tiers and effectiveness/consumer reception is untested",
+          "Consumer wariness of AI support persists (cited >80% prefer human-first service), a risk for the Agentforce/Olive rollout"
+        ],
+        "notableFeatures": [
+          "The Key Rewards: unified cross-brand loyalty across 8 brands (2% Silver / 5% Gold) + co-branded credit card; Rejuvenation added Sept 2024",
+          "Cross-brand gift cards (any WSI-brand gift card usable at other brands) and a cross-brand gift registry",
+          "Affirm monthly financing across the brands (expanded to Canada May 2025)",
+          "OpenAI Ad Pilot participant (Feb 11, 2026) — among first retailers to test ChatGPT ads (with Target, Adobe, Audible, HelloFresh, Ford, Albertsons)",
+          "Salesforce Agentforce 360 AI customer-service agents across the portfolio (Oct 2025), targeting 60%+ of chat inquiries",
+          "'Olive' proprietary culinary AI assistant (fall 2025): menus, recipes, shopping lists, tool recommendations from purchase history",
+          "Digital-first model: ~65% of FY2025 revenue is e-commerce",
+          "FY2025: net revenue $7.81B (one source $7.71B), record diluted EPS $8.84, ~$1.3B operating cash flow; Q4 FY2025 (ended Feb 1, 2026) net revenue $2.36B, comparable brand revenue +3.2%, operating margin 20.3%; full-year comps +3.5%",
+          "Q1 FY2026 (ended May 3, 2026): net revenue ~$1.81B, diluted EPS $1.93; FY2026 guidance net revenue +2.7% to +6.7%, comps +2.0% to +6.0%",
+          "Market cap ~$24B with a strong late-May 2026 stock rally (~+22% over 8 days); analysts (e.g., Seeking Alpha) moved to 'Hold' on strong sales growth — view is constructive but valuation-cautious"
+        ],
+        "sources": [
+          {
+            "title": "Williams-Sonoma partners with OpenAI to test ads in ChatGPT (BusinessWire press release, Feb 11, 2026)",
+            "url": "https://www.businesswire.com/news/home/20260211993758/en/WILLIAMS-SONOMA-INC.-PARTNERS-WITH-OPENAI-TO-TEST-ADS-IN-CHATGPT"
+          },
+          {
+            "title": "Williams-Sonoma to test ads in ChatGPT (Retail Dive)",
+            "url": "https://www.retaildive.com/news/williams-sonoma-tests-ads-chatgpt-generative-ai-product-discovery/812107/"
+          },
+          {
+            "title": "Williams-Sonoma aims to infuse its product authority in AI experiences — Olive, Agentforce, CTO Sameer Hassan (CX Dive, Mar 18, 2026)",
+            "url": "https://www.customerexperiencedive.com/news/williams-sonoma-product-authority-ai-experience/815133/"
+          },
+          {
+            "title": "Williams-Sonoma deploys AI agents across its brand portfolio for 24/7 support (CX Dive, Oct 2025)",
+            "url": "https://www.customerexperiencedive.com/news/williams-sonoma-ai-agents-portfolio/802914/"
+          },
+          {
+            "title": "Williams-Sonoma deploys Salesforce Agentforce 360 across brand portfolio (BusinessWire, Oct 14, 2025)",
+            "url": "https://www.businesswire.com/news/home/20251014031480/en/Williams-Sonoma-Inc.-Deploys-Salesforce-Agentforce-360-Across-Its-Brand-Portfolio-Elevating-Its-Premium-Customer-Support-and-Experiences-to-the-Next-Level"
+          },
+          {
+            "title": "Williams-Sonoma announces strong Q4 and fiscal year 2025 results (IR press release)",
+            "url": "https://ir.williams-sonomainc.com/investor-information/news-releases/news-release-details/2026/Williams-Sonoma-Inc--announces-strong-fourth-quarter-and-fiscal-year-2025-results/default.aspx"
+          },
+          {
+            "title": "Williams-Sonoma ends fiscal 2025 strongly (Interior Daily) — FY2025 $7.81B revenue, EPS $8.84, brand comps",
+            "url": "https://www.interiordaily.com/article/9821259/williams-sonoma-ends-fiscal-2025-strongly-as-home-retail-group-targets-further-growth/"
+          },
+          {
+            "title": "WSM Form 8-K FY2026 Q1 earnings exhibit (SEC) — Q1 FY2026 revenue/EPS",
+            "url": "https://www.sec.gov/Archives/edgar/data/0000719955/000071995526000126/exhibit991fy2026q1earnings.htm"
+          },
+          {
+            "title": "Affirm expands partnership with Williams-Sonoma, Inc. into Canada (BusinessWire, May 29, 2025) — Affirm across WS, West Elm, Pottery Barn, PB Kids/Teen, Mark & Graham",
+            "url": "https://www.businesswire.com/news/home/20250529904934/en/Affirm-expands-partnership-with-Williams-Sonoma-Inc.-into-Canada"
+          },
+          {
+            "title": "Monthly Financing / Affirm (Williams Sonoma)",
+            "url": "https://www.williams-sonoma.com/pages/affirm/?pp=1"
+          },
+          {
+            "title": "The Key Rewards (Williams Sonoma) — cross-brand loyalty tiers and brands",
+            "url": "https://www.williams-sonoma.com/pages/the-key-rewards/"
+          },
+          {
+            "title": "Williams-Sonoma adds Rejuvenation to The Key Rewards (BusinessWire, Sept 4, 2024)",
+            "url": "https://www.businesswire.com/news/home/20240904060474/en/WILLIAMS-SONOMA-INC.-ADDS-REJUVENATION-TO-THE-KEY-REWARDS-LOYALTY-PROGRAM"
+          },
+          {
+            "title": "Shop Our Featured Brands / brand hub (Williams Sonoma) — sister brands route to separate sites/carts",
+            "url": "https://www.williams-sonoma.com/pages/brand-shop/"
+          },
+          {
+            "title": "Williams-Sonoma, Inc. corporate site — brand portfolio (Williams Sonoma, WS Home, Pottery Barn, PB Kids, PBteen, West Elm, Mark & Graham, Rejuvenation, GreenRow, Dormify)",
+            "url": "https://www.williams-sonomainc.com/"
+          },
+          {
+            "title": "Williams-Sonoma, Inc. — Wikipedia (portfolio, history, S&P 400)",
+            "url": "https://en.wikipedia.org/wiki/Williams-Sonoma,_Inc."
+          },
+          {
+            "title": "Williams-Sonoma: Upgrading to Hold Due to Strong Sales Growth (Seeking Alpha) — analyst view",
+            "url": "https://seekingalpha.com/article/4909900-williams-sonoma-upgrading-to-hold-due-to-strong-sales-growth"
+          },
+          {
+            "title": "Williams-Sonoma Stock Rockets 22% (Trefis, May 29, 2026) — ~$24B market cap, rally",
+            "url": "https://www.trefis.com/articles/600677/williams-sonoma-stock-rockets-22-with-8-day-winning-streak/2026-05-29"
+          }
+        ]
+      },
+      "competitors": {
+        "competitors": [
+          {
+            "name": "Muji",
+            "positioning": "Japanese 'no-brand' minimalism. Functional, understated, neutral-toned home goods and furniture emphasizing simplicity, sustainability and 'just enough' design. Sells across categories (homewares, furniture, storage, apparel, food).",
+            "pricePoint": "Value-to-mid. Affordable everyday homewares with some higher-priced furniture; generally well below WSI's West Elm/Pottery Barn on decor, comparable to or below on small furniture.",
+            "targetConsumer": "Design-conscious, minimalist-leaning urban consumers across age groups; students and young professionals plus older minimalists. Global, especially Asia-Pacific.",
+            "aiUsage": "Limited/unverified. No prominent consumer-facing generative-AI design tool found; MUJI passport app provides loyalty/personalization but specific AI features are unverified.",
+            "physicalVsDigital": "Physical-store led. Large global store fleet anchors the brand experience; e-commerce exists but stores and the in-store 'discovery' experience are central.",
+            "vsWSI": "Far more minimalist and lower-priced than WSI brands. Competes mainly at the affordable-decor/storage end (vs West Elm accessories), not on premium upholstered furniture. Different aesthetic philosophy (Japanese minimalism vs WSI's American transitional/coastal/classic)."
+          },
+          {
+            "name": "IKEA",
+            "positioning": "Mass-market, flat-pack, democratic 'design for everyone.' Scandinavian functional design at scale with strong DIY/self-assembly model and ecosystem of room solutions.",
+            "pricePoint": "Value/low price leader. Substantially cheaper than all WSI brands; competes on affordability and volume.",
+            "targetConsumer": "Broad mass market: first-apartment renters, young families, budget-conscious and value shoppers globally.",
+            "aiUsage": "Active. IKEA Kreativ AI-powered room scanner/visualizer lets shoppers scan a room, erase existing furniture and drop in 3D IKEA products (launched 2022, expanded since). IKEA also launched a ChatGPT/OpenAI-based AI assistant in the OpenAI GPT store (2024) for home-furnishing advice. (Details partly via secondary sources.)",
+            "physicalVsDigital": "Hybrid, store-anchored. Iconic large-format warehouse stores plus growing smaller-format city stores; rapidly expanding e-commerce and app, with digital visualization tools bridging the two.",
+            "vsWSI": "Plays a tier (or more) below WSI on price and finish. Strongest contrast: IKEA is volume/value/DIY while WSI is premium, assembled/delivered, design-service led. IKEA's mature AI visualization tools are ahead of WSI's consumer-facing AI."
+          },
+          {
+            "name": "Crate & Barrel",
+            "positioning": "Mid-to-premium contemporary/transitional home furnishings and tabletop; clean, modern-classic aesthetic with strong dinnerware and registry heritage. Owned by Otto Group (Euromarket Designs).",
+            "pricePoint": "Mid-to-premium, broadly overlapping West Elm and Pottery Barn. Below RH/Arhaus on high-end furniture.",
+            "targetConsumer": "Style-conscious mid-to-upper-income adults/families, strong wedding-registry and homeowner base, 30s-50s.",
+            "aiUsage": "Limited/unverified consumer-facing generative AI. Offers AR/room-view and free design services; specific generative-AI tools not clearly verified.",
+            "physicalVsDigital": "Balanced omnichannel. Substantial mall/standalone store fleet plus robust e-commerce and design services.",
+            "vsWSI": "Closest direct analog to WSI's core (Pottery Barn/West Elm) on price, aesthetic and registry/omnichannel model. Primary head-to-head competitor in the mid-premium segment."
+          },
+          {
+            "name": "CB2",
+            "positioning": "Crate & Barrel's modern, design-forward, edgier sister brand. Bold, contemporary, trend-driven furniture and decor; collaborations with designers.",
+            "pricePoint": "Mid-to-premium, similar to West Elm; modern aesthetic at accessible-premium prices.",
+            "targetConsumer": "Younger, urban, design-savvy modernists (late 20s-40s), apartment/condo dwellers wanting statement pieces.",
+            "aiUsage": "Limited/unverified. Shares C&B parent capabilities (AR/room visualization, design services); no distinct generative-AI tool verified.",
+            "physicalVsDigital": "Omnichannel, more digital-leaning than parent. Smaller urban store footprint plus strong e-commerce.",
+            "vsWSI": "Most directly competes with West Elm for the modern, younger design shopper. Comparable price and channel mix; differentiator is bolder, trend-forward styling vs West Elm's more accessible-modern look."
+          },
+          {
+            "name": "RH (Restoration Hardware)",
+            "positioning": "Aspirational luxury 'curated lifestyle' brand. Large-format design galleries, hospitality (restaurants), membership model, and an explicit move upmarket into luxury furniture and interior design.",
+            "pricePoint": "Luxury / top of the set, well above WSI. High-ticket upholstery and case goods; membership (annual fee) gives a flat discount rather than promotions.",
+            "targetConsumer": "Affluent, design-driven homeowners; high household income; people furnishing whole rooms/homes and using interior-design services.",
+            "aiUsage": "Limited/unverified consumer generative AI. RH emphasizes in-person design galleries and human designers; no prominent public generative-AI shopping tool verified.",
+            "physicalVsDigital": "Heavily physical/experiential. Flagship design galleries and hospitality are core to the brand; e-commerce and source-books exist but the gallery experience leads.",
+            "vsWSI": "Sits a clear tier above WSI on price and luxury positioning. Competes for WSI's most affluent furniture customers but with a more exclusive, membership-and-gallery model versus WSI's broader, more promotional omnichannel approach."
+          },
+          {
+            "name": "Arhaus",
+            "positioning": "Premium, artisan-crafted, sustainably-minded furniture and decor with a natural-materials, heirloom-quality story. Showroom-led experiential retail.",
+            "pricePoint": "Premium, above West Elm/Pottery Barn, generally below RH. Mid-to-high-ticket furniture.",
+            "targetConsumer": "Affluent, quality- and sustainability-oriented homeowners, 35-60, willing to pay for craftsmanship and natural materials.",
+            "aiUsage": "Limited/unverified. Offers in-home/complimentary design services; no prominent consumer generative-AI tool verified.",
+            "physicalVsDigital": "Showroom-anchored omnichannel. Growing fleet of large experiential showrooms plus e-commerce; design consultants central to conversion.",
+            "vsWSI": "Competes just above WSI's premium furniture (Pottery Barn, West Elm) and just below RH. Differentiates on artisanal/natural-materials craftsmanship narrative versus WSI's broader product breadth and multi-brand scale."
+          },
+          {
+            "name": "Article",
+            "positioning": "Digitally-native, direct-to-consumer mid-century-modern and contemporary furniture. 'Better design for less' by cutting out middlemen; curated, in-house designed assortment.",
+            "pricePoint": "Mid / value-premium. Notably lower than WSI furniture for comparable modern looks; positioned as design value.",
+            "targetConsumer": "Online-comfortable millennials/Gen Z and value-seeking design shoppers; first/second-home furnishers wanting modern style affordably.",
+            "aiUsage": "Limited/unverified. DTC e-commerce with strong digital UX; no prominent public generative-AI design tool verified.",
+            "physicalVsDigital": "Online-only / digital-native. No traditional retail store fleet; entirely e-commerce with home delivery (a few experiential pop-ups historically).",
+            "vsWSI": "Undercuts WSI (especially West Elm) on price for modern furniture by being pure-play DTC with no store overhead. WSI counters with physical stores, design services, registry and brand breadth that Article lacks."
+          },
+          {
+            "name": "Wayfair",
+            "positioning": "Mass-market online home marketplace with enormous SKU breadth across all price tiers (and premium banners like Perigold, AllModern, Birch Lane). Selection- and convenience-driven.",
+            "pricePoint": "Value-to-mid mass market on core Wayfair; premium via Perigold. Generally below WSI on like items, competing on price and assortment.",
+            "targetConsumer": "Broad online mass market seeking selection, deals and convenience; value-driven home shoppers of all ages.",
+            "aiUsage": "Most aggressive AI adopter in the set. Launched generative-AI tools including Decorify (AI room redesign / restyle from a photo) and AI-powered visual search and recommendations; has publicly invested in generative AI for merchandising and customer experience (2023-2025). Some specifics via secondary sources.",
+            "physicalVsDigital": "Predominantly digital. Online-first marketplace; has begun limited physical retail (a large-format Wayfair store opened 2024) but channel mix remains overwhelmingly e-commerce.",
+            "vsWSI": "Competes on price, breadth and online convenience rather than curation or quality. WSI differentiates with proprietary design, brand equity, stores and services; Wayfair's lead in deployed generative-AI shopping tools is a notable gap versus WSI."
+          },
+          {
+            "name": "Target (Threshold / Hearth & Hand with Magnolia)",
+            "positioning": "Mass-market 'cheap chic' home via owned brands: Threshold (broad everyday home/decor), Hearth & Hand with Magnolia (Joanna/Chip Gaines farmhouse-modern), plus Studio McGee collabs. Trend-right design at discount-retail prices.",
+            "pricePoint": "Value / mass. Well below all WSI brands; competes on affordability and trend speed.",
+            "targetConsumer": "Broad value-conscious mass market; families and younger shoppers wanting on-trend looks (incl. farmhouse/modern) at low prices.",
+            "aiUsage": "Active enterprise AI. Target has rolled out generative-AI tools including a store-associate assistant ('Store Companion') and AI-driven personalization/search; a guest-facing shopping chatbot and AI features have been piloted (2023-2025). Home-specific generative design tools are limited/unverified.",
+            "physicalVsDigital": "Store-anchored omnichannel at massive scale. ~1,900 US stores drive most volume, complemented by strong digital and same-day fulfillment.",
+            "vsWSI": "Competes a full tier below WSI on price; pulls aspirational-but-budget design shoppers (especially via Magnolia/Studio McGee) who might otherwise buy entry West Elm/Pottery Barn decor. WSI counters on quality, premium positioning and design services."
+          },
+          {
+            "name": "Anthropologie Home",
+            "positioning": "Eclectic, bohemian, feminine, artisanal and globally-inspired home decor and furniture (URBN-owned). Distinctive curated, of-the-moment aesthetic and immersive store merchandising.",
+            "pricePoint": "Mid-to-premium, broadly overlapping West Elm/Pottery Barn; some statement furniture at premium prices.",
+            "targetConsumer": "Style-led, predominantly female, creative-class shoppers (30s-50s) wanting unique, characterful, non-cookie-cutter pieces.",
+            "aiUsage": "Limited/unverified. URBN/Anthropologie use digital personalization; no prominent public generative-AI home-design tool verified.",
+            "physicalVsDigital": "Balanced omnichannel with experiential stores. Highly merchandised physical stores are a brand signature alongside strong e-commerce.",
+            "vsWSI": "Competes with WSI (esp. West Elm and Pottery Barn) on the decor/accessories and accent-furniture customer who prioritizes distinctive style. Differentiates on eclectic/bohemian curation versus WSI's more classic/transitional/coastal aesthetics."
+          }
+        ],
+        "marketSummary": "The mid-to-premium home furnishings market relevant to Williams-Sonoma, Inc. (parent of Williams Sonoma, Pottery Barn, West Elm, Rejuvenation, Mark and Graham) is a crowded, segmented field that can be read along two axes: price/luxury tier and channel/AI sophistication.\\n\\nBy price tier: RH sits clearly above WSI in aspirational luxury (galleries, membership, hospitality), with Arhaus just below RH on premium artisan furniture. WSI's core brands occupy the mid-to-premium center, where their most direct, like-for-like rivals are Crate & Barrel, CB2 and Anthropologie Home (similar prices, aesthetics, registry/omnichannel models, differing mainly in style: modern-classic, bold-modern, and bohemian-eclectic respectively). Below WSI sit the value players that pull aspirational-but-budget shoppers: IKEA (DIY value leader), Wayfair (selection/price mass marketplace), Article (DTC modern value), Target's Threshold and Hearth & Hand with Magnolia (cheap-chic mass), and Muji (minimalist value homewares).\\n\\nBy channel and AI: the set splits between experiential, store-and-service-led players (RH, Arhaus, Anthropologie, Crate & Barrel, plus WSI itself with its stores, registry and Design Crew services) and digital-first players (Article online-only; Wayfair predominantly online). On AI, the clearest leaders are the digital and mass players: Wayfair (generative-AI restyling via Decorify and AI visual search), IKEA (Kreativ AR/AI room visualizer and an OpenAI-based assistant), and Target (enterprise generative-AI associate tools and personalization). The premium and curation-led brands - RH, Arhaus, Anthropologie, Crate & Barrel, Muji, Article - have comparatively limited or unverified consumer-facing generative-AI offerings, leaning instead on human design services and curation.\\n\\nImplication for WSI: it is squeezed from above on luxury (RH, Arhaus) and from below on price and AI-enabled convenience (IKEA, Wayfair, Target, Article), while facing direct mid-premium style competition from Crate & Barrel/CB2 and Anthropologie. WSI's defensible strengths are brand breadth, proprietary design, omnichannel stores, registry and design services; its relative exposure is in deployed consumer-facing generative-AI shopping/visualization tools, where value and digital-native rivals are visibly ahead. Note: several brand-specific AI and exact-price claims could not be independently verified from primary sources within this research and are marked unverified above.",
+        "sources": [
+          {
+            "title": "Williams-Sonoma, Inc. (brands and portfolio) - Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Williams-Sonoma,_Inc."
+          },
+          {
+            "title": "Wayfair generative AI tools (Decorify, AI visual search) - Bing search results",
+            "url": "https://www.bing.com/search?q=Wayfair+generative+AI+Decorify+Muse+visual+search+2024"
+          },
+          {
+            "title": "IKEA Kreativ AI room visualizer and OpenAI-based assistant - Bing search results",
+            "url": "https://www.bing.com/search?q=IKEA+AI+assistant+OpenAI+GPT+Kreativ+app+launch+date+features"
+          },
+          {
+            "title": "RH (Restoration Hardware) positioning, membership and luxury price point - Bing search results",
+            "url": "https://www.bing.com/search?q=RH+Restoration+Hardware+positioning+price+point+luxury+membership+target+customer"
+          },
+          {
+            "title": "Crate & Barrel and CB2 positioning, price and target customer - Bing search results",
+            "url": "https://www.bing.com/search?q=Crate+and+Barrel+CB2+positioning+price+point+target+customer+demographics"
+          },
+          {
+            "title": "Arhaus premium artisan positioning and price point - Bing search results",
+            "url": "https://www.bing.com/search?q=Arhaus+furniture+positioning+price+point+target+customer+premium+artisan"
+          },
+          {
+            "title": "Article DTC online furniture positioning and price - Bing search results",
+            "url": "https://www.bing.com/search?q=Article+furniture+direct+to+consumer+online+positioning+price+target+customer+AI"
+          },
+          {
+            "title": "Muji minimalist home goods positioning and price - Bing search results",
+            "url": "https://www.bing.com/search?q=Muji+home+goods+positioning+minimalist+price+point+target+customer+store"
+          },
+          {
+            "title": "Target Threshold and Hearth & Hand with Magnolia positioning - Bing search results",
+            "url": "https://www.bing.com/search?q=Target+Threshold+Hearth+and+Hand+Magnolia+home+decor+positioning+price+target"
+          },
+          {
+            "title": "Target generative AI (Store Companion, shopping AI) - Bing search results",
+            "url": "https://www.bing.com/search?q=Target+AI+shopping+assistant+Roundel+Bullseye+Gift+Finder+generative+2024+2025"
+          },
+          {
+            "title": "Anthropologie Home eclectic/bohemian positioning and price - Bing search results",
+            "url": "https://www.bing.com/search?q=Anthropologie+Home+positioning+price+point+target+customer+bohemian+eclectic"
+          },
+          {
+            "title": "Williams-Sonoma / West Elm / Pottery Barn AI and design services - Bing search results",
+            "url": "https://www.bing.com/search?q=Williams-Sonoma+West+Elm+Pottery+Barn+AI+artificial+intelligence+personalization+2024+2025"
+          }
+        ]
+      },
+      "industryFriction": {
+        "summary": "High-end / premium home furnishings e-commerce (2024-2026) carries unusually high UX stakes: large order values, physically bulky goods, long made-to-order lead times, and shoppers who expect a showroom-grade, white-glove experience online. The Home & Furniture category posts one of the worst cart-abandonment rates of any vertical (about 80% in 2024 per ClickPost, vs. the ~70% Baymard cross-industry documented average), and the friction clusters into eight areas. (1) Visualization: buyers cannot confidently judge whether a large piece fits or looks right, and AR/3D measurably fixes this (Shopify cites up to ~94-250% higher conversion and up to ~40% fewer returns for 3D/AR products; multiple sources say AR users are up to 8x more likely to convert). (2) Delivery/lead-time uncertainty: 41% of sites show no delivery date and ~21-23% of shoppers abandon over slow/uncertain delivery (Baymard / ClickPost). (3) Returns of bulky items: furniture return rates look modest (~8-17% by various measures; 3.9% by revenue per ECDB 2024) but carry the highest cost-to-value ratio in e-commerce, and two-thirds of retailers added return fees in 2024 (NRF), raising perceived purchase risk. (4) Financing/BNPL clarity: cost opacity drives ~34% of BNPL checkout abandonment and ~40% of users regret BNPL once they see total costs (Bankrate 2024). (5) Fragmented multi-brand experiences. (6) Weak imagery/spec depth: visual discrepancies between photos and the real item are a documented return driver, especially for fabric pieces and first-time buyers. (7) AR adoption gap: strong consumer interest (60-71% want AR; ~32% have used it) but only ~1% of retailers had deployed AR and ~52% weren't ready (per cited market research) and coverage/quality lag. (8) Conversational/AI assistant dead-ends: 3 in 5 shoppers report a bad chatbot experience and ~50% rarely get a successful outcome from AI-only support, failing on exactly the complex questions premium buyers ask. NOTE: All figures below are sourced to the URLs listed; several come from vendor/secondary blogs citing primary research (Baymard, NRF, Bankrate, ECDB/Statista, Shopify) and should be treated as directional. Where I could not pin a claim to a primary source it is marked \"unverified.\"",
+        "frictionPoints": [
+          {
+            "area": "Visualizing large furniture in a real space",
+            "problem": "Premium buyers cannot judge whether a sofa, sectional, dining table, or bed will physically fit and look right in their room. Static studio photos are shot in idealized, oversized sets that distort scale, and most sites give no reliable scale reference, room planner, or quality AR placement. The shopper must commit four to five figures on a guess about fit, proportion, and color against their own walls.",
+            "impact": "Visualization gaps suppress conversion on high-AOV items and are a leading root cause of costly bulky-item returns ('looked smaller/bigger online'). Conversely, the fix is well quantified: Shopify reports products with 3D/AR convert up to ~94% higher (some cases up to ~250%) and can see up to ~40% fewer returns; multiple sources say AR users are up to 8x more likely to convert, and 80% say 3D visualization increases purchase confidence (3D Cloud). The friction is the gap between this proven lift and how few premium SKUs actually offer trustworthy visualization.",
+            "example": "A shopper considering a $4,500 sectional sees only an angled hero shot in a vast loft set with no dimension overlay, room planner, or AR placement, so they cannot tell if it clears their living room walkway and either abandon or buy-and-return. Wayfair's '3D View in Room' app feature is the kind of capability that addresses this, but it is far from universal across premium catalogs."
+          },
+          {
+            "area": "Delivery and lead-time uncertainty",
+            "problem": "For made-to-order, imported, or back-ordered premium pieces the actual ship/arrival date is hidden, vague ('8-14 weeks'), or only revealed deep in checkout. Baymard found 41% of sites do not show a delivery date, so customers must guess; firm item-level delivery promises with white-glove/assembly scheduling before purchase are rare.",
+            "impact": "This creates a confidence gap at the decision point. Baymard's documented data attributes 21% of checkout abandonment (excluding browsers) to delivery being too slow, and ClickPost/industry data cite ~23% abandoning over slow delivery; bulky freight and long ETAs are repeatedly named among the top drivers of the Home & Furniture category's ~80% cart-abandonment rate (2024). Vague timelines also raise pre-purchase support contacts and post-purchase cancellations when timelines slip.",
+            "example": "A custom upholstered bed lists '8-14 weeks, ships when ready' with no firm date or delivery window shown at cart, so a buyer renovating on a deadline abandons rather than risk it. (Source: Baymard cart-abandonment list; ClickPost cart-abandonment-by-industry.)"
+          },
+          {
+            "area": "Returns of bulky items",
+            "problem": "Return policies for large furniture are restrictive and expensive: high restocking and return-freight fees, customer must repackage/disassemble heavy items, narrow windows, and 'final sale' on custom pieces. Terms are often buried rather than surfaced near the buy button, so buyers feel the policy is a trap. NRF notes two-thirds of retailers introduced return fees in 2024.",
+            "impact": "Furniture's return RATE is moderate (ECDB: 3.9% by revenue in 2024; Statista: ~8% of digital buyers returned furniture/household items in the prior 12 months; other industry estimates 15-20%), but it has the highest cost-to-value ratio in e-commerce because reverse logistics on big-and-bulky goods is so expensive, and damaged-in-last-mile delivery drives a meaningful share of returns. The result is a vicious cycle: brands tighten/obscure policies to protect margin, which raises perceived purchase risk and depresses conversion on high-ticket, first-time buyers.",
+            "example": "A buyer learns only after delivery that returning a $2,000 dining table incurs return freight plus a restocking fee and requires original crating they no longer have, souring the relationship and producing negative reviews. (Sources: NRF on 2024 return fees; ECDB/Statista furniture return figures; ienhance on furniture return cost-to-value.)"
+          },
+          {
+            "area": "Financing / BNPL clarity",
+            "problem": "On four- and five-figure carts, financing/BNPL is presented with unclear total cost, APR, eligibility, deposit-on-custom-order terms, and how it interacts with long lead times (when payments start vs. when the item ships). Terms are fragmented across the PDP, cart, and a third-party provider flow.",
+            "impact": "Ambiguity erodes trust on the highest-value transactions and causes drop-off and downstream regret/disputes. Bankrate (2024) found cost opacity drives ~34% of BNPL checkout abandonment and unclear payment schedules another ~30%; ~40% of users regret BNPL once they realize total costs, and 56% of BNPL users reported issues like overspending, missed payments, or regret. For premium long-lead orders, payments starting before a made-to-order item arrives compounds the confusion.",
+            "example": "A shopper sees 'as low as $X/mo' on a $6,000 bedroom set but cannot tell the APR, whether the deposit on the custom finish is non-refundable, or when installments start relative to the 10-week build, and abandons. (Sources: Bankrate BNPL survey 2024; Fool BNPL trends.)"
+          },
+          {
+            "area": "Fragmented multi-brand experiences",
+            "problem": "Premium shoppers move across multi-brand marketplaces, brand DTC sites, and designer/trade channels, each with different imagery standards, spec formats, lead-time conventions, return rules, and accounts. Inconsistent or incomplete data on marketplaces makes cross-comparison and trust difficult.",
+            "impact": "Fragmentation forces buyers to re-research the same product across channels, undermines a coherent premium brand experience, and leaks high-intent traffic; inconsistent spec/lead-time/return data across listings increases mismatch returns and support load. Industry commentary frames consistent omnichannel/unified experiences as a 2025-2026 table stake for furniture retailers. (Magnitude of revenue impact: unverified.)",
+            "example": "The same designer chair appears on a marketplace with one set of dimensions and a generic photo, and on the brand site with full materials, swatches, and a different return policy, leaving the buyer unsure which listing is authoritative. (Sources: ienhance furniture buyer-journey insights; Shopware/Experro furniture-trend pieces.)"
+          },
+          {
+            "area": "Weak product imagery and shallow spec depth",
+            "problem": "For items that cannot be touched, premium PDPs still often lack depth: true-to-life color, fabric/leather texture close-ups, orderable physical swatches, exact dimensions with doorway/clearance guidance, weight, construction details, and 360/zoom. Color accuracy across screens is a persistent issue.",
+            "impact": "Insufficient imagery/specs is a documented return driver: industry reporting notes visual discrepancies between online images and the actual product cause higher return rates among first-time customers, particularly for fabric-based furniture, and it also drives pre-purchase abandonment when buyers cannot resolve quality/fit questions. 3D Cloud reports 80% say 3D visualization increases purchase confidence and 83% find a 3D planner very helpful in the final decision, underscoring how much shallow media costs.",
+            "example": "A $3,000 leather armchair shows only three studio shots with no grain close-up, no swatch option, and no seat-height/arm-width detail, so the buyer cannot confirm leather quality or fit in a reading nook and abandons or buys-to-try. (Sources: industry return-rate reporting on image-vs-product discrepancy; 3D Cloud Furniture Shopping Trends Study 2025.)"
+          },
+          {
+            "area": "AR adoption gap (interest high, deployment and quality lag)",
+            "problem": "AR 'view in your room' is heavily marketed as solved, but real deployment and quality lag demand. AR is missing on many SKUs, often app-gated rather than web-native, requires friction to launch, and frequently renders with imperfect scale/lighting or low-fidelity models, so shoppers either don't use it or don't trust the result.",
+            "impact": "The promised benefits (higher conversion, fewer fit/scale returns) go largely unrealized when AR is shallow or unused. Cited market research shows strong demand (60-71% of consumers want/would shop more with AR; ~32% have used AR while shopping; 65% more likely to buy from an AR-enabled retailer) against thin supply (reportedly only ~1% of retailers had deployed AR in customer experience and ~52% weren't ready to integrate AR/VR). Web-native AR is repeatedly named as the way to close the usage gap by removing the app-download barrier.",
+            "example": "A retailer promotes AR but only a fraction of the catalog has 3D models, the feature is app-gated, and the rendered sofa appears slightly off-scale, so most shoppers ignore it and still guess, leaving the core visualization friction unsolved. (Sources: Statista AR-usage-in-home-furnishings; futuramo AR/VR retail readiness stats; Experro/Omnisend furniture-trend pieces.)"
+          },
+          {
+            "area": "Conversational / AI assistant dead-ends",
+            "problem": "On-site AI chat/virtual assistants handle generic FAQs but dead-end on the complex, high-consideration questions premium buyers ask: 'will this fit through a 30-inch door,' 'what's the true delivery date to my zip on the custom finish,' 'compare the construction of these two sofas,' 'can I get a COM/swatch.' Human escalation is often slow or hidden.",
+            "impact": "Failing on exactly the questions that gate a large purchase erodes trust at the decision point and squanders the concierge expectation premium buyers have. Research cited in 2024-2026 reporting: 3 in 5 customers have had a bad chatbot experience; ~50% rarely or never get a successful outcome from AI-only service and 48% don't trust AI to fully handle service; in finance specifically 80% left a chatbot more frustrated and 78% needed a human afterward. Early GenAI shopping assistants also underdeliver on personalization/memory.",
+            "example": "A buyer asks the on-site assistant for the realistic delivery date and clearance dimensions on a configured sectional and gets a canned link to the generic shipping page with no human escalation, so they leave. (Sources: RetailWire on AI chatbots frustrating shoppers; IT Pro chatbot survey; CFPB chatbots in consumer finance.)"
+          }
+        ],
+        "sources": [
+          {
+            "title": "Cart Abandonment Rate (documented reasons and stats) - Baymard Institute",
+            "url": "https://baymard.com/lists/cart-abandonment-rate"
+          },
+          {
+            "title": "Cart Abandonment Rate by Industry (2026): Benchmarks and Key Insights - ClickPost",
+            "url": "https://www.clickpost.ai/blog/cart-abandonment-rate"
+          },
+          {
+            "title": "Extra costs are the No. 1 reason consumers abandon online carts - eMarketer",
+            "url": "https://www.emarketer.com/content/extra-costs-are-the-top-reason-consumers-abandon-online-carts"
+          },
+          {
+            "title": "The ROI on AR: How Augmented Reality is Boosting Ecommerce Sales - Shopify",
+            "url": "https://www.shopify.com/blog/ar-shopping"
+          },
+          {
+            "title": "AR Technology in Retail: Use Cases and Benefits (2025) - Shopify",
+            "url": "https://www.shopify.com/enterprise/blog/how-retailers-are-using-ar-technology-to-build-buzz-and-brand-awareness"
+          },
+          {
+            "title": "3D Cloud Furniture Shopping Trends Study 2025 - 3D Cloud",
+            "url": "https://3dcloud.com/3d-cloud-furniture-shopping-trends-study/"
+          },
+          {
+            "title": "Home furnishings: augmented reality technology usage U.S. - Statista",
+            "url": "https://www.statista.com/statistics/1132686/augmented-reality-technology-usage-among-home-furnishings-consumers-us/"
+          },
+          {
+            "title": "AR/VR Shopping: The Future of E-Commerce and Retail - Futuramo",
+            "url": "https://futuramo.com/blog/the-future-of-retail-how-ar-vr-shopping-is-transforming-e-commerce/"
+          },
+          {
+            "title": "Furniture eCommerce Trends to Grow Your Sales By 89% in 2025 - Experro",
+            "url": "https://www.experro.com/blog/furniture-ecommerce-trends-and-insights/"
+          },
+          {
+            "title": "The 4 biggest furniture ecommerce trends for 2025 - Omnisend",
+            "url": "https://www.omnisend.com/blog/furniture-ecommerce/"
+          },
+          {
+            "title": "How leading brands reduce furniture returns and protect margins - iEnhance",
+            "url": "https://www.ienhance.co/insights/how-leading-brands-reduce-furniture-returns-and-protect-margins"
+          },
+          {
+            "title": "Furniture eCommerce Benchmarks in the U.S. (return rate 3.9% 2024) - ECDB",
+            "url": "https://ecommercedb.com/benchmarks/us/furniture"
+          },
+          {
+            "title": "Furniture e-commerce in the United States - statistics and facts - Statista",
+            "url": "https://www.statista.com/topics/5171/furniture-e-commerce-in-the-united-states/"
+          },
+          {
+            "title": "The Average eCommerce Return Rate Hit 20% in 2025 - Upcounting",
+            "url": "https://www.upcounting.com/blog/average-ecommerce-return-rate"
+          },
+          {
+            "title": "Survey: About half of buy now, pay later users have experienced issues - Bankrate",
+            "url": "https://www.bankrate.com/loans/personal-loans/buy-now-pay-later-survey/"
+          },
+          {
+            "title": "2025 Buy Now, Pay Later Trends Study - The Motley Fool",
+            "url": "https://www.fool.com/money/research/buy-now-pay-later-statistics/"
+          },
+          {
+            "title": "Are AI-Driven Chatbots Only Frustrating the Online Shopper Journey? - RetailWire",
+            "url": "https://retailwire.com/discussion/are-ai-driven-chatbots-only-frustrating-the-online-shopper-journey/"
+          },
+          {
+            "title": "Your customers aren't keen on that customer service chatbot - IT Pro",
+            "url": "https://www.itpro.com/technology/artificial-intelligence/your-customers-arent-keen-on-that-customer-service-chatbot-you-introduced-heres-why"
+          },
+          {
+            "title": "Chatbots in consumer finance - Consumer Financial Protection Bureau",
+            "url": "https://www.consumerfinance.gov/data-research/research-reports/chatbots-in-consumer-finance/chatbots-in-consumer-finance/"
+          },
+          {
+            "title": "Winning the buyer journey in interactive furniture ecommerce - iEnhance",
+            "url": "https://www.ienhance.co/insights/winning-the-buyer-journey-in-interactive-furniture-ecommerce"
+          }
+        ]
+      },
+      "businessMetrics": {
+        "metrics": [
+          {
+            "metric": "Conversion Rate (CR)",
+            "definition": "The share of site visits (or sessions) that result in a completed purchase. It is the single most-watched measure of how effectively a store turns traffic into buyers.",
+            "formula": "CR = (Number of orders / Number of sessions) x 100",
+            "uxLevers": [
+              "Reduce friction in the path to purchase: fewer steps, clear primary CTAs, sticky add-to-cart",
+              "Fast page load and Core Web Vitals (slow pages directly suppress conversion)",
+              "Clear, scannable product detail pages: strong imagery, specs, sizing, social proof/reviews",
+              "Trust signals near decision points: security badges, return policy, ratings",
+              "Effective search and filtering so users find relevant products quickly",
+              "Mobile-first layouts and large tap targets (mobile converts far lower than desktop)",
+              "Guest checkout and minimized form fields to cut drop-off"
+            ],
+            "benchmark": "Typical ecommerce conversion rate is roughly 2-4%; ~2.5-3% is a common average, with top performers above 4-5%. Mobile generally converts lower than desktop. (Dynamic Yield benchmarks; The Good)"
+          },
+          {
+            "metric": "Average Order Value (AOV)",
+            "definition": "The average revenue generated per order. It reflects how much customers spend in a single transaction, independent of how many people buy.",
+            "formula": "AOV = Total revenue / Number of orders",
+            "uxLevers": [
+              "Cross-sell and 'frequently bought together' modules on PDP and cart",
+              "Upsell to higher-tier or bundled options at the decision point",
+              "Free-shipping thresholds with a progress indicator ('add $12 to get free shipping')",
+              "Quantity nudges, bundles, and volume discounts surfaced clearly",
+              "Tiered loyalty or gift-with-purchase incentives",
+              "Well-designed cart/checkout that makes adding items easy rather than a chore"
+            ],
+            "benchmark": "Median ecommerce AOV is around $100; bottom-quintile stores ~$48 and top-quintile ~$170+ (varies widely by category, e.g., apparel lower, furniture/luxury higher). (Littledata 2024)"
+          },
+          {
+            "metric": "Cart Abandonment Rate",
+            "definition": "The percentage of shoppers who add items to a cart but leave without completing the purchase. It pinpoints leakage between intent and conversion, mostly in the cart and checkout.",
+            "formula": "Cart Abandonment Rate = (1 - (Completed purchases / Carts created)) x 100",
+            "uxLevers": [
+              "Show all costs (shipping, tax, fees) early; 48% abandon over unexpected extra costs",
+              "Offer guest checkout; 26% abandon because forced to create an account",
+              "Streamline the checkout: fewer steps/fields; 22% cite a too-long or complex process",
+              "Show order total and a progress indicator upfront (21% cite inability to see total)",
+              "Build trust at payment: security badges, recognizable payment logos (25% distrust entering card info)",
+              "Offer multiple payment methods, including wallets (13% cite too few options)",
+              "Prevent and gracefully handle errors; 17% abandon due to site errors/crashes",
+              "Surface clear delivery timing and a friendly return policy (slow delivery 23%, weak returns 16%)"
+            ],
+            "benchmark": "Documented average cart abandonment rate is ~70% (Baymard, 49 studies). Top abandonment reason: extra costs too high (48%). (Baymard)"
+          },
+          {
+            "metric": "Revenue Per Visitor (RPV)",
+            "definition": "Average revenue earned per site visitor. It blends conversion rate and order value into one number, so it captures the total monetary impact of UX changes better than CR alone.",
+            "formula": "RPV = Total revenue / Number of visitors (equivalently, RPV = Conversion Rate x AOV)",
+            "uxLevers": [
+              "Any lever that lifts CR (reducing friction, faster pages, better PDPs) raises RPV",
+              "Any lever that lifts AOV (cross-sell, bundles, free-ship thresholds) raises RPV",
+              "Personalization and relevant recommendations that match intent",
+              "Better merchandising and on-site search to put high-value products in front of users",
+              "Guards against changes that boost CR but shrink AOV (or vice versa) - RPV exposes the net effect"
+            ],
+            "benchmark": "No single universal benchmark; it depends on traffic quality, AOV, and CR. As a rough sanity check, RPV approximates AOV x CR (e.g., $100 AOV x 3% CR = ~$3 RPV). Best used as a relative metric for A/B tests rather than against an industry number. (Derived from Littledata AOV and Dynamic Yield CR benchmarks)"
+          },
+          {
+            "metric": "Return Rate",
+            "definition": "The percentage of sold items (or order value) that customers send back. High returns erode net revenue and margin and often signal a mismatch between expectation and reality set during the shopping experience.",
+            "formula": "Return Rate = (Value or units returned / Value or units sold) x 100",
+            "uxLevers": [
+              "Accurate, detailed product pages: rich imagery, video, dimensions, materials",
+              "Sizing guides, fit finders, and 'true-to-size' review signals to cut wrong-size returns",
+              "Honest, plentiful customer reviews and photos to align expectations",
+              "Clear delivery and condition expectations to reduce 'not as described' returns",
+              "Helpful post-purchase comms and easy reorder/exchange flows (exchange over refund)",
+              "Avoiding over-aggressive upsell that drives impulse buys likely to be returned"
+            ],
+            "benchmark": "Overall retail return rate ~14-15%; online/ecommerce returns are higher at ~20-25%, with apparel the highest (~24%+). (Capital One Shopping / NRF 2024)"
+          },
+          {
+            "metric": "Customer Lifetime Value (CLV/CLTV)",
+            "definition": "The total net profit (or revenue) a business expects from a customer across the entire relationship. It reframes design success from a single purchase to long-term loyalty and repeat buying.",
+            "formula": "Simplified CLV = Average Order Value x Purchase Frequency x Average Customer Lifespan (then optionally x gross margin for profit-based CLV)",
+            "uxLevers": [
+              "Smooth onboarding and first-purchase experience that earns a second visit",
+              "Easy reordering, saved carts, saved payment, and account/order history",
+              "Loyalty programs, subscriptions, and replenishment flows surfaced in-product",
+              "Personalized recommendations and lifecycle messaging that bring users back",
+              "Strong post-purchase UX: order tracking, painless returns/exchanges that build trust",
+              "Reducing return friction and product mismatch so customers stay satisfied and repeat"
+            ],
+            "benchmark": "No universal dollar benchmark - highly category-dependent. The practical rule of thumb is that CLV should comfortably exceed Customer Acquisition Cost (a healthy LTV:CAC ratio is often cited around 3:1). (Shopify; Qualtrics)"
+          }
+        ],
+        "summary": "How to 'speak business' as a designer: Revenue in retail is basically Traffic x Conversion Rate x Average Order Value, repeated over a customer's lifetime and reduced by returns. Conversion Rate (CR, ~2-4% typical) measures how many visitors buy - you raise it by cutting friction, speeding up pages, and strengthening product pages and trust signals. Average Order Value (AOV, ~$100 median) measures how much each order is worth - you raise it with cross-sell, bundles, and free-shipping thresholds. Cart Abandonment Rate (~70% average) is the leak between intent and purchase; the #1 fix is showing all costs early and offering guest checkout, since 48% abandon over surprise costs and 26% over forced account creation. Revenue Per Visitor (RPV = CR x AOV) is the best single 'net' scorecard for a design change because it catches cases where you lift one number but hurt the other - lead with it in A/B test results. Return Rate (online ~20-25%) protects margin; accurate product pages, sizing tools, and honest reviews keep returns down. Customer Lifetime Value (CLV = AOV x purchase frequency x lifespan) reframes good UX as repeat business, and it should exceed acquisition cost (aim ~3:1 LTV:CAC). The one-liner for a stakeholder: 'This change is designed to lift RPV by improving conversion without lowering AOV, while reducing checkout abandonment - which compounds into higher lifetime value.'",
+        "sources": [
+          {
+            "title": "49 Cart Abandonment Rate Statistics 2025 - Baymard",
+            "url": "https://baymard.com/lists/cart-abandonment-rate"
+          },
+          {
+            "title": "E-commerce Conversion Rate Benchmarks 2025 - Dynamic Yield",
+            "url": "https://www.dynamicyield.com/benchmarks/conversion-rate/"
+          },
+          {
+            "title": "What's a Good Ecommerce Conversion Rate? (2025 Benchmarks) - The Good",
+            "url": "https://www.thegood.com/insights/ecommerce-conversion-rate"
+          },
+          {
+            "title": "Average Order Value Benchmarks for 2024 - Littledata",
+            "url": "https://www.littledata.io/average/order-value"
+          },
+          {
+            "title": "Average Order Value (AOV): Benchmarks, Formula & Tips - Dynamic Yield",
+            "url": "https://www.dynamicyield.com/benchmarks/aov/"
+          },
+          {
+            "title": "Retail Return Rate Statistics for 2024 - Capital One Shopping",
+            "url": "https://capitaloneshopping.com/research/return-rate-statistics/"
+          },
+          {
+            "title": "2024 Consumer Returns in the Retail Industry - NRF",
+            "url": "https://nrf.com/research/2024-consumer-returns-retail-industry"
+          },
+          {
+            "title": "How to Calculate Customer Lifetime Value (CLV) - Shopify",
+            "url": "https://www.shopify.com/blog/customer-lifetime-value"
+          },
+          {
+            "title": "Customer Lifetime Value (CLV): Formula & Calculation - Qualtrics",
+            "url": "https://www.qualtrics.com/experience-management/customer/how-to-calculate-customer-lifetime-value/"
+          }
+        ]
+      },
+      "figmaResources": {
+        "topic": "Best current learning resources for mastering Figma at an intern-to-junior level (auto-layout 5.0, component properties/variants, variables/tokens, responsive product cards, dark-mode variants, prototyping) plus public retail design systems to study",
+        "resources": [
+          {
+            "title": "Guide to auto layout (Figma Learn)",
+            "type": "doc",
+            "url": "https://help.figma.com/hc/en-us/articles/360040451373-Guide-to-auto-layout",
+            "why": "Official, continuously updated overview of auto layout. The canonical starting point: stacking direction, spacing, padding, alignment, resizing (hug/fill/fixed), plus the auto layout 5.0 capabilities (wrap to new lines, min/max width and height, absolute position). Note: as of the May 2025 Grid release some screens differ slightly from older videos.",
+            "length": "~15-20 min read"
+          },
+          {
+            "title": "A Guide to Auto Layout: Best Practices, Tips & Tricks (Figma official YouTube)",
+            "type": "youtube",
+            "url": "https://www.youtube.com/watch?v=1odqpkfkDL8",
+            "why": "Official Figma video where Designer Advocate Lauren Byrne walks through when and how to use auto layout with practical examples. Verified via search to be from the official Figma channel. Best free video for seeing auto layout applied to real UI like cards.",
+            "length": "~15-25 min (video)"
+          },
+          {
+            "title": "Config 2025: Structure your designs with Figma Grid (Figma official YouTube)",
+            "type": "youtube",
+            "url": "https://www.youtube.com/watch?v=j9-d1HskOxs",
+            "why": "Official talk introducing Grid, the newest auto layout option (May 2025). Important so an intern learns the current state of auto layout rather than an outdated mental model. Directly relevant to building responsive product card grids.",
+            "length": "~20-40 min (video)"
+          },
+          {
+            "title": "Create and use variants (Figma Learn)",
+            "type": "doc",
+            "url": "https://help.figma.com/hc/en-us/articles/360056440594-Create-and-use-variants",
+            "why": "Official reference for grouping similar components into a single component set with variant properties (size, state, color). The authoritative source for organizing a component library correctly.",
+            "length": "~15 min read"
+          },
+          {
+            "title": "Explore component properties (Figma Learn)",
+            "type": "doc",
+            "url": "https://help.figma.com/hc/en-us/articles/5579474826519-Explore-component-properties",
+            "why": "Official reference for the component property types (boolean, instance swap, text, variant) and applying them to nested layers. Core skill for building flexible, configurable components the way real teams do.",
+            "length": "~20 min read"
+          },
+          {
+            "title": "Figma tutorial: Component properties (Figma official YouTube)",
+            "type": "youtube",
+            "url": "https://www.youtube.com/watch?v=iIq8FLt1hUY",
+            "why": "Short official walkthrough demonstrating each component property type in practice. Pairs well with the docs above; good for an intern who learns better by watching the panel in action. (Runtime not machine-verified.)",
+            "length": "~5-10 min (video, unverified)"
+          },
+          {
+            "title": "Guide to variables in Figma (Figma Learn)",
+            "type": "doc",
+            "url": "https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma",
+            "why": "Verified official guide covering all variable types and the three main uses: design tokens/theming, advanced prototyping, and API workflows. The foundation to understand before any tokens video. Note: publishing variables to libraries requires a paid/education plan.",
+            "length": "~20 min read"
+          },
+          {
+            "title": "Update 1: Tokens, variables, and styles (Figma Learn)",
+            "type": "doc",
+            "url": "https://help.figma.com/hc/en-us/articles/18490793776023-Update-1-Tokens-variables-and-styles",
+            "why": "Verified official page clarifying the often-confusing relationship between design tokens, variables, and styles, and when to use each. Crucial conceptual grounding for juniors joining teams with token systems.",
+            "length": "~10 min read"
+          },
+          {
+            "title": "Design Tokens: How to Sync Design and Code in Figma (Figma resource library)",
+            "type": "article",
+            "url": "https://www.figma.com/resource-library/design-tokens/",
+            "why": "Official explainer connecting Figma variables to the broader design-token ecosystem and handoff to code, including naming taxonomy (e.g. category/role/variant). Good for understanding why tokens matter beyond the canvas.",
+            "length": "~10-15 min read"
+          },
+          {
+            "title": "Overview of variables, collections, and modes (Figma Learn)",
+            "type": "doc",
+            "url": "https://help.figma.com/hc/en-us/articles/14506821864087-Overview-of-variables-collections-and-modes",
+            "why": "Verified official page explaining collections and modes, the mechanism behind theming. Essential setup knowledge before building light/dark or brand themes.",
+            "length": "~10-15 min read"
+          },
+          {
+            "title": "Modes for variables (Figma Learn)",
+            "type": "doc",
+            "url": "https://help.figma.com/hc/en-us/articles/15343816063383-Modes-for-variables",
+            "why": "Verified official documentation for the exact dark-mode workflow: one collection with light (default) and dark modes, per-mode color values, applying variables once and toggling modes on frames. Directly covers the dark-mode-variants requirement and scales to a third theme without re-doing work.",
+            "length": "~15 min read"
+          },
+          {
+            "title": "Guide to prototyping in Figma (Figma Learn)",
+            "type": "doc",
+            "url": "https://help.figma.com/hc/en-us/articles/360040314193-Guide-to-prototyping-in-Figma",
+            "why": "Verified official prototyping starting point: hotspots, connections (noodles), triggers, actions, animations, and overlays. The reliable reference for building clickable flows.",
+            "length": "~20 min read"
+          },
+          {
+            "title": "Create interactive components with variants (Figma Learn)",
+            "type": "doc",
+            "url": "https://help.figma.com/hc/en-us/articles/360061175334-Create-interactive-components-with-variants",
+            "why": "Verified official guide for wiring variant-to-variant interactions (e.g. button default to hover to pressed) at the component level so prototypes work automatically on every instance. Bridges the components and prototyping topics.",
+            "length": "~15 min read"
+          },
+          {
+            "title": "Figma Tutorial for Beginners (free 3-hour course) - Flux Academy",
+            "type": "youtube",
+            "url": "https://www.youtube.com/@FluxAcademy",
+            "why": "Well-regarded free, project-based full beginner course (verified ~3 hours) by Ran Segall covering the interface, components, styles, variables, and auto layout by building a complete responsive website. Strong single-source onboarding for an intern. Link is the channel; search 'Flux 3-hour Figma' for the exact video.",
+            "length": "~3 hours (verified)"
+          },
+          {
+            "title": "Jesse Showalter - free Figma course (YouTube)",
+            "type": "youtube",
+            "url": "https://www.youtube.com/@JesseShowalter",
+            "why": "Popular free course (650k+ views per search) covering Figma basics through advanced features including auto layout, variants, and design systems. Good alternative teaching style to Flux for the same fundamentals. Link is the channel; browse for the Figma course playlist. (Exact runtime unverified.)",
+            "length": "Multi-part course (unverified total)"
+          },
+          {
+            "title": "Shopify Polaris - public retail design system",
+            "type": "doc",
+            "url": "https://polaris-react.shopify.com/",
+            "why": "Verified public, mature commerce design system (polaris.shopify.com 301-redirects here). Study its design foundations, components with usage do/don't guidance, tokens, content (voice/tone), and icons to see how a real retail team structures tokens and documents components. Note: Polaris is moving to web components and unifying across Admin/Checkout/Customer Accounts.",
+            "length": "Browse; budget 1-2 hrs"
+          },
+          {
+            "title": "Target's design system (Canvas / enterprise design system) - case studies",
+            "type": "article",
+            "url": "https://lizzb.com/canvas-tgt",
+            "why": "Substitute for the requested 'Target Hexagon': I could NOT verify a public design system named 'Hexagon' from Target, and design.target.com did not resolve (the public name is UNVERIFIED). Target's known systems are the internal Canvas (admin/enterprise) and Nicollet (guest-facing), which are not fully public. This designer case study plus Target's accessibility writeup are the best public windows into how a major US retailer structures its system. For a guaranteed-public second retail system, prefer Polaris or another open system instead.",
+            "length": "Browse; ~30-45 min"
+          }
+        ],
+        "sources": [
+          {
+            "title": "Guide to auto layout | Figma Learn",
+            "url": "https://help.figma.com/hc/en-us/articles/360040451373-Guide-to-auto-layout"
+          },
+          {
+            "title": "FD4B: Auto layout fundamentals | Figma Learn",
+            "url": "https://help.figma.com/hc/en-us/articles/31351261703063-FD4B-Auto-layout-fundamentals"
+          },
+          {
+            "title": "A Guide to Auto Layout: Best Practices, Tips & Tricks (Figma YouTube)",
+            "url": "https://www.youtube.com/watch?v=1odqpkfkDL8"
+          },
+          {
+            "title": "Config 2025: Structure your designs with Figma Grid (Figma YouTube)",
+            "url": "https://www.youtube.com/watch?v=j9-d1HskOxs"
+          },
+          {
+            "title": "Create and use variants | Figma Learn",
+            "url": "https://help.figma.com/hc/en-us/articles/360056440594-Create-and-use-variants"
+          },
+          {
+            "title": "Explore component properties | Figma Learn",
+            "url": "https://help.figma.com/hc/en-us/articles/5579474826519-Explore-component-properties"
+          },
+          {
+            "title": "Figma tutorial: Component properties (Figma YouTube)",
+            "url": "https://www.youtube.com/watch?v=iIq8FLt1hUY"
+          },
+          {
+            "title": "Guide to variables in Figma | Figma Learn",
+            "url": "https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma"
+          },
+          {
+            "title": "Update 1: Tokens, variables, and styles | Figma Learn",
+            "url": "https://help.figma.com/hc/en-us/articles/18490793776023-Update-1-Tokens-variables-and-styles"
+          },
+          {
+            "title": "Design Tokens: How to Sync Design and Code in Figma (resource library)",
+            "url": "https://www.figma.com/resource-library/design-tokens/"
+          },
+          {
+            "title": "Overview of variables, collections, and modes | Figma Learn",
+            "url": "https://help.figma.com/hc/en-us/articles/14506821864087-Overview-of-variables-collections-and-modes"
+          },
+          {
+            "title": "Modes for variables | Figma Learn",
+            "url": "https://help.figma.com/hc/en-us/articles/15343816063383-Modes-for-variables"
+          },
+          {
+            "title": "Guide to prototyping in Figma | Figma Learn",
+            "url": "https://help.figma.com/hc/en-us/articles/360040314193-Guide-to-prototyping-in-Figma"
+          },
+          {
+            "title": "Create interactive components with variants | Figma Learn",
+            "url": "https://help.figma.com/hc/en-us/articles/360061175334-Create-interactive-components-with-variants"
+          },
+          {
+            "title": "Flux Academy (YouTube channel) + 3-hour free Figma course",
+            "url": "https://www.youtube.com/@FluxAcademy"
+          },
+          {
+            "title": "Jesse Showalter (YouTube channel)",
+            "url": "https://www.youtube.com/@JesseShowalter"
+          },
+          {
+            "title": "Polaris (Shopify design system, redirected from polaris.shopify.com)",
+            "url": "https://polaris-react.shopify.com/"
+          },
+          {
+            "title": "Polaris unified and for the web (2025) - Shopify Partners blog",
+            "url": "https://www.shopify.com/partners/blog/polaris-unified-and-for-the-web"
+          },
+          {
+            "title": "Target Enterprise Design System (Canvas) - Lizz Brazen case study",
+            "url": "https://lizzb.com/canvas-tgt"
+          },
+          {
+            "title": "Target's Design System Incorporates Accessibility as Standard - NFB",
+            "url": "https://nfb.org/programs-services/center-excellence-nonvisual-access/strategic-nonvisual-accessibility-partnership/target"
+          }
+        ]
+      },
+      "aiResources": {
+        "topic": "Best current learning resources (2023-2026) for AI-assisted UX/product design workflows, prompt engineering for designers, using ChatGPT/Claude/Gemini as a design co-pilot and critical UX researcher, AI-assisted ideation, and AI image generation for design (including OpenAI's latest image generation).",
+        "resources": [
+          {
+            "title": "AI for UX: Articles, Videos, Reports (NN/g AI topic hub)",
+            "type": "Article + video hub (free)",
+            "url": "https://www.nngroup.com/topic/ai/",
+            "why": "Nielsen Norman Group is the most research-grounded, hype-resistant UX authority. This hub aggregates their free articles and short videos on AI in UX design, ideation, and research, including critical takes on AI's limits. Best single starting point for evidence-based guidance.",
+            "length": "Hub; articles ~6-12 min reads, videos ~3-8 min each"
+          },
+          {
+            "title": "AI for UX: Getting Started (NN/g)",
+            "type": "Article",
+            "url": "https://www.nngroup.com/articles/ai-ux-getting-started/",
+            "why": "A practical orientation to where AI fits across the UX workflow from the leading UX research firm. Good first read before diving into specific tools, prompts, or image generation.",
+            "length": "~8-12 min read"
+          },
+          {
+            "title": "CARE: Structure for Crafting AI Prompts (NN/g)",
+            "type": "Article",
+            "url": "https://www.nngroup.com/articles/careful-prompts/",
+            "why": "A designer-friendly prompting framework (Context, Ask, Rules, Examples) from NN/g, built specifically for UX work. Concrete, research-backed structure for getting reliable output from ChatGPT/Claude/Gemini.",
+            "length": "~8-10 min read"
+          },
+          {
+            "title": "Your AI UX Intern (NN/g video)",
+            "type": "YouTube/video",
+            "url": "https://www.nngroup.com/videos/your-ai-ux-intern/",
+            "why": "Short, credible video (Kate Moran) framing the right mental model for an AI design/research co-pilot: treat its work as a first pass, verify facts, give specific instructions. The core 'critical' stance, distilled.",
+            "length": "~3-6 minutes"
+          },
+          {
+            "title": "Use AI Responsibly in Analysis (NN/g video)",
+            "type": "YouTube/video",
+            "url": "https://www.nngroup.com/videos/use-ai-responsibly-in-analysis/",
+            "why": "Directly addresses using AI as a research thought partner during analysis while keeping critical thinking and interpretation human. Essential for the 'critical UX researcher' use case.",
+            "length": "~3-6 minutes"
+          },
+          {
+            "title": "Accelerating Research with AI (NN/g)",
+            "type": "Article",
+            "url": "https://www.nngroup.com/articles/research-with-ai/",
+            "why": "Practical, regularly-updated guide (updated Jan 2026) on how publicly available AI tools genuinely help UX researchers, and where human judgment must stay in the loop. Strong companion to the responsible-analysis video.",
+            "length": "~10-15 min read"
+          },
+          {
+            "title": "A Research Agenda for Generative AI in UX (NN/g, Raluca Budiu)",
+            "type": "Article",
+            "url": "https://www.nngroup.com/articles/genai-ux-research-agenda/",
+            "why": "Maps where generative AI reshapes UX research and design (planning studies, understanding users, evaluating designs) and flags risks like synthetic users. Strong framing for treating AI as a co-pilot with clear-eyed limits. Published June 20, 2025.",
+            "length": "~15-18 min read (~3,500-4,000 words)"
+          },
+          {
+            "title": "Anthropic's Interactive Prompt Engineering Tutorial (official, free)",
+            "type": "Hands-on course (GitHub)",
+            "url": "https://github.com/anthropics/prompt-eng-interactive-tutorial",
+            "why": "Free, official, hands-on. 9 chapters plus an advanced appendix: prompt structure, being clear and direct, role prompting, separating data from instructions, formatting output, step-by-step reasoning, examples, avoiding hallucinations, and building complex prompts. Strongest foundation for reliably using Claude; techniques transfer to ChatGPT/Gemini. A friendlier Google Sheets version exists.",
+            "length": "~2-4 hours self-paced"
+          },
+          {
+            "title": "Prompt Engineering Guide (DAIR.AI, promptingguide.ai)",
+            "type": "Reference site (free, open-source)",
+            "url": "https://www.promptingguide.ai/",
+            "why": "Comprehensive, free, model-agnostic reference covering zero-shot, few-shot, chain-of-thought, RAG, ReAct, and per-model notes for ChatGPT, Claude, and Gemini. Use it for depth beyond designer-specific tips. Core guide is free; the site also promotes a paid academy.",
+            "length": "Reference; browse 30-60 min, deeper sections longer"
+          },
+          {
+            "title": "OpenAI 4o Image Generation Guide (DAIR.AI / promptingguide.ai)",
+            "type": "Guide",
+            "url": "https://www.promptingguide.ai/guides/4o-image-generation",
+            "why": "Focused, free guide to prompting OpenAI's 4o image generation, useful for designers learning how to phrase prompts for text-in-image, layouts, and edits. Pairs well with OpenAI's own announcement and docs below.",
+            "length": "~15-20 min read"
+          },
+          {
+            "title": "Google Prompting Essentials (Coursera / Google Skills)",
+            "type": "Online course",
+            "url": "https://www.coursera.org/specializations/prompting-essentials-google",
+            "why": "Beginner-friendly, structured prompting course from Google, completable in under ~10 hours, teaching a clear 5-step prompting method usable with Gemini and other assistants. Note: certificate path is paid (~$49/mo after a 7-day free trial; financial aid available); auditing materials may be free.",
+            "length": "~9-10 hours"
+          },
+          {
+            "title": "Prompt engineering for designers (Figma Resource Library)",
+            "type": "Article",
+            "url": "https://www.figma.com/resource-library/prompt-engineering-for-designers/",
+            "why": "Designer-framed prompting guidance from a tool designers already use, grounding prompt concepts in concrete design tasks (copy, ideation, asset generation). Accessible bridge from prompt theory to daily design work. (Direct fetch was blocked this session; URL from search results, content unverified directly.)",
+            "length": "~10-15 min read"
+          },
+          {
+            "title": "Prompt Engineering Guide for UX/UI Designers (UXPin)",
+            "type": "Article",
+            "url": "https://www.uxpin.com/studio/blog/prompt-engineering-for-designers/",
+            "why": "Designer-specific walkthrough of structuring prompts for research, wireframing, content, and accessibility tasks, with practical examples. Solid practitioner complement to the model-agnostic guides.",
+            "length": "~10-15 min read"
+          },
+          {
+            "title": "Using AI for UX Design is Awesome - Crash Course (DesignCourse, YouTube)",
+            "type": "YouTube/video",
+            "url": "https://www.youtube.com/watch?v=prVP_M0j3uQ",
+            "why": "Free ~49-minute crash course showing how to use GPT-4 to produce real UX deliverables end-to-end: target audience, user personas, information architecture, user flows, copy, testimonials, FAQs, and color schemes. Highly practical AI-assisted-workflow demo. (Also indexed on Class Central.)",
+            "length": "~49 minutes"
+          },
+          {
+            "title": "AI for Designers (Ioana Teleanu - YouTube)",
+            "type": "YouTube channel/playlist",
+            "url": "https://www.youtube.com/@ioanateleanu",
+            "why": "Ioana Teleanu is a prominent AI product designer (Lead Product Designer for AI at Miro; previously UiPath Clipboard AI) and design educator who publishes free videos on integrating AI into UX workflows and designing AI products. Good free, designer-specific video learning. Specific video titles/lengths vary; browse the channel.",
+            "length": "Channel; videos typically ~10-20 min each"
+          },
+          {
+            "title": "How to use ChatGPT for UX Research (with examples) (Eleken)",
+            "type": "Article",
+            "url": "https://www.eleken.co/blog-posts/how-to-use-chatgpt-as-a-ux-researcher",
+            "why": "Concrete, example-driven walkthrough of using ChatGPT across the research process (interview guides, personas, transcript analysis, pattern-finding) while stressing human oversight and bias-checking. Practical companion to the NN/g critical pieces.",
+            "length": "~10-15 min read"
+          },
+          {
+            "title": "19 ChatGPT prompts for faster, better UX research (LogRocket)",
+            "type": "Article",
+            "url": "https://blog.logrocket.com/ux-design/19-chatgpt-prompts-for-faster-better-ux-research/",
+            "why": "A ready-to-use prompt library for UX research tasks (planning, screeners, interview questions, synthesis). Quick, copy-pasteable starting points to operationalize AI-as-research-co-pilot.",
+            "length": "~12-15 min read"
+          },
+          {
+            "title": "How to use AI for ideation and brainstorming (IDEO U)",
+            "type": "Article",
+            "url": "https://www.ideou.com/blogs/inspiration/ai-brainstorming",
+            "why": "IDEO is a canonical design-thinking authority. Practical techniques for using AI as a divergent-thinking partner, breaking creative blocks, and combining AI output with human judgment, the core AI-assisted-ideation use case. (Content not directly fetched this session; URL from search results.)",
+            "length": "~6-8 min read"
+          },
+          {
+            "title": "Introducing 4o Image Generation (OpenAI, official announcement)",
+            "type": "Article (primary source)",
+            "url": "https://openai.com/index/introducing-4o-image-generation/",
+            "why": "Primary source for OpenAI's natively multimodal image generation (announced March 25, 2025). Covers capabilities most relevant to designers: accurate in-image text rendering, strong prompt-following, photorealism, multi-turn conversational editing, and using uploaded images as references. (Page returned a fetch block this session; URL confirmed via multiple OpenAI search results.)",
+            "length": "~10 min read"
+          },
+          {
+            "title": "Introducing our latest image generation model in the API / gpt-image-1 (OpenAI)",
+            "type": "Article (primary source)",
+            "url": "https://openai.com/index/image-generation-api/",
+            "why": "OpenAI's announcement of gpt-image-1 in the API (April 2025), the model behind 4o image generation, noting high-resolution output, instruction-following, text rendering, and partners exploring it (e.g., Canva). Important for designers wanting to build image generation into tools/workflows.",
+            "length": "~8-10 min read"
+          },
+          {
+            "title": "Image generation guide (OpenAI API docs, gpt-image-1)",
+            "type": "Documentation",
+            "url": "https://platform.openai.com/docs/guides/image-generation",
+            "why": "Official, current how-to for generating and editing images via gpt-image-1, covering Generations and Edits endpoints, sizes/quality, and image edits. The authoritative reference for scripting mockups/assets and iterative editing. Note: third-party reports indicate OpenAI later shipped GPT Image 1.5 (reportedly Dec 16, 2025) with faster, more precise edits, verify current model naming in the live docs.",
+            "length": "~15-20 min read; reference"
+          },
+          {
+            "title": "Generate images with GPT Image (OpenAI Cookbook)",
+            "type": "Tutorial / code examples",
+            "url": "https://cookbook.openai.com/examples/generate_images_with_gpt_image",
+            "why": "Hands-on, official code walkthrough for generating and editing images with GPT Image, plus a companion prompting guide. Best practical resource for designers/design-engineers building production image workflows rather than chat-only generation.",
+            "length": "~20-30 min hands-on"
+          },
+          {
+            "title": "Creating images with ChatGPT (OpenAI Academy)",
+            "type": "Course / guide (free)",
+            "url": "https://openai.com/academy/image-generation/",
+            "why": "OpenAI's own free, beginner-friendly guide to generating images in ChatGPT, with prompting tips for clear, specific visual descriptions. A no-code on-ramp before moving to the API/Cookbook for design production.",
+            "length": "~30-45 min"
+          }
+        ],
+        "sources": [
+          {
+            "title": "NN/g - AI Articles, Videos, Reports (topic hub)",
+            "url": "https://www.nngroup.com/topic/ai/"
+          },
+          {
+            "title": "NN/g - AI for UX: Getting Started",
+            "url": "https://www.nngroup.com/articles/ai-ux-getting-started/"
+          },
+          {
+            "title": "NN/g - CARE: Structure for Crafting AI Prompts",
+            "url": "https://www.nngroup.com/articles/careful-prompts/"
+          },
+          {
+            "title": "NN/g - Your AI UX Intern (video)",
+            "url": "https://www.nngroup.com/videos/your-ai-ux-intern/"
+          },
+          {
+            "title": "NN/g - Use AI Responsibly in Analysis (video)",
+            "url": "https://www.nngroup.com/videos/use-ai-responsibly-in-analysis/"
+          },
+          {
+            "title": "NN/g - Accelerating Research with AI",
+            "url": "https://www.nngroup.com/articles/research-with-ai/"
+          },
+          {
+            "title": "NN/g - A Research Agenda for Generative AI in UX (Raluca Budiu, Jun 20 2025)",
+            "url": "https://www.nngroup.com/articles/genai-ux-research-agenda/"
+          },
+          {
+            "title": "NN/g - AI-Assisted Prototyping: Promise and Pitfalls (video)",
+            "url": "https://www.nngroup.com/videos/ai-assisted-prototyping/"
+          },
+          {
+            "title": "NN/g - Using AI for UX Work: Study Guide",
+            "url": "https://www.nngroup.com/articles/ai-work-study-guide/"
+          },
+          {
+            "title": "Anthropic - Interactive Prompt Engineering Tutorial (GitHub)",
+            "url": "https://github.com/anthropics/prompt-eng-interactive-tutorial"
+          },
+          {
+            "title": "DAIR.AI - Prompt Engineering Guide",
+            "url": "https://www.promptingguide.ai/"
+          },
+          {
+            "title": "DAIR.AI - OpenAI 4o Image Generation Guide",
+            "url": "https://www.promptingguide.ai/guides/4o-image-generation"
+          },
+          {
+            "title": "Google Prompting Essentials (Coursera)",
+            "url": "https://www.coursera.org/specializations/prompting-essentials-google"
+          },
+          {
+            "title": "Google AI Essentials (Coursera)",
+            "url": "https://www.coursera.org/specializations/ai-essentials-google"
+          },
+          {
+            "title": "Figma - Prompt engineering for designers",
+            "url": "https://www.figma.com/resource-library/prompt-engineering-for-designers/"
+          },
+          {
+            "title": "UXPin - Prompt Engineering Guide for UX/UI Designers",
+            "url": "https://www.uxpin.com/studio/blog/prompt-engineering-for-designers/"
+          },
+          {
+            "title": "DesignCourse - Using AI for UX Design is Awesome (YouTube)",
+            "url": "https://www.youtube.com/watch?v=prVP_M0j3uQ"
+          },
+          {
+            "title": "Class Central - Using AI for UX Design is Awesome (crash course listing)",
+            "url": "https://www.classcentral.com/course/youtube-using-ai-for-ux-design-is-awesome-crash-course-159720"
+          },
+          {
+            "title": "Ioana Teleanu - YouTube channel",
+            "url": "https://www.youtube.com/@ioanateleanu"
+          },
+          {
+            "title": "Eleken - How to use ChatGPT for UX Research (with examples)",
+            "url": "https://www.eleken.co/blog-posts/how-to-use-chatgpt-as-a-ux-researcher"
+          },
+          {
+            "title": "LogRocket - 19 ChatGPT prompts for faster, better UX research",
+            "url": "https://blog.logrocket.com/ux-design/19-chatgpt-prompts-for-faster-better-ux-research/"
+          },
+          {
+            "title": "Askable - A human-centred guide to using ChatGPT for UX research",
+            "url": "https://www.askable.com/blog/chatgpt-ux-research"
+          },
+          {
+            "title": "IDEO U - How to use AI for ideation and brainstorming",
+            "url": "https://www.ideou.com/blogs/inspiration/ai-brainstorming"
+          },
+          {
+            "title": "OpenAI - Introducing 4o Image Generation (Mar 25 2025)",
+            "url": "https://openai.com/index/introducing-4o-image-generation/"
+          },
+          {
+            "title": "OpenAI - Introducing our latest image generation model in the API (gpt-image-1)",
+            "url": "https://openai.com/index/image-generation-api/"
+          },
+          {
+            "title": "OpenAI API - Image generation guide (gpt-image-1)",
+            "url": "https://platform.openai.com/docs/guides/image-generation"
+          },
+          {
+            "title": "OpenAI Cookbook - Generate images with GPT Image",
+            "url": "https://cookbook.openai.com/examples/generate_images_with_gpt_image"
+          },
+          {
+            "title": "OpenAI Academy - Creating images with ChatGPT",
+            "url": "https://openai.com/academy/image-generation/"
+          }
+        ]
+      }
+    }

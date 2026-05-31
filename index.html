@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>watermellie // workspace</title>
+  <meta name="description" content="watermellie intern workspace — dashboard, work, personal." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header id="topbar">
+    <nav id="nav" aria-label="Primary">
+      <a id="brand" href="https://watermellie.com" target="_blank" rel="noopener">watermellie</a>
+      <span class="nav-sep">//</span>
+      <a class="nav-link" data-route="dashboard" href="#dashboard">dashboard</a>
+      <span class="nav-slash">/</span>
+      <a class="nav-link" data-route="work" href="#work">work</a>
+      <span class="nav-slash">/</span>
+      <a class="nav-link" data-route="personal" href="#personal">personal</a>
+    </nav>
+    <div id="topdate" aria-live="off"></div>
+    <div id="topright">
+      <button id="settings-btn" class="icon-btn" title="Settings" aria-label="Settings"></button>
+    </div>
+  </header>
+
+  <main id="view"><!-- route content injected here --></main>
+
+  <!-- Generic modal -->
+  <div id="modal" hidden>
+    <div class="modal-scrim" data-close></div>
+    <div class="modal-box" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h2 id="modal-title">Title</h2>
+        <button class="icon-btn" data-close aria-label="Close">✕</button>
+      </div>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js" defer></script>
+  <script src="curriculum.js" defer></script>
+</body>
+</html>
