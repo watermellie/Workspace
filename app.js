@@ -642,7 +642,7 @@
     let timer, afterSave = null;
     const flush = () => {
       data.meta.updatedAt = Date.now();
-      try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch (e) { console.error(e); toast('storage full — could not save'); }
+      try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch (e) { console.error(e); toast('storage full — export a backup, then delete some photos (Settings → storage)'); }
       try { afterSave && afterSave(); } catch (e) { console.error(e); }
     };
     const save = (immediate = false) => {
@@ -1028,8 +1028,9 @@
     return wrap;
   }
 
-  /* downscale + recompress images so months of photos don't blow the storage budget */
-  function compressImage(dataURL, done, maxEdge = 1400, quality = 0.82) {
+  /* downscale + recompress images so months of photos don't blow the storage budget.
+     iOS Safari caps localStorage at ~5MB, so keep images small (base64 lives in that blob). */
+  function compressImage(dataURL, done, maxEdge = 1000, quality = 0.7) {
     const img = new Image();
     img.onload = () => {
       let w = img.width, h = img.height;
@@ -2999,6 +3000,19 @@
             el('button', { class:'btn blue sm', text:'export backup (.json)', onclick: exportData }),
             el('button', { class:'btn ghost sm', text:'import backup', onclick: () => importData(close) }),
           ]) ]),
+
+        (() => {
+          const used = ((localStorage.getItem(LS_KEY) || '').length) / 1024;   // ~KB (chars≈bytes)
+          const pct = Math.min(100, Math.round(used / 5120 * 100));            // iOS Safari ≈ 5 MB cap
+          const r = el('div', { class:'modal-row' });
+          r.append(
+            el('label', { text:'Storage' }),
+            el('div', { style:'font-size:12px;color:var(--ink-soft)', html:
+              `using <b>${used > 1024 ? (used/1024).toFixed(1)+' MB' : Math.round(used)+' KB'}</b> of your browser’s ~5&nbsp;MB limit (~${pct}%). ` +
+              'pasted photos &amp; lesson screenshots take the most space — if you hit "storage full," <b>export a backup</b> first, then delete a few images from notes/lessons.' }),
+          );
+          return r;
+        })(),
 
         syncSettings(),
 
