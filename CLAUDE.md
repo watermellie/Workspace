@@ -37,8 +37,9 @@ There is **no build and no test runner**. To run: open `index.html` in a browser
 The file is organized into numbered sections:
 
 1. **Constants** — `LS_KEY`, `ROLLOVER_HOUR` (3 AM), tag lists, `GYM_CHECKLIST`,
-   `JOURNAL_PROMPTS`, `CURRICULUM_BASE` (the WSI track: Day 0 orientation + Days 1–10, Day 10 is a
-   capstone), and `FINANCE_BASE` (a separate, fully-inline financial-literacy track).
+   `JOURNAL_PROMPTS`, `CURRICULUM_BASE` (the WSI track: Day 0 orientation + Days 1–11; Day 9 is User
+   Research & Usability Testing; Day 11 is a capstone), and `FINANCE_BASE` (a separate, fully-inline
+   financial-literacy track).
 2. **Helpers** — `$`/`$$`, `el()` (declarative DOM builder — learn this, it's used everywhere),
    `dKey`/`todayKey`/`logicalDate` (the 3 AM rollover lives here), date math
    (`addDays`/`daysBetween`/`parseKey`), date/time formatters.
@@ -94,19 +95,21 @@ Note = { id, html, checklist:[{id,html,done}]|null, images:[{src,caption}], x, y
 
 ## Curriculum content pipeline
 
-`CURRICULUM_BASE` (in `app.js`) holds the WSI track — Day 0 orientation + Days 1–10 — as
+`CURRICULUM_BASE` (in `app.js`) holds the WSI track — Day 0 orientation + Days 1–11 — as
 titles/concepts/outputs. The rich content (step-by-step plans with time estimates, real YouTube/doc
-resources, Figma exercises, feedback criteria, WSI context) for Days 1–10 lives in **`curriculum.js`**
+resources, Figma exercises, feedback criteria, WSI context) for the curriculum.js-backed days lives in **`curriculum.js`**
 — an auto-generated file loaded by `index.html` right after `app.js`. It calls
 `window.__applyCurriculum(richArray)`, which merges each entry into `CURRICULUM_BASE` **by matching
 `day` value** (not array index — so prepending Day 0 was safe). Load order is handled both ways: if
 `curriculum.js` runs first it parks data on `window.__pendingCurriculum` and `app.js` drains it at
 the end of its IIFE.
 
-Two lessons are authored **fully inline in `app.js`** instead of `curriculum.js`: **Day 0** (the
-orientation/landscape lesson) and the **entire `FINANCE_BASE` finance track** (5 lessons). Edit those
-directly in `CURRICULUM_BASE` / `FINANCE_BASE`. Day 10 is a capstone (portfolio story + return-offer
-pitch), not the old "code integration" lesson.
+Some lessons are authored **fully inline in `app.js`** instead of `curriculum.js`: **Day 0**
+(orientation/landscape), **Day 9** (user research & usability testing), and the **entire
+`FINANCE_BASE` finance track** (5 lessons). Edit those directly in `CURRICULUM_BASE` / `FINANCE_BASE`.
+Day 11 is a capstone (portfolio story + return-offer pitch), not the old "code integration" lesson.
+When inserting a WSI lesson, renumber `day` in BOTH `CURRICULUM_BASE` and the matching `curriculum.js`
+entries (merge is by `day` value), and keep ids stable for already-saved state.
 
 `curriculum.js` was produced by the `wsi-internship-research` workflow (see `research/research.json`
 for the raw source data and `docs/` for the synthesized audit/primer/playbook). To regenerate:

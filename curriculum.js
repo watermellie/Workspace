@@ -984,7 +984,7 @@
         ]
       },
       {
-        "day": 9,
+        "day": 10,
         "week": 2,
         "title": "The Final Pitch Prep & Portfolio Scaffolding",
         "coreConcept": "Set up your documentation framework before day one. A portfolio case study is won or lost in how you capture evidence as the work happens, not in a frantic write-up at the end. Today you build an empty, ready-to-fill case-study scaffold with sections (Problem, Research, Business Constraints, Iterations, Metrics Impact) plus empty states and prompts, so that when your real Williams-Sonoma, Inc. summer project starts, every artifact, decision, and metric has a pre-built home.",
@@ -1109,7 +1109,7 @@
         ]
       },
       {
-        "day": 10,
+        "day": 11,
         "week": 2,
         "title": "Capstone: Your Portfolio Story & Return-Offer Pitch",
         "coreConcept": "The prep is done — now you learn to TELL it. A portfolio is only as strong as your ability to walk someone through your thinking out loud, and a summer internship converts to a full-time offer when you can show measurable impact and a point of view, not just screens. Today you synthesize the week's artifacts (your Day 0 landscape map, brand teardown, checkout fix, navigation redesign, metrics work) into a tight 3-artifact portfolio story, rehearse presenting it the way a real portfolio review or design critique runs, translate each outcome into a Google X-Y-Z impact bullet, and draft a return-offer game plan so you walk into June 10 with direction instead of nerves. This deliberately replaces 'build another interface' — you already practiced UI craft in Days 5–7 — with the skill that actually wins the offer: communicating design value.",
@@ -1146,7 +1146,7 @@
           {
             "title": "Curate your 3-artifact story",
             "time": "40 min",
-            "detail": "You have a week of artifacts — now pick the THREE that together show range, and drop them into your Day 9 case-study scaffold. A strong trio: (1) the Day 0 competitive landscape map (shows strategic literacy — you understand the business and the field), (2) a craft piece — your Day 4 checkout micro-fixes OR the Day 6 cross-brand nav redesign (shows you can actually design the screen), and (3) the Day 8 metrics work (shows you tie design to business outcomes). For each, write a single-sentence PROBLEM and a single-sentence IMPACT now. Resist adding more than three — a focused story beats a tour of everything. This is the through-line you'll present and, later, the spine of your real summer case study.",
+            "detail": "You have a week of artifacts — now pick the THREE that together show range, and drop them into your Day 10 case-study scaffold. A strong trio: (1) the Day 0 competitive landscape map (shows strategic literacy — you understand the business and the field), (2) a craft piece — your Day 4 checkout micro-fixes OR the Day 6 cross-brand nav redesign (shows you can actually design the screen), and (3) the Day 8 metrics work (shows you tie design to business outcomes). For each, write a single-sentence PROBLEM and a single-sentence IMPACT now. Resist adding more than three — a focused story beats a tour of everything. This is the through-line you'll present and, later, the spine of your real summer case study.",
             "resources": [
               {
                 "title": "Portfolio Presentation for UX Design Internship Interviews — UX Planet",
