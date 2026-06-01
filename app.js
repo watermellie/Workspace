@@ -68,6 +68,81 @@
   ];
 
   const CURRICULUM_BASE = [
+    {
+      day: 0, week: 1,
+      title: 'The WSI Universe: Brands, Buyers & the 2026 AI Landscape',
+      coreConcept: `Before you deconstruct a single brand or design a single screen, you need the map of the territory. Williams-Sonoma, Inc. is a "house of brands" competing across price tiers and life stages, ringed by a direct rival (Crate & Barrel) and indirect ones (Muji, IKEA) — each placing a different bet on price, digital value, and 2026 AI/spatial tech. This orientation hands you the strategic context the rest of the curriculum quietly assumes: who each brand serves, where it sits on price and digital-value, and how AI (Olive, Design Services 3.0, AR/3D planners, IKEA Kreativ) is reshaping the category. A designer who can hold this whole landscape in their head designs decisions, not just screens.`,
+      objectives: [
+        'Explain the positioning of all six brands in the landscape — the WSI core three (Williams Sonoma, Pottery Barn, West Elm) plus Crate & Barrel, Muji, and IKEA — across target demographic, price point, and core digital value proposition.',
+        'Plot the brands on a two-axis positioning (perceptual) map and articulate where WSI’s banners cluster, where competitors apply pressure, and where there is whitespace.',
+        'Distinguish direct (Crate & Barrel) from indirect (Muji, IKEA) competitors and explain why each still matters to a WSI UX designer.',
+        'Summarize each brand’s 2026 AI/tech footprint (Olive, Design Services 3.0 generative planning, mobile/social acquisition, spatial computing/AR, IKEA Kreativ) and what it signals about where the category is heading.',
+        'Produce a one-page competitive landscape map + positioning matrix you keep as a reference for the rest of the curriculum.',
+      ],
+      wsiContext: `Williams-Sonoma, Inc. deliberately runs a "house of brands," not a single label: Williams Sonoma (premium culinary authority, ages 30–65, high-frequency gift + registry buyers), Pottery Barn (premium-mainstream American-casual heritage for affluent suburban families 30–55), and West Elm (accessible-premium mid-century-modern for urban professionals and first-time buyers 25–40). Each banner owns a different life stage and price tier so the portfolio covers the customer's whole lifetime without the brands cannibalizing each other. Around them: Crate & Barrel is the closest DIRECT competitor (overlaps both PB and West Elm, mid-high price, investing hard in proprietary spatial/AR visualization); Muji and IKEA are INDIRECT — different price floors and value props (Muji = low-mid, unbranded functional calm; IKEA = low, mass-market modular self-service with AI room scanning) — but they shape category-wide expectations for what "designing a room online" should feel like. The 2026 throughline is that AI is moving from search to intent and from flat catalogs to spatial: WSI's bet is Olive, an AI culinary companion that leans on category authority to guide intent, while competitors bet on spatial computing. Knowing this map is what lets you argue why a given UX decision fits WSI's strategy rather than a competitor's.`,
+      steps: [
+        {
+          title: 'Internalize the landscape: build your six-brand reference table',
+          time: '30 min',
+          detail: `Recreate the competitive landscape as your own one-page table with five columns — Brand · Target demographic · Price point · Core digital value proposition · 2026 AI/tech footprint — and six rows: Williams Sonoma, Pottery Barn, West Elm, Crate & Barrel, Muji, IKEA. Fill it from the briefing data and the docs below, but rewrite every cell in your own words (copying teaches nothing). As you go, mark each brand DIRECT or INDIRECT to WSI and jot a one-line "why it matters." Pay attention to the deliberate spread: WSI's three banners ladder up a price/life-stage curve (West Elm → Pottery Barn → Williams Sonoma) while Crate & Barrel sits right on top of the PB/West Elm overlap, and Muji/IKEA anchor the value floor. This table is the backbone of everything you build today.`,
+          resources: [
+            { title: 'Williams-Sonoma, Inc. — Wikipedia (portfolio, brands, revenue, strategy)', type: 'doc', url: 'https://en.wikipedia.org/wiki/Williams-Sonoma,_Inc.' },
+            { title: 'West Elm — Wikipedia (mid-century-modern, Millennial target, sustainability)', type: 'doc', url: 'https://en.wikipedia.org/wiki/West_Elm' },
+            { title: 'Pottery Barn Marketing Strategy (positioning, good-better-best, segments)', type: 'doc', url: 'https://www.latterly.org/pottery-barn-marketing-strategy/' },
+            { title: 'MUJI — the global strategy behind the Japanese "no-brand brand" (Martin Roll)', type: 'article', url: 'https://martinroll.com/resources/articles/strategy/muji-the-global-strategy-behind-the-japanese-no-brand-brand/' },
+          ],
+        },
+        {
+          title: 'Learn the tool: competitive analysis & positioning maps for UX',
+          time: '40 min',
+          detail: `A landscape table lists facts; a competitive analysis turns them into a point of view. Watch the two videos to learn (1) how UX designers actually run a competitive analysis and (2) how a perceptual/positioning map converts attributes into a picture you can act on. Then skim the NN/g and Baymard pieces for the rigor: pick task-based, comparable dimensions; separate "direct" from "indirect" competitors; look for patterns, gaps, and conventions rather than just screenshotting. Note the core idea of a positioning map: choose two axes that genuinely matter to the buyer, place each brand by where customers perceive it, and read the clusters (crowded = competitive, empty = whitespace or no-demand). Write down the two axes you'll use in the next step.`,
+          resources: [
+            { title: 'Competitive Analysis Guide for UX Designers (YouTube)', type: 'video', url: 'https://www.youtube.com/watch?v=Vl0m3Y3hg80' },
+            { title: 'Perceptual Mapping & Product Positioning Explained (YouTube)', type: 'video', url: 'https://www.youtube.com/watch?v=xJUrBylId7I' },
+            { title: 'Competitive Usability Evaluations — Nielsen Norman Group', type: 'doc', url: 'https://www.nngroup.com/articles/competitive-usability-evaluations/' },
+            { title: 'The Step-by-Step Guide to UX Competitive Analysis — Baymard', type: 'doc', url: 'https://baymard.com/learn/competitive-analysis-ux' },
+          ],
+        },
+        {
+          title: 'Map the territory: plot the positioning matrix',
+          time: '45 min',
+          detail: `On paper or in Figma, draw two axes and place all six brands as labeled dots. A strong pairing for this category: X = price tier (value → premium) and Y = digital value proposition (functional/utility ↔ experiential/aspirational). Place Williams Sonoma (premium + experiential, anchored by culinary authority and content), Pottery Barn (premium-mainstream, experiential-heritage), West Elm (mid, editorial/trend-forward but more transactional and mobile-social), Crate & Barrel (mid-high, leaning experiential via polished spatial tools), Muji (low-mid, deliberately functional/calm), and IKEA (low, highly functional/self-service). Now read the map like an analyst: Where do WSI's three banners cluster, and is the spacing between them healthy or do any overlap/cannibalize? Where does Crate & Barrel sit relative to PB and West Elm (this is your direct-threat zone)? Is there visible whitespace no one owns? Annotate 2–3 observations directly on the map — these become your insight callouts.`,
+          resources: [
+            { title: 'How to Use Perceptual Mapping to Assess Your Competition — HBS Online', type: 'doc', url: 'https://online.hbs.edu/blog/post/perceptual-map' },
+          ],
+        },
+        {
+          title: 'Decode the 2026 AI / tech footprint',
+          time: '40 min',
+          detail: `Add an AI lens to your map. For each brand, name its 2026 bet and what it reveals about strategy: Williams Sonoma → Olive, an AI culinary companion that uses category authority to understand intent and guide lifestyle/cooking problems (intent + content, not just visualization); Pottery Barn → Design Services 3.0, where store associates use generative space-planning tools (human + AI hybrid service); West Elm → a rapid, mobile/social-optimized acquisition funnel (speed-to-cart for younger buyers); Crate & Barrel → proprietary spatial-computing / AR visualization apps (own the in-room preview); IKEA → IKEA Kreativ, AI/computer-vision room scanning that erases and re-furnishes your real space (mass-market spatial); Muji → light personalization that leans on the physical store and product calm rather than software. The strategic read: the category is splitting into an intent/authority bet (WSI/Olive) and a spatial/visualization bet (Crate & Barrel, IKEA). Capture, in two sentences, where WSI is differentiated and where it is exposed.`,
+          resources: [
+            { title: 'Williams-Sonoma aims to infuse product authority into AI experiences (Olive, CTO on "category authority")', type: 'article', url: 'https://www.customerexperiencedive.com/news/williams-sonoma-product-authority-ai-experience/815133/' },
+            { title: 'IKEA launches AI-powered IKEA Kreativ — Scene Scanner room design (IKEA newsroom)', type: 'article', url: 'https://www.ikea.com/us/en/newsroom/corporate-news/ikea-launches-new-ai-powered-digital-experience-empowering-customers-to-create-lifelike-room-designs-pub58c94890/' },
+            { title: 'View in Your Room — Crate & Barrel augmented reality (the spatial bet, hands-on)', type: 'doc', url: 'https://www.crateandbarrel.com/special-features/augmented-reality/' },
+          ],
+        },
+        {
+          title: 'Build the one-page landscape map in Figma',
+          time: '45 min',
+          detail: `Assemble your work into one reusable reference frame. Compose three regions: (1) the POSITIONING MAP — two labeled axes with all six brands as dots, WSI's three banners visually distinguished (e.g., one accent color) from competitors (a neutral); (2) a compact COMPARISON TABLE — the six rows × five columns from Step 1, tightened to phrases not paragraphs; (3) 2–3 INSIGHT CALLOUTS — short "so what" statements that tie the map to a UX implication for WSI (a strength to protect, a Crate & Barrel threat, or a whitespace opportunity). Keep type and spacing clean and consistent (this is a reference you'll reopen all curriculum long). Export a PNG and grab the Figma share link for your dashboard submission.`,
+          resources: [
+            { title: 'UX Competitive Analysis — template & example (UXtweak)', type: 'doc', url: 'https://blog.uxtweak.com/competitive-analysis-in-ux-research/' },
+          ],
+        },
+      ],
+      figmaExercise: {
+        brief: `Build a single-frame "WSI Competitive Landscape" reference in Figma with three parts: (a) a POSITIONING MAP with two clearly-labeled axes (suggested: price tier value→premium on X, functional↔experiential digital value on Y) and all six brands plotted as labeled dots, with WSI's three banners visually distinct from the three competitors; (b) a COMPARISON TABLE of six rows (Williams Sonoma, Pottery Barn, West Elm, Crate & Barrel, Muji, IKEA) × five columns (target demographic, price point, core digital value proposition, direct/indirect, 2026 AI/tech bet); and (c) 2–3 INSIGHT CALLOUTS that each connect the map to a concrete UX implication for WSI (a strength to protect, a competitor threat, or a whitespace opportunity). Keep it clean, consistent, and reference-grade — you'll reopen this throughout the curriculum.`,
+        deliverable: 'A one-frame Figma "WSI Competitive Landscape" (positioning map + comparison table + 2–3 insight callouts). Upload a screenshot (PNG) AND the Figma share link to your dashboard.',
+      },
+      output: 'A one-page WSI competitive landscape reference (Figma): a two-axis positioning map of all six brands, a six-row comparison table, and 2–3 strategic insight callouts — kept as a reference for the rest of the curriculum.',
+      feedbackCriteria: [
+        'All six brands are plotted on a positioning map with two clearly-labeled axes, and WSI’s three banners are visually distinguishable from the three competitors.',
+        'The comparison table accurately captures each brand’s target demographic, price point, and core digital value proposition — matching the landscape data, with no invented facts.',
+        'Direct vs. indirect competitors are correctly identified (Crate & Barrel = direct; Muji + IKEA = indirect) with a one-line rationale for each.',
+        'Each brand’s 2026 AI/tech bet is named correctly (Olive; Design Services 3.0 generative planning; West Elm mobile/social acquisition; Crate & Barrel spatial/AR; IKEA Kreativ AI room scan; Muji minimal personalization + physical store).',
+        'At least two "so what" insight callouts connect the map to a specific UX implication for WSI (a strength, a threat, or a whitespace opportunity) — not generic observations.',
+      ],
+    },
     { day:1, week:1, title:'Brand Deconstruction & The Phygital Experience',
       coreConcept:'Understand the distinct brand identities and spatial footprints of WSI vs its competitors.',
       output:'A 3-slide comparative teardown deck mapping store atmosphere to web UI tone for WSI’s core three brands.' },
@@ -2405,7 +2480,7 @@
      ========================================================== */
   window.__applyCurriculum = (rich) => {
     if (!Array.isArray(rich)) return;
-    rich.forEach(r => { const i = r.day - 1; if (CURRICULUM_BASE[i]) Object.assign(CURRICULUM_BASE[i], r); });
+    rich.forEach(r => { const L = CURRICULUM_BASE.find(x => x.day === r.day); if (L) Object.assign(L, r); });
     window.__curriculumApplied = true;
     if (parseHash().route === 'work') render();
   };
