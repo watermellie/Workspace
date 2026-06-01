@@ -220,9 +220,34 @@ input.field:focus, select.field:focus, textarea.field:focus { border-color: var(
 .note-head, .note-resize, .fw-head { touch-action: none; }
 
 /* doodle layer — full-surface SVG overlay; inert until pen mode, then captures touch */
-.doodle-layer { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
-.canvas-surface.drawing { touch-action: none; }
-.canvas-surface.drawing .doodle-layer { pointer-events: all; z-index: 20; touch-action: none; cursor: crosshair; }
+/* ── Pen: strokes drawn on individual notes ── */
+.note-doodle { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; overflow: hidden; border-radius: var(--radius); }
+body.pen-mode .note { cursor: crosshair; outline: 1.5px dashed var(--blue); outline-offset: 2px; }
+body.pen-mode .note .note-rich, body.pen-mode .note .chk-row { cursor: crosshair; }
+body.pen-mode .note-doodle { pointer-events: all; touch-action: none; cursor: crosshair; }
+
+/* shared pen toolbar (bottom) */
+#draw-bar {
+  position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 16px;
+  padding: 9px 12px; max-width: min(94vw, 460px); z-index: 80;
+  box-shadow: 0 8px 30px rgba(0,0,0,.16); animation: stickbar .18s var(--ease);
+}
+.draw-hint { font-size: 11px; color: var(--ink-soft); white-space: nowrap; }
+.draw-swatches { display: flex; gap: 6px; }
+.draw-sw { width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; transition: transform .12s var(--ease); }
+.draw-sw:hover { transform: scale(1.12); }
+.draw-sw.on { border-color: var(--ink); transform: scale(1.12); }
+.draw-tool {
+  width: 30px; height: 30px; display: inline-grid; place-items: center;
+  border: 1px solid var(--line-bold); border-radius: 8px; background: var(--paper);
+  color: var(--ink-soft); cursor: pointer; transition: all .12s var(--ease);
+}
+.draw-tool:hover { color: var(--ink); border-color: var(--ink-faint); }
+.draw-tool.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.draw-tool svg { width: 16px; height: 16px; }
+@media (max-width: 560px) { #draw-bar { bottom: calc(70px + env(safe-area-inset-bottom, 0)); } }
 
 /* floating + add-note button + cluster */
 .fab-cluster { position: fixed; right: 22px; bottom: 22px; z-index: 45; display: flex; align-items: center; gap: 10px; }

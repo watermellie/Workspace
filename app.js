@@ -212,6 +212,7 @@
         html: n.html != null ? n.html : (n.text ? esc(n.text).replace(/\n/g, '<br>') : ''),
         checklist: Array.isArray(n.checklist) ? n.checklist : null,
         images: Array.isArray(n.images) ? n.images : [],
+        doodle: Array.isArray(n.doodle) ? n.doodle : [],   // pen strokes drawn on this note
         x: n.x ?? 40, y: n.y ?? 40,
         w: n.w ?? null, h: n.h ?? null,        // null = auto-size
         tag: n.tag ?? null,
@@ -382,6 +383,7 @@
       sticker:'<path d="M15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10l6-6V5a2 2 0 0 0-2-2z"/><path d="M15 21v-4a2 2 0 0 1 2-2h4"/>',
       pen:'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/>',
       eraser:'<path d="M20 20H7L3 16a2 2 0 0 1 0-3L13 3a2 2 0 0 1 3 0l5 5a2 2 0 0 1 0 3l-9 9"/>',
+      undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12H8"/>',
     };
     return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${P[name]||''}</svg>`;
   }
@@ -698,6 +700,7 @@
       rz.addEventListener('pointerdown', (e) => startResize(e, node, note));
       node.append(rz);
     }
+    node.append(Draw.layerFor(note, readonly));   // pen overlay — inert until pen mode
     return node;
   }
 
@@ -730,7 +733,6 @@
       const ctx = { view, dateKey, readonly, tags, onChange, onArchive: archive, onDelete: remove, onDragStart: startDrag };
       active = { surface, ctx };
       paint();
-      Draw.attach(surface, view, dateKey, readonly);   // doodle layer (under notes until pen mode)
       Stickers.attach(surface, view, dateKey, readonly); // emoji decorations behind notes
       return surface;
     }
@@ -808,73 +810,91 @@
   })();
 
   /* ==========================================================
-     7b · Draw — finger/pen doodling layer over a canvas
+     7b · Draw — pen strokes drawn ON individual sticky notes
+       Each note carries its own `doodle` array; a transparent SVG
+       overlay sits on the note, inert until pen mode is toggled on.
      ========================================================== */
   const Draw = (() => {
     const NS = 'http://www.w3.org/2000/svg';
     const COLORS = ['#1c1c1e', '#d6453d', '#2f6df0', '#1f9d57', '#ffd84d'];
-    let svg = null, surface = null, view = null, key = null;
     let enabled = false, color = '#1c1c1e', tool = 'pen';
-    let pts = null, strokeEl = null;
+    const history = [];                       // [{ note, id }] — per-session undo stack
 
-    const node = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+    const mk = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
     const toD = (p) => p.length ? 'M' + p.map(q => q[0] + ',' + q[1]).join(' L') : '';
-    const rel = (e) => { const r = svg.getBoundingClientRect(); return [Math.round(e.clientX - r.left), Math.round(e.clientY - r.top)]; };
+    const rel = (layer, e) => { const r = layer.getBoundingClientRect(); return [Math.round(e.clientX - r.left), Math.round(e.clientY - r.top)]; };
 
-    /* attach a doodle layer to a freshly built canvas surface */
-    function attach(surf, v, k, readonly) {
-      surface = surf; view = v; key = k; enabled = false;
-      svg = node('svg', { class: 'doodle-layer' });
-      surface.appendChild(svg);
-      renderAll();
-      if (!readonly) svg.addEventListener('pointerdown', down);
-      return svg;
+    /* build a note's drawing overlay (called from buildNote); always shows
+       existing strokes, only captures input when not read-only */
+    function layerFor(note, readonly) {
+      const layer = mk('svg', { class: 'note-doodle' });
+      render(layer, note);
+      if (!readonly) wire(layer, note);
+      return layer;
     }
-    function renderAll() {
-      if (!svg) return;
-      svg.innerHTML = '';
-      Store.doodles(view, key).forEach(s => {
-        const p = node('path', { d: toD(s.points), stroke: s.color, 'stroke-width': s.width || 3, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
-        p.dataset.id = s.id; svg.appendChild(p);
+    function render(layer, note) {
+      layer.innerHTML = '';
+      (note.doodle || []).forEach(s => {
+        const p = mk('path', { d: toD(s.points), stroke: s.color, 'stroke-width': s.width || 3, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+        p.dataset.id = s.id; layer.appendChild(p);
       });
     }
+    function rerenderNote(note) {
+      document.querySelectorAll(`.note[data-id="${note.id}"] .note-doodle`).forEach(l => render(l, note));
+    }
 
-    function down(e) {
-      if (!enabled) return;
-      e.preventDefault(); svg.setPointerCapture?.(e.pointerId);
-      if (tool === 'eraser') { eraseAt(e); svg.addEventListener('pointermove', erMove); svg.addEventListener('pointerup', erUp); return; }
-      pts = [rel(e)];
-      strokeEl = node('path', { stroke: color, 'stroke-width': 3, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', d: '' });
-      svg.appendChild(strokeEl);
-      svg.addEventListener('pointermove', move); svg.addEventListener('pointerup', up);
+    function wire(layer, note) {
+      let pts = null, strokeEl = null;
+      const move = (e) => { pts.push(rel(layer, e)); strokeEl.setAttribute('d', toD(pts)); };
+      const up = () => {
+        layer.removeEventListener('pointermove', move); layer.removeEventListener('pointerup', up);
+        if (pts && pts.length > 1) {
+          const s = { id: uid(), color, width: 3, points: pts };
+          (note.doodle ||= []).push(s); history.push({ note, id: s.id }); Store.save(true);
+          strokeEl.dataset.id = s.id;
+        } else strokeEl?.remove();
+        pts = null; strokeEl = null;
+      };
+      const erMove = (e) => eraseAt(layer, note, e);
+      const erUp = () => { layer.removeEventListener('pointermove', erMove); layer.removeEventListener('pointerup', erUp); };
+      layer.addEventListener('pointerdown', (e) => {
+        if (!enabled) return;
+        e.preventDefault(); e.stopPropagation(); layer.setPointerCapture?.(e.pointerId);
+        if (tool === 'eraser') { eraseAt(layer, note, e); layer.addEventListener('pointermove', erMove); layer.addEventListener('pointerup', erUp); return; }
+        pts = [rel(layer, e)];
+        strokeEl = mk('path', { stroke: color, 'stroke-width': 3, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', d: '' });
+        layer.appendChild(strokeEl);
+        layer.addEventListener('pointermove', move); layer.addEventListener('pointerup', up);
+      });
     }
-    function move(e) { pts.push(rel(e)); strokeEl.setAttribute('d', toD(pts)); }
-    function up() {
-      svg.removeEventListener('pointermove', move); svg.removeEventListener('pointerup', up);
-      if (pts && pts.length > 1) {
-        const s = { id: uid(), color, width: 3, points: pts };
-        Store.doodles(view, key).push(s); Store.save(true);
-        strokeEl.dataset.id = s.id;
-      } else strokeEl?.remove();
-      pts = null; strokeEl = null;
-    }
-    function eraseAt(e) {
-      const [x, y] = rel(e); const list = Store.doodles(view, key);
+    function eraseAt(layer, note, e) {
+      const [x, y] = rel(layer, e); const list = note.doodle || [];
       for (let i = list.length - 1; i >= 0; i--) {
         if (list[i].points.some(p => Math.hypot(p[0] - x, p[1] - y) < 16)) {
           const id = list[i].id; list.splice(i, 1);
-          svg.querySelector(`[data-id="${id}"]`)?.remove(); Store.save(true); break;
+          layer.querySelector(`[data-id="${id}"]`)?.remove(); Store.save(true); break;
         }
       }
     }
-    function erMove(e) { eraseAt(e); }
-    function erUp() { svg.removeEventListener('pointermove', erMove); svg.removeEventListener('pointerup', erUp); }
+    function undo() {
+      const last = history.pop();
+      if (!last) { toast('nothing to undo'); return; }
+      const list = last.note.doodle || [];
+      const i = list.findIndex(s => s.id === last.id);
+      if (i >= 0) { list.splice(i, 1); Store.save(true); rerenderNote(last.note); }
+    }
+    function clearAll() {
+      const c = Canvas.current; if (!c) return;
+      if (!confirm('Clear all pen drawings on this page?')) return;
+      Store.notes(c.ctx.view, c.ctx.dateKey).forEach(n => { n.doodle = []; });
+      Store.save(true); history.length = 0;
+      document.querySelectorAll('.note-doodle').forEach(l => { l.innerHTML = ''; });
+    }
 
-    /* toggle draw mode + floating toolbar */
+    /* toggle pen mode (page-wide) + floating toolbar */
     function toggle() {
-      if (!surface) return;
       enabled = !enabled;
-      surface.classList.toggle('drawing', enabled);
+      document.body.classList.toggle('pen-mode', enabled);
       if (enabled) showBar(); else $('#draw-bar')?.remove();
       return enabled;
     }
@@ -883,23 +903,23 @@
       const bar = el('div', { id: 'draw-bar' });
       const swEls = COLORS.map(c => el('button', { class: 'draw-sw', style: `background:${c}`, dataset: { c }, title: 'pen' }));
       const eraser = el('button', { class: 'draw-tool', html: svg('eraser'), title: 'eraser' });
+      const undoBtn = el('button', { class: 'draw-tool', html: svg('undo'), title: 'undo last stroke', onclick: () => undo() });
+      const clear = el('button', { class: 'draw-tool', html: svg('trash'), title: 'clear page drawings', onclick: () => clearAll() });
+      const done = el('button', { class: 'btn primary sm', text: 'done', onclick: () => toggle() });
       const mark = () => {
         swEls.forEach(b => b.classList.toggle('on', tool === 'pen' && b.dataset.c === color));
         eraser.classList.toggle('on', tool === 'eraser');
       };
       swEls.forEach(b => b.addEventListener('click', () => { color = b.dataset.c; tool = 'pen'; mark(); }));
       eraser.addEventListener('click', () => { tool = 'eraser'; mark(); });
-      const clear = el('button', { class: 'draw-tool', html: svg('trash'), title: 'clear all drawings',
-        onclick: () => { if (confirm('Clear all drawings on this page?')) { Store.doodles(view, key).length = 0; Store.save(true); renderAll(); } } });
-      const done = el('button', { class: 'btn primary sm', text: 'done', onclick: () => toggle() });
-      bar.append(el('div', { class: 'draw-swatches' }, swEls), eraser, clear, done);
+      bar.append(el('span', { class: 'draw-hint', text: '✏️ draw on notes' }), el('div', { class: 'draw-swatches' }, swEls), eraser, undoBtn, clear, done);
       document.body.append(bar);
       mark();
     }
 
-    function teardown() { enabled = false; $('#draw-bar')?.remove(); svg = surface = null; }
+    function teardown() { enabled = false; document.body.classList.remove('pen-mode'); $('#draw-bar')?.remove(); history.length = 0; }
 
-    return { attach, toggle, teardown, get enabled() { return enabled; } };
+    return { layerFor, toggle, teardown, get enabled() { return enabled; } };
   })();
 
   /* ==========================================================
