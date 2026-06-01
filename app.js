@@ -1661,6 +1661,7 @@
         } }));
       }
       box.append(bar);
+      box.append(lessonNav(L));
       return box;
     }
 
@@ -1858,7 +1859,24 @@
         st.complete=false; st.completedAt=null; Store.save(true); pane.innerHTML=''; pane.append(lessonBody(L, st, pane)); pane.scrollTop = 0;
         $$('.ix-link').forEach(a => { if (a.getAttribute('href')===`#work/lesson/${L.id}`) a.classList.remove('complete'); });
       } })));
+      card.append(lessonNav(L));
       return card;
+    }
+
+    /* prev / next lesson footer — makes the curriculum read as one arc */
+    function lessonNav(L) {
+      const all = allLessons();
+      const i = all.findIndex(x => x.id === L.id);
+      if (i < 0) return el('span');
+      const tag = (x) => x.builtin ? (x.day === 0 ? 'orientation' : 'day ' + x.day) : 'custom';
+      const link = (x, dir) => el('a', { class:'lnav ' + dir, href:`#work/lesson/${x.id}` }, [
+        el('span', { class:'lnav-dir', text: dir === 'prev' ? '← previous' : 'next →' }),
+        el('span', { class:'lnav-t', text: `${tag(x)} · ${x.title}` }),
+      ]);
+      return el('div', { class:'lesson-nav' }, [
+        i > 0 ? link(all[i-1], 'prev') : el('span'),
+        i < all.length - 1 ? link(all[i+1], 'next') : el('span'),
+      ]);
     }
 
     return { mount, allLessons };
