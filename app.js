@@ -141,6 +141,7 @@
       meta: {
         catImage: '', focusPos: { x: 26, y: 20 }, weather: null, coords: null,
         recurring: ['gym'], mood: {}, delight: true, collected: [], digestPos: null,
+        calPos: null, calUrl: '',
         name: 'neli', nicknames: ['dani', 'dania', 'neli', 'nellie'],
         theme: 'cream', accent: '',
         pets: [
@@ -168,6 +169,8 @@
       if (d.meta.delight === undefined) d.meta.delight = true;
       if (!Array.isArray(d.meta.collected)) d.meta.collected = [];
       d.meta.digestPos ||= null;
+      d.meta.calPos ||= null;
+      if (typeof d.meta.calUrl !== 'string') d.meta.calUrl = '';
       // personalization
       d.meta.name ||= 'neli';
       if (!Array.isArray(d.meta.nicknames) || !d.meta.nicknames.length) d.meta.nicknames = ['dani', 'dania', 'neli', 'nellie'];
@@ -1007,7 +1010,7 @@
       const body = el('div', { class:'dash-body' });
       const canvasCol = el('div', { class:'dash-canvas' });
       const surface = Canvas.build({ view:'dashboard', dateKey: KEY, readonly: false, onChange: refreshPanel, tall: true });
-      surface.prepend(focusWidget()); surface.prepend(digestCard());
+      surface.prepend(focusWidget()); surface.prepend(digestCard()); surface.prepend(calendarWidget());
       Pets.mount(surface);
       canvasCol.append(surface);
 
@@ -1136,6 +1139,85 @@
       };
       const up = () => { w.classList.remove('dragging'); if (moved) w._dragged = true;
         document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); Store.save(true); };
+      document.addEventListener('pointermove', move); document.addEventListener('pointerup', up);
+    }
+
+    /* ── Google Calendar embed (draggable, pinnable widget) ── */
+    function buildCalEmbedUrl(raw) {
+      raw = (raw || '').trim();
+      if (!raw) return '';
+      const tag = raw.match(/src="([^"]+)"/i);                 // pasted a full <iframe …> tag
+      if (tag) return tag[1];
+      if (/^https?:\/\//i.test(raw)) return raw;               // already an embed URL
+      return `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(raw)}` +
+             `&ctz=America/Los_Angeles&mode=WEEK&showTitle=0&showPrint=0&showCalendars=0&showTz=0`;
+    }
+    function calendarWidget() {
+      const meta = Store.get().meta;
+      const pos = meta.calPos || { x: 26, y: 372 };
+      const w = el('div', { class:'cal-widget', style:`left:${pos.x}px; top:${pos.y}px` });
+      const head = el('div', { class:'cal-head' }, [
+        el('span', { class:'stamp', text:'📅 calendar' }),
+        el('span', { class:'stamp cal-grip', text:'drag' }),
+      ]);
+      head.addEventListener('pointerdown', (e) => dragCal(e, w));
+      w.append(head);
+      const body = el('div', { class:'cal-body' });
+      renderCal(body, w);
+      w.append(body);
+      return w;
+    }
+    function renderCal(body) {
+      const meta = Store.get().meta;
+      body.innerHTML = '';
+      const url = buildCalEmbedUrl(meta.calUrl);
+      if (url) {
+        body.append(el('iframe', { class:'cal-frame', src: url, loading:'lazy', title:'Google Calendar' }));
+        body.append(el('button', { class:'cal-edit', title:'change calendar', html: svg('gear'), onclick: () => editCal(body) }));
+      } else {
+        const inp = el('input', { class:'field cal-input', placeholder:'you@gmail.com  or  embed URL' });
+        inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
+        const save = () => { meta.calUrl = inp.value.trim(); Store.save(true); renderCal(body); };
+        body.append(el('div', { class:'cal-setup' }, [
+          el('div', { class:'cal-setup-title', text:'connect Google Calendar' }),
+          el('div', { class:'cal-setup-hint', html:'paste your calendar address (e.g. <b>you@gmail.com</b>) or a full embed URL from Google Calendar → Settings → “Integrate calendar”. it shows when you’re signed in to that account here, or if the calendar is public.' }),
+          inp,
+          el('button', { class:'btn primary sm', text:'show calendar', onclick: save }),
+        ]));
+      }
+    }
+    function editCal(body) {
+      const meta = Store.get().meta;
+      body.innerHTML = '';
+      const inp = el('input', { class:'field cal-input', value: meta.calUrl || '', placeholder:'you@gmail.com  or  embed URL' });
+      body.append(el('div', { class:'cal-setup' }, [
+        el('div', { class:'cal-setup-title', text:'calendar address or embed URL' }),
+        inp,
+        el('div', { style:'display:flex; gap:6px' }, [
+          el('button', { class:'btn primary sm', text:'save', onclick: () => { meta.calUrl = inp.value.trim(); Store.save(true); renderCal(body); } }),
+          el('button', { class:'btn ghost sm', text:'cancel', onclick: () => renderCal(body) }),
+        ]),
+      ]));
+    }
+    function dragCal(e, w) {
+      if (e.target.closest('button') || e.target.closest('input')) return;
+      e.preventDefault();
+      const surface = w.parentElement, r = surface.getBoundingClientRect();
+      const meta = Store.get().meta;
+      const start = w.getBoundingClientRect();
+      let px = start.left - r.left, py = start.top - r.top;
+      const offX = e.clientX - r.left - px, offY = e.clientY - r.top - py;
+      w.classList.add('dragging'); w.setPointerCapture?.(e.pointerId);
+      const move = (ev) => {
+        px = Math.round(clamp(ev.clientX - r.left - offX, 0, r.width - 80));
+        py = Math.round(clamp(ev.clientY - r.top - offY, 0, 6000));
+        w.style.left = px + 'px'; w.style.top = py + 'px';
+      };
+      const up = () => {
+        w.classList.remove('dragging');
+        document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up);
+        meta.calPos = { x: px, y: py }; Store.save(true);
+      };
       document.addEventListener('pointermove', move); document.addEventListener('pointerup', up);
     }
 

@@ -344,6 +344,37 @@ body.pen-mode .note-doodle { pointer-events: all; touch-action: none; cursor: cr
   box-shadow: var(--shadow-sm); overflow: hidden;
   transition: box-shadow var(--t) var(--ease);
 }
+
+/* ── Google Calendar embed widget ── */
+.cal-widget {
+  position: absolute; width: 330px; z-index: 5;
+  background: var(--paper); border: 1px solid var(--line-bold); border-radius: var(--radius);
+  box-shadow: var(--shadow-sm); overflow: hidden; display: flex; flex-direction: column;
+  transition: box-shadow var(--t) var(--ease);
+}
+.cal-widget:hover { box-shadow: var(--shadow-md); }
+.cal-widget.dragging { box-shadow: var(--shadow-lg); z-index: 40; transition: none; }
+.cal-widget.dragging .cal-frame { pointer-events: none; }
+.cal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 8px 6px 11px; cursor: grab; border-bottom: 1px solid var(--line);
+  touch-action: none; user-select: none;
+}
+.cal-head .stamp { font-size: 11px; color: var(--ink-faint); font-weight: 500; }
+.cal-grip { color: var(--ink-faint); }
+.cal-body { position: relative; min-height: 300px; }
+.cal-frame { width: 100%; height: 320px; border: 0; display: block; background: #fff; }
+.cal-edit {
+  position: absolute; top: 7px; right: 7px; width: 26px; height: 26px;
+  display: grid; place-items: center; border-radius: 6px; cursor: pointer; opacity: .9;
+  border: 1px solid var(--line-bold); background: var(--paper); color: var(--ink-soft);
+}
+.cal-edit:hover { color: var(--ink); opacity: 1; }
+.cal-edit svg { width: 14px; height: 14px; }
+.cal-setup { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.cal-setup-title { font-size: 13px; font-weight: 600; }
+.cal-setup-hint { font-size: 11px; color: var(--ink-soft); line-height: 1.5; }
+.cal-input { width: 100%; }
 .focus-widget:hover { box-shadow: var(--shadow-md); }
 .focus-widget.dragging { box-shadow: var(--shadow-lg); z-index: 40; transition: none; }
 .fw-head { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px 6px 11px; cursor: grab; }
