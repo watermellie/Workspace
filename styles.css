@@ -786,14 +786,14 @@ textarea.lesson-notes:focus, textarea.reflect:focus { border-color: var(--blue);
   font-size: 13px; font-weight: 600; color: var(--ink);
   background: rgba(255,255,255,.86); backdrop-filter: blur(4px);
   border: 1px solid var(--line-bold); border-radius: 999px; padding: 7px 14px;
-  box-shadow: var(--shadow-md); cursor: pointer; -webkit-tap-highlight-color: transparent;
-  animation: floatie-drift 26s linear forwards;
+  box-shadow: var(--shadow-sm); cursor: pointer; -webkit-tap-highlight-color: transparent;
+  animation: floatie-drift 40s linear forwards;
 }
-.floatie:hover { color: var(--red); border-color: var(--red); transform: scale(1.06); }
+.floatie:hover { color: var(--red); border-color: var(--red); transform: scale(1.06); opacity: 1 !important; }
 @keyframes floatie-drift {
   0%   { left: var(--from); opacity: 0; }
-  8%   { opacity: 1; }
-  92%  { opacity: 1; }
+  12%  { opacity: .5; }
+  88%  { opacity: .5; }
   100% { left: var(--to); opacity: 0; }
 }
 

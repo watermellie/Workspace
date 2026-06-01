@@ -2603,7 +2603,7 @@
   function exportData() {
     const blob = new Blob([JSON.stringify(Store.get(), null, 2)], { type:'application/json' });
     const url = URL.createObjectURL(blob);
-    const a = el('a', { href: url, download: `w.workspace-backup-${todayKey()}.json` });
+    const a = el('a', { href: url, download: `watermellie-backup-${todayKey()}.json` });
     document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     toast('backup downloaded');
@@ -2767,10 +2767,11 @@
     /* a phrase drifts across; tap to collect it */
     function floatOne() {
       if (!on()) { schedule(); return; }
-      if (document.hidden || $('.floatie')) { schedule(); return; }   // one at a time
+      // one at a time; never drift over a lesson you're concentrating on
+      if (document.hidden || $('.floatie') || /^#work\/lesson\//.test(location.hash)) { schedule(); return; }
       const txt = pick(PHRASES());
       const fromLeft = Math.random() < 0.5;
-      const top = 90 + Math.random() * (window.innerHeight - 220);
+      const top = window.innerHeight - 104;   // glide low along the bottom, clear of content
       const f = el('button', { class:'floatie', text: '✦ ' + txt, title:'tap to collect' });
       f.style.top = top + 'px';
       f.style.setProperty('--from', fromLeft ? '-30vw' : '110vw');
@@ -2790,7 +2791,7 @@
     }
     function schedule() {
       clearTimeout(phraseTimer);
-      phraseTimer = setTimeout(floatOne, 18000 + Math.random() * 22000);  // every ~18–40s
+      phraseTimer = setTimeout(floatOne, 32000 + Math.random() * 28000);  // calmer: every ~32–60s
     }
 
     function init() {

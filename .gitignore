@@ -7,5 +7,4 @@ Thumbs.db
 *.log
 
 # Local backups exported from the app (may contain personal notes)
-w.workspace-backup-*.json
 watermellie-backup-*.json
