@@ -1,12 +1,12 @@
 /* watermellie service worker — offline shell cache.
    Bump CACHE on each deploy (kept in step with the ?v= query in index.html). */
-const CACHE = 'watermellie-v22';
+const CACHE = 'watermellie-v23';
 const ASSETS = [
   './',
   './index.html',
-  './styles.css?v=22',
-  './app.js?v=22',
-  './curriculum.js?v=22',
+  './styles.css?v=23',
+  './app.js?v=23',
+  './curriculum.js?v=23',
   './manifest.webmanifest',
   './favicon.svg',
   './icon-180.png',

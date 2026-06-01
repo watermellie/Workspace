@@ -1033,6 +1033,48 @@
   })();
 
   /* ==========================================================
+     7d · GCal — read-only Google Calendar (public cal + API key)
+       Config + per-event tick state live in localStorage ONLY —
+       never synced to the cloud store, never committed.
+     ========================================================== */
+  const GCal = (() => {
+    const CFG = 'wsi_gcal_config', DONE = 'wsi_gcal_done';
+    const read = (k) => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch { return {}; } };
+    function config() { const c = read(CFG); return { calId: c.calId || '', apiKey: c.apiKey || '' }; }
+    function setConfig(calId, apiKey) { localStorage.setItem(CFG, JSON.stringify({ calId: (calId||'').trim(), apiKey: (apiKey||'').trim() })); }
+    function configured() { const c = config(); return !!(c.calId && c.apiKey); }
+    function clear() { localStorage.removeItem(CFG); }
+
+    const doneSet = () => { try { return new Set(JSON.parse(localStorage.getItem(DONE)) || []); } catch { return new Set(); } };
+    function isDone(id) { return doneSet().has(id); }
+    function toggleDone(id, on) { const s = doneSet(); on ? s.add(id) : s.delete(id); localStorage.setItem(DONE, JSON.stringify([...s])); }
+
+    async function fetchUpcoming(days = 7, max = 15) {
+      const c = config(); if (!c.calId || !c.apiKey) throw new Error('not configured');
+      const now = new Date(), tMax = new Date(Date.now() + days * 864e5);
+      const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(c.calId)}/events`
+        + `?key=${encodeURIComponent(c.apiKey)}`
+        + `&timeMin=${encodeURIComponent(now.toISOString())}`
+        + `&timeMax=${encodeURIComponent(tMax.toISOString())}`
+        + `&singleEvents=true&orderBy=startTime&maxResults=${max}`;
+      const res = await fetch(url);
+      if (!res.ok) {
+        let msg = `error ${res.status}`;
+        try { const j = await res.json(); if (j.error?.message) msg = j.error.message; } catch {}
+        throw new Error(msg);
+      }
+      const data = await res.json();
+      return (data.items || []).map(ev => ({
+        id: ev.id,
+        title: ev.summary || '(busy)',
+        start: ev.start?.dateTime || ev.start?.date,
+        allDay: !ev.start?.dateTime,
+      })).filter(e => e.start);
+    }
+    return { config, setConfig, configured, clear, isDone, toggleDone, fetchUpcoming };
+  })();
+
+  /* ==========================================================
      8 · Dashboard
      ========================================================== */
   const Dashboard = (() => {
@@ -1178,63 +1220,86 @@
       document.addEventListener('pointermove', move); document.addEventListener('pointerup', up);
     }
 
-    /* ── Google Calendar embed (draggable, pinnable widget) ── */
-    function buildCalEmbedUrl(raw) {
-      raw = (raw || '').trim();
-      if (!raw) return '';
-      const tag = raw.match(/src="([^"]+)"/i);                 // pasted a full <iframe …> tag
-      if (tag) return tag[1];
-      if (/^https?:\/\//i.test(raw)) return raw;               // already an embed URL
-      const BG = { cream:'fffdf8', pink:'fffafb', mint:'fafefb', lavender:'fdfbff', dark:'fbf7ef' };
-      const bg = BG[Store.get().meta.theme] || 'fffdf8';       // tint agenda to match the theme
-      return `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(raw)}` +
-             `&ctz=America/Los_Angeles&mode=AGENDA&bgcolor=%23${bg}` +
-             `&showTitle=0&showPrint=0&showCalendars=0&showTz=0&showTabs=0&showNav=1&showDate=1`;
-    }
+    /* ── Google Calendar → upcoming events as a checklist (draggable widget) ── */
     function calendarWidget() {
       const meta = Store.get().meta;
       const pos = meta.calPos || { x: 26, y: 372 };
       const w = el('div', { class:'cal-widget', style:`left:${pos.x}px; top:${pos.y}px` });
+      const body = el('div', { class:'cal-body' });
       const head = el('div', { class:'cal-head' }, [
-        el('span', { class:'stamp', text:'📅 calendar' }),
-        el('span', { class:'stamp cal-grip', text:'drag' }),
+        el('span', { class:'stamp', text:'📅 upcoming' }),
+        el('div', { class:'cal-head-tools' }, [
+          el('button', { class:'cal-edit', title:'refresh', html: svg('restore'), onclick: () => renderCal(body) }),
+          el('button', { class:'cal-edit', title:'calendar settings', html: svg('gear'), onclick: () => calSetup(body) }),
+          el('span', { class:'stamp cal-grip', text:'drag' }),
+        ]),
       ]);
       head.addEventListener('pointerdown', (e) => dragCal(e, w));
-      w.append(head);
-      const body = el('div', { class:'cal-body' });
-      renderCal(body, w);
-      w.append(body);
+      w.append(head, body);
+      renderCal(body);
       return w;
     }
     function renderCal(body) {
-      const meta = Store.get().meta;
       body.innerHTML = '';
-      const url = buildCalEmbedUrl(meta.calUrl);
-      if (url) {
-        body.append(el('iframe', { class:'cal-frame', src: url, loading:'lazy', title:'Google Calendar' }));
-        body.append(el('button', { class:'cal-edit', title:'change calendar', html: svg('gear'), onclick: () => editCal(body) }));
-      } else {
-        const inp = el('input', { class:'field cal-input', placeholder:'you@gmail.com  or  embed URL' });
-        inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
-        const save = () => { meta.calUrl = inp.value.trim(); Store.save(true); renderCal(body); };
-        body.append(el('div', { class:'cal-setup' }, [
-          el('div', { class:'cal-setup-title', text:'connect Google Calendar' }),
-          el('div', { class:'cal-setup-hint', html:'paste your calendar address (e.g. <b>you@gmail.com</b>) or a full embed URL from Google Calendar → Settings → “Integrate calendar”. it shows when you’re signed in to that account here, or if the calendar is public.' }),
-          inp,
-          el('button', { class:'btn primary sm', text:'show calendar', onclick: save }),
-        ]));
-      }
+      if (!GCal.configured()) { calSetup(body); return; }
+      const list = el('div', { class:'cal-list' }, el('div', { class:'cal-loading', text:'loading your calendar…' }));
+      body.append(list);
+      GCal.fetchUpcoming().then(events => {
+        list.innerHTML = '';
+        if (!events.length) { list.append(el('div', { class:'empty-line', text:'nothing coming up 🌿' })); return; }
+        let lastDay = '';
+        events.forEach(ev => {
+          const d = new Date(ev.start);
+          const label = calDayLabel(d);
+          if (label !== lastDay) { list.append(el('div', { class:'cal-day', text: label })); lastDay = label; }
+          list.append(calEventRow(ev, d));
+        });
+      }).catch(err => {
+        list.innerHTML = '';
+        list.append(
+          el('div', { class:'cal-error', text:'couldn’t load your calendar.' }),
+          el('div', { class:'cal-setup-hint', text: String(err && err.message || err) }),
+          el('button', { class:'btn ghost sm', style:'margin-top:6px', text:'check settings', onclick: () => calSetup(body) }),
+        );
+      });
     }
-    function editCal(body) {
-      const meta = Store.get().meta;
+    function calDayLabel(d) {
+      const today = new Date().toDateString();
+      const tomorrow = new Date(Date.now() + 864e5).toDateString();
+      if (d.toDateString() === today) return 'today';
+      if (d.toDateString() === tomorrow) return 'tomorrow';
+      return d.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
+    }
+    function calEventRow(ev, d) {
+      const row = el('label', { class:'cal-evt' + (GCal.isDone(ev.id) ? ' done' : '') });
+      const cb = el('input', { type:'checkbox' }); cb.checked = GCal.isDone(ev.id);
+      cb.addEventListener('change', () => { GCal.toggleDone(ev.id, cb.checked); row.classList.toggle('done', cb.checked); });
+      const time = ev.allDay ? 'all day' : d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+      row.append(cb, el('span', { class:'cal-evt-time', text: time }), el('span', { class:'cal-evt-title', text: ev.title }));
+      return row;
+    }
+    function calSetup(body) {
+      const cfg = GCal.config();
       body.innerHTML = '';
-      const inp = el('input', { class:'field cal-input', value: meta.calUrl || '', placeholder:'you@gmail.com  or  embed URL' });
+      const id = el('input', { class:'field cal-input', value: cfg.calId, placeholder:'calendar ID (e.g. you@gmail.com)' });
+      const key = el('input', { class:'field cal-input', type:'password', value: cfg.apiKey, placeholder:'Google API key' });
+      const save = () => {
+        if (!id.value.trim() || !key.value.trim()) { toast('enter both the calendar ID and API key'); return; }
+        GCal.setConfig(id.value, key.value); toast('calendar connected'); renderCal(body);
+      };
+      key.addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
       body.append(el('div', { class:'cal-setup' }, [
-        el('div', { class:'cal-setup-title', text:'calendar address or embed URL' }),
-        inp,
-        el('div', { style:'display:flex; gap:6px' }, [
-          el('button', { class:'btn primary sm', text:'save', onclick: () => { meta.calUrl = inp.value.trim(); Store.save(true); renderCal(body); } }),
-          el('button', { class:'btn ghost sm', text:'cancel', onclick: () => renderCal(body) }),
+        el('div', { class:'cal-setup-title', text:'connect Google Calendar' }),
+        el('div', { class:'cal-setup-hint', html:
+          'shows your upcoming events as a checklist. one-time setup:<br>' +
+          '<b>1.</b> Google Calendar → ⚙ Settings → your calendar → <b>Access permissions</b> → tick <b>“Make available to public”</b>.<br>' +
+          '<b>2.</b> same page → <b>Integrate calendar</b> → copy the <b>Calendar ID</b> (usually your email).<br>' +
+          '<b>3.</b> <b>console.cloud.google.com</b> → enable <b>Google Calendar API</b> → Credentials → create an <b>API key</b>.<br>' +
+          'both are stored on this device only — never synced or shared.' }),
+        id, key,
+        el('div', { style:'display:flex; gap:6px; flex-wrap:wrap' }, [
+          el('button', { class:'btn primary sm', text:'connect', onclick: save }),
+          GCal.configured() ? el('button', { class:'btn ghost sm', text:'disconnect', onclick: () => { GCal.clear(); renderCal(body); } }) : el('span'),
         ]),
       ]));
     }

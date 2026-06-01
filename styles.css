@@ -345,47 +345,43 @@ body.pen-mode .note-doodle { pointer-events: all; touch-action: none; cursor: cr
   transition: box-shadow var(--t) var(--ease);
 }
 
-/* ── Google Calendar embed widget (cute paper card) ── */
+/* ── Google Calendar → upcoming events as a checklist ── */
 .cal-widget {
-  position: absolute; width: 320px; z-index: 5;
-  background: var(--paper); border: 1px solid var(--line-bold); border-radius: 14px;
-  box-shadow: var(--shadow-sm); display: flex; flex-direction: column;
+  position: absolute; width: 300px; z-index: 5;
+  background: var(--paper); border: 1px solid var(--line-bold); border-radius: var(--radius);
+  box-shadow: var(--shadow-sm); display: flex; flex-direction: column; overflow: hidden;
   transition: box-shadow var(--t) var(--ease);
 }
 .cal-widget:hover { box-shadow: var(--shadow-md); }
 .cal-widget.dragging { box-shadow: var(--shadow-lg); z-index: 40; transition: none; }
-.cal-widget.dragging .cal-frame { pointer-events: none; }
-/* little washi-tape accent peeking over the top */
-.cal-widget::before {
-  content: ''; position: absolute; top: -7px; left: 50%; width: 54px; height: 15px;
-  transform: translateX(-50%) rotate(-2.5deg);
-  background: var(--yellow, #ffd84d); opacity: .5; border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(0,0,0,.06); pointer-events: none;
-}
 .cal-head {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 8px 10px 8px 12px; cursor: grab; border-radius: 13px 13px 0 0;
-  background: var(--wash); border-bottom: 1px solid var(--line);
-  touch-action: none; user-select: none;
+  padding: 7px 9px 7px 12px; cursor: grab; border-bottom: 1px solid var(--line);
+  background: var(--wash); touch-action: none; user-select: none;
 }
-.cal-head .stamp { font-size: 11.5px; color: var(--ink-soft); font-weight: 600; letter-spacing: .01em; }
+.cal-head .stamp { font-size: 11.5px; color: var(--ink-soft); font-weight: 600; }
+.cal-head-tools { display: flex; align-items: center; gap: 7px; }
 .cal-grip { color: var(--ink-faint); font-weight: 400; }
-.cal-body { position: relative; padding: 8px; }
-.cal-frame {
-  width: 100%; height: 318px; border: 0; display: block; background: var(--paper);
-  border-radius: 10px; box-shadow: inset 0 0 0 1px var(--line);
-}
+.cal-body { position: relative; max-height: 340px; overflow-y: auto; padding: 8px 10px 10px; }
+.cal-list { display: flex; flex-direction: column; gap: 1px; }
+.cal-day { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-faint); margin: 9px 0 3px; }
+.cal-day:first-child { margin-top: 0; }
+.cal-evt { display: flex; align-items: flex-start; gap: 8px; padding: 4px 4px; font-size: 13px; color: var(--ink); cursor: pointer; border-radius: 6px; }
+.cal-evt:hover { background: var(--wash); }
+.cal-evt input { margin: 2px 0 0; width: 14px; height: 14px; accent-color: var(--green); flex-shrink: 0; }
+.cal-evt-time { color: var(--ink-soft); font-size: 11.5px; min-width: 56px; flex-shrink: 0; padding-top: 1px; }
+.cal-evt-title { flex: 1; line-height: 1.35; }
+.cal-evt.done .cal-evt-title { text-decoration: line-through; color: var(--ink-faint); }
+.cal-loading, .cal-error { font-size: 12px; color: var(--ink-soft); padding: 6px 2px; }
 .cal-edit {
-  position: absolute; top: 14px; right: 14px; width: 26px; height: 26px;
-  display: grid; place-items: center; border-radius: 8px; cursor: pointer; opacity: .92;
+  width: 24px; height: 24px; display: grid; place-items: center; border-radius: 6px; cursor: pointer; opacity: .85;
   border: 1px solid var(--line-bold); background: var(--paper); color: var(--ink-soft);
-  box-shadow: var(--shadow-sm);
 }
 .cal-edit:hover { color: var(--ink); opacity: 1; }
-.cal-edit svg { width: 14px; height: 14px; }
-.cal-setup { padding: 10px 8px; display: flex; flex-direction: column; gap: 8px; }
+.cal-edit svg { width: 13px; height: 13px; }
+.cal-setup { padding: 6px 2px; display: flex; flex-direction: column; gap: 8px; }
 .cal-setup-title { font-size: 13px; font-weight: 600; }
-.cal-setup-hint { font-size: 11px; color: var(--ink-soft); line-height: 1.5; }
+.cal-setup-hint { font-size: 11px; color: var(--ink-soft); line-height: 1.55; }
 .cal-input { width: 100%; }
 .focus-widget:hover { box-shadow: var(--shadow-md); }
 .focus-widget.dragging { box-shadow: var(--shadow-lg); z-index: 40; transition: none; }
