@@ -1360,11 +1360,12 @@
       const toggle = el('label', { class:'complete-toggle' });
       const cb = el('input', { type:'checkbox' });
       cb.addEventListener('change', () => {
-        st.complete = cb.checked; st.completedAt = cb.checked ? Date.now() : null; Store.save(true);
+        const done = cb.checked, r = cb.getBoundingClientRect();
+        st.complete = done; st.completedAt = done ? Date.now() : null; Store.save(true);
         pane.innerHTML=''; pane.append(lessonBody(L, st, pane)); pane.scrollTop = 0;
-        $$('.ix-link').forEach(a => { if (a.getAttribute('href')===`#work/lesson/${L.id}`) a.classList.toggle('complete', st.complete); });
-        toast(cb.checked ? 'lesson complete ✓' : 'reopened');
-        if (cb.checked) Pets.celebrate();
+        $$('.ix-link').forEach(a => { if (a.getAttribute('href')===`#work/lesson/${L.id}`) a.classList.toggle('complete', done); });
+        toast(done ? 'lesson complete ✓' : 'reopened');
+        if (done) { Pets.celebrate(); Confetti.burst(r.left + r.width/2, r.top); }
       });
       toggle.append(cb, el('span', { text:'mark “Lesson Complete” → lock as read-only reference' }));
       bar.append(toggle);
@@ -2099,6 +2100,43 @@
     }
 
     return { init, collectionView };
+  })();
+
+  /* ==========================================================
+     Confetti — a little celebration burst (lesson complete!)
+     ========================================================== */
+  const Confetti = (() => {
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const COLORS = ['#d6453d', '#2f6df0', '#1f9d57', '#ffd84d', '#e0577a', '#7a5fe0'];
+    const EMOJI = ['✨', '🎉', '⭐', '🍉', '🌸', '🎀'];
+    function burst(x, y) {
+      if (reduced) return;
+      const cx = x == null ? window.innerWidth / 2 : x;
+      const cy = y == null ? window.innerHeight / 3 : y;
+      const layer = el('div', { class: 'confetti-layer' });
+      document.body.appendChild(layer);
+      const N = 34;
+      for (let i = 0; i < N; i++) {
+        const ang = (Math.PI * 2 * i) / N + Math.random() * 0.5;
+        const dist = 80 + Math.random() * 180;
+        const useEmoji = i % 5 === 0;
+        const p = el('div', { class: 'confetti' + (useEmoji ? ' emoji' : ''),
+          text: useEmoji ? pick(EMOJI) : '' });
+        if (!useEmoji) {
+          p.style.background = pick(COLORS);
+          p.style.width = p.style.height = (6 + Math.random() * 7) + 'px';
+          if (Math.random() < 0.5) p.style.borderRadius = '50%';
+        }
+        p.style.left = cx + 'px'; p.style.top = cy + 'px';
+        p.style.setProperty('--dx', Math.cos(ang) * dist + 'px');
+        p.style.setProperty('--dy', Math.sin(ang) * dist + 'px');
+        p.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
+        p.style.animationDelay = Math.round(Math.random() * 70) + 'ms';
+        layer.appendChild(p);
+      }
+      setTimeout(() => layer.remove(), 1400);
+    }
+    return { burst };
   })();
 
   /* ==========================================================

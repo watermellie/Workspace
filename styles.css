@@ -219,6 +219,11 @@ input.field:focus, select.field:focus, textarea.field:focus { border-color: var(
 /* only the grab/resize handles capture touch, so the page still scrolls elsewhere */
 .note-head, .note-resize, .fw-head { touch-action: none; }
 
+/* doodle layer — full-surface SVG overlay; inert until pen mode, then captures touch */
+.doodle-layer { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
+.canvas-surface.drawing { touch-action: none; }
+.canvas-surface.drawing .doodle-layer { pointer-events: all; z-index: 20; touch-action: none; cursor: crosshair; }
+
 /* floating + add-note button + cluster */
 .fab-cluster { position: fixed; right: 22px; bottom: 22px; z-index: 45; display: flex; align-items: center; gap: 10px; }
 .add-fab {
@@ -763,6 +768,17 @@ textarea.lesson-notes:focus, textarea.reflect:focus { border-color: var(--blue);
 @keyframes stickwiggle { 0%,100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
 @keyframes stickbar { from { transform: translateX(-50%) translateY(8px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
 @media (max-width: 560px) { .sticker-grid { grid-template-columns: repeat(7, 1fr); } #sticker-bar { bottom: calc(70px + env(safe-area-inset-bottom, 0)); } }
+
+/* ═══════════════════════ CONFETTI ═══════════════════════ */
+.confetti-layer { position: fixed; inset: 0; pointer-events: none; z-index: 120; overflow: hidden; }
+.confetti { position: absolute; will-change: transform, opacity; animation: confetti-fly 1.15s var(--ease) forwards; }
+.confetti.emoji { font-size: 18px; line-height: 1; }
+@keyframes confetti-fly {
+  0%   { transform: translate(-50%, -50%) scale(.3) rotate(0deg); opacity: 1; }
+  65%  { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) + 70px)) scale(1) rotate(var(--rot)); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .confetti-layer { display: none; } }
 @media (prefers-reduced-motion: reduce) { .pet { transition: none; } .pet.hop, .pet-heart { animation: none; } }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .001ms !important; animation-duration: .001ms !important; } .spark, .floatie { display: none !important; } }
