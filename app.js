@@ -248,7 +248,7 @@
       work: { lessons: {}, customLessons: [], entries: [] },
       meta: {
         catImage: '', focusPos: { x: 26, y: 20 }, weather: null, coords: null,
-        recurring: ['gym', 'breakfast', 'lunch', 'dinner'], mealsSeeded: true,
+        recurring: ['gym', 'breakfast', 'lunch', 'dinner'], mealsSeeded: true, lessonIdsMigrated: true,
         mood: {}, delight: true, collected: [], digestPos: null,
         calPos: null, calUrl: '',
         name: 'neli', nicknames: ['dani', 'dania', 'neli', 'nellie'],
@@ -276,6 +276,18 @@
       if (!Array.isArray(d.meta.recurring)) d.meta.recurring = ['gym', 'breakfast', 'lunch', 'dinner'];
       // one-time: fold breakfast/lunch/dinner into existing users' recurring set
       if (!d.meta.mealsSeeded) { d.meta.recurring = [...new Set([...d.meta.recurring, 'breakfast', 'lunch', 'dinner'])]; d.meta.mealsSeeded = true; }
+      // one-time: lesson state moved from array-index ids (c{i}, where c0 was Day 1) to
+      // stable day-based ids (d{day}) after a Day 0 orientation lesson was prepended.
+      if (!d.meta.lessonIdsMigrated) {
+        const src = d.work.lessons || {}, out = {};
+        for (const k of Object.keys(src)) {
+          const m = /^c(\d+)$/.exec(k);
+          if (m) out['d' + (parseInt(m[1], 10) + 1)] = src[k];   // old c{i} == Day i+1 → d{i+1}
+          else out[k] = src[k];                                   // custom/other keys untouched
+        }
+        d.work.lessons = out;
+        d.meta.lessonIdsMigrated = true;
+      }
       d.meta.mood ||= {};
       if (d.meta.delight === undefined) d.meta.delight = true;
       if (!Array.isArray(d.meta.collected)) d.meta.collected = [];
@@ -1374,9 +1386,9 @@
      ========================================================== */
   const Work = (() => {
     let sort = 'all';
-    const lessonId = (i) => `c${i}`;
+    const lessonId = (L) => `d${L.day}`;        // stable, day-based — survives reordering
     const allLessons = () => [
-      ...CURRICULUM_BASE.map((L, i) => ({ ...L, id: lessonId(i), builtin: true })),
+      ...CURRICULUM_BASE.map((L) => ({ ...L, id: lessonId(L), builtin: true })),
       ...Store.get().work.customLessons.map(L => ({ ...L, builtin: false })),
     ];
     const findLesson = (id) => allLessons().find(L => L.id === id);
