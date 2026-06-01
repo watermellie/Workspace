@@ -32,6 +32,39 @@
     'what does your future self need you to do right now?',
     'what is within your control today, and what isn’t?',
     'what gave you a sense of purpose recently?',
+    // ── reflection ──
+    'what did today teach you about yourself?',
+    'what felt heavy today, and what felt light?',
+    'if today had a title, what would it be?',
+    'what would you do differently if you could replay today?',
+    'what moment from today do you want to remember?',
+    'what story are you telling yourself right now — is it true?',
+    'what did you need today that you didn’t ask for?',
+    // ── self-awareness ──
+    'what emotion has been visiting you most lately, and what is it telling you?',
+    'where in your body do you feel your stress, and what eases it?',
+    'what pattern do you keep repeating, and where did it come from?',
+    'when did you feel most like yourself recently?',
+    'what do you tend to hide from others, and why?',
+    'what boundary do you need to set, or honor?',
+    'what are you pretending not to know?',
+    'whose approval are you seeking, and do you actually need it?',
+    // ── purpose & values ──
+    'what kind of person are you becoming?',
+    'what matters to you that you’ve been neglecting?',
+    'if fear weren’t a factor, what would you start?',
+    'what does a meaningful life look like to you this season?',
+    'what would you regret not trying?',
+    'what work makes you lose track of time?',
+    'what legacy do you want today to be a small part of?',
+    'what does “enough” look like for you right now?',
+    // ── growth & gratitude ──
+    'what strength did you use today without noticing?',
+    'who do you want to thank, and have you told them?',
+    'what challenge is quietly shaping you?',
+    'what’s one belief you’ve outgrown?',
+    'what would make tomorrow 1% better?',
+    'what are you proud of that no one else saw?',
   ];
 
   const CURRICULUM_BASE = [
