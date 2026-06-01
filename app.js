@@ -170,9 +170,9 @@
     { day:9, week:2, title:'The Final Pitch Prep & Portfolio Scaffolding',
       coreConcept:'Set up your documentation framework before day one.',
       output:'An empty, ready-to-fill case-study layout (Problem, Research, Constraints, Iterations, Metrics).' },
-    { day:10, week:2, title:'Interface Compilation & Code Integration',
-      coreConcept:'Integrate habits, prep tracking, and summer logs into your local dev environment.',
-      output:'A live, functional internal tracking interface (this workspace) pushed to GitHub.' },
+    { day:10, week:2, title:'Capstone: Your Portfolio Story & Return-Offer Pitch',
+      coreConcept:'Synthesize the week into a told story: a 3-artifact portfolio walkthrough, X-Y-Z impact bullets, a mock critique, and a return-offer game plan.',
+      output:'A rehearsed portfolio walkthrough deck + three X-Y-Z impact bullets + a one-page return-offer plan.' },
   ];
 
   /* ==========================================================

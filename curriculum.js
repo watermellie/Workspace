@@ -1111,120 +1111,115 @@
       {
         "day": 10,
         "week": 2,
-        "title": "Interface Compilation & Code Integration",
-        "coreConcept": "Integrating your habits, internship-prep tracking, and summer logs into a single, version-controlled web dashboard that lives in your local dev environment and ships to GitHub. Today you stop being a consumer of dashboards and become the engineer/designer of one: you refine an HTML/CSS/JS interface in VS Code, embed this entire 10-day curriculum next to your personal daily logs (gym, habits, diary), and push it to a real repo. The deeper lesson mirrors how Williams-Sonoma, Inc. operates as a \"digital-first, design-led\" retailer where ~65% of revenue is e-commerce: a polished front end is only credible when the underlying data model is clean, the information architecture is honest, and the thing actually ships and runs. You are practicing the full design-to-deployment loop a UX designer must understand to collaborate with engineers, exactly the loop behind WSI's JavaScript-heavy storefronts and the Design Crew Room Planner tools.",
+        "title": "Capstone: Your Portfolio Story & Return-Offer Pitch",
+        "coreConcept": "The prep is done — now you learn to TELL it. A portfolio is only as strong as your ability to walk someone through your thinking out loud, and a summer internship converts to a full-time offer when you can show measurable impact and a point of view, not just screens. Today you synthesize the week's artifacts (your Day 0 landscape map, brand teardown, checkout fix, navigation redesign, metrics work) into a tight 3-artifact portfolio story, rehearse presenting it the way a real portfolio review or design critique runs, translate each outcome into a Google X-Y-Z impact bullet, and draft a return-offer game plan so you walk into June 10 with direction instead of nerves. This deliberately replaces 'build another interface' — you already practiced UI craft in Days 5–7 — with the skill that actually wins the offer: communicating design value.",
         "objectives": [
-          "Structure a single-page dashboard's information architecture so professional (curriculum, prep tracking) and personal (gym, habits, diary) data live in clearly separated, navigable sections rather than one undifferentiated wall of content.",
-          "Refine an existing HTML/CSS/JS interface in VS Code, using a small JSON/JS data layer to separate content from presentation so the dashboard is maintainable and extensible.",
-          "Apply premium, design-led UI polish (consistent type scale, spacing system, accessible color contrast) at the standard a WSI design-led brand would expect of a customer-facing surface.",
-          "Diagnose how heavy client-side JavaScript affects performance and accessibility, and make at least one deliberate choice that keeps your dashboard fast and resilient, referencing WSI's documented JS-gating friction.",
-          "Initialize a Git repository, write a clear README, and push the working dashboard to GitHub, producing a live or locally runnable artifact you maintain across the summer."
+          "Curate 3 artifacts from this prep week into a coherent portfolio story with a clear problem → process/decision → impact spine.",
+          "Present your work aloud the way a real portfolio review or design critique runs — context first, then decisions and trade-offs, then outcomes — without reading from notes.",
+          "Run a structured self- or peer-critique using NN/g's design-critique framework, and capture the feedback as concrete revisions.",
+          "Translate each project's outcome into a Google X-Y-Z impact bullet ('Accomplished X, as measured by Y, by doing Z') grounded in the real WSI/retail benchmarks from Day 8.",
+          "Draft a one-page return-offer game plan: first-week questions, a 30/60/90 focus, and the Friday Intern-Log (X-Y-Z) ritual that compounds into your end-of-summer case study."
         ],
         "steps": [
           {
-            "title": "Map the dashboard's information architecture and data model before touching CSS",
+            "title": "Learn how designers present work (and what loses the room)",
             "time": "35 min",
-            "detail": "Open VS Code and a blank notes file. Before styling anything, sketch the IA of your dashboard on paper or in a comment block: what are the top-level sections and how do professional vs. personal data coexist without colliding? Decide on four to five sections, for example: (1) Internship Prep / 10-Day Curriculum, (2) Habits tracker, (3) Gym log, (4) Diary / daily reflection, (5) Summer goals. For each, write down the data fields it holds (e.g., a curriculum day = {day, title, status, link}; a habit = {name, streak, doneToday}; a gym entry = {date, lift, sets}). This is your data model. Then design a single navigation pattern (top tab bar or left sidebar) that lets you jump between sections. Ground this in the research: WSI's own cross-brand experience is criticized because discovery is 'fragmented across distinct branded storefronts' with no unified view, and Olive is 'siloed' rather than embedded across the site. Your dashboard should NOT repeat that mistake; aim for one coherent surface where switching contexts is one click. Write the IA and data model as a comment at the top of your main JS file so it guides the build.",
+            "detail": "Before assembling anything, study the target. Watch the portfolio-presentation walkthrough and skim the UX Design Institute guide, noting the spine every strong presentation follows: (1) a quick who-you-are + the project's context, (2) the PROBLEM stated sharply, (3) your PROCESS — the key decisions and the trade-offs you weighed (not every step, just the pivotal ones), (4) the OUTCOME with a number, and (5) what you'd do next / what you learned. Write yourself a 5-line script skeleton from this. The single biggest beginner mistake the resources call out: leading with pretty final screens instead of the problem and the thinking. You are practicing for a real WSI portfolio review — interviewers and design leads want to hear HOW you decided, not just see WHAT you made.",
             "resources": [
               {
-                "title": "Information Architecture - Nielsen Norman Group (study guide)",
-                "type": "doc",
-                "url": "https://www.nngroup.com/articles/information-architecture-study-guide/"
-              }
-            ]
-          },
-          {
-            "title": "Build the content/data layer as a JS object and render sections from it",
-            "time": "45 min",
-            "detail": "In your main script (e.g., app.js), create plain JavaScript objects/arrays that hold your real content: a curriculum array with all 10 days (pull the titles from your own curriculum, marking Days 1-9 done and Day 10 in-progress), a habits array, a gym-log array, and a diary array. Then write a small render function per section that loops over the data and injects HTML into the DOM (template literals + innerHTML, or createElement). The point of separating data from markup is maintainability: tomorrow you add a gym entry by editing one array, not hand-writing HTML. This mirrors how WSI separates content from commerce, and where it fails ('recipe/guide content and the shop are loosely stitched'), so make your render layer the connective tissue. Keep it vanilla JS, no framework needed. Test in the browser via VS Code Live Server after each section renders.",
-            "resources": [
-              {
-                "title": "JavaScript DOM Manipulation - full crash course (freeCodeCamp, YouTube)",
+                "title": "How to Present Your UX Design Portfolio in an Interview (with examples) — YouTube",
                 "type": "video",
-                "url": "https://www.youtube.com/watch?v=5fb2aPlgoys"
+                "url": "https://www.youtube.com/watch?v=ad2aIfURRWE"
               },
               {
-                "title": "Using template literals - MDN Web Docs",
+                "title": "How to Prepare for (and Ace) a UX Portfolio Presentation — UX Design Institute",
                 "type": "doc",
-                "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals"
+                "url": "https://www.uxdesigninstitute.com/blog/ux-portfolio-presentation-guide/"
+              },
+              {
+                "title": "How to Present a UX Portfolio During a Job Interview — Designlab",
+                "type": "doc",
+                "url": "https://designlab.com/blog/ux-portfolio-presentation"
               }
             ]
           },
           {
-            "title": "Apply a design-led UI polish pass: type scale, spacing, contrast, responsiveness",
-            "time": "45 min",
-            "detail": "Now style it to a premium, design-led standard, the bar WSI sets as a 'design-led' retailer. Define CSS custom properties for a small type scale (e.g., 0.875 / 1 / 1.25 / 1.5 / 2 rem), a spacing scale (4/8/16/24/32px), and a restrained color palette with one accent. Apply consistent card components for each data item, generous whitespace, and a clear visual hierarchy so the eye lands on section headers first. Verify color contrast meets WCAG AA (4.5:1 for body text) using a contrast checker. Add a single responsive breakpoint so the layout stacks cleanly on a phone, this matters because WSI is 'digital-first' and mobile is the dominant surface. Avoid the 'wall of content' problem: each section should feel like a calm, curated vignette, much like Pottery Barn's 'shop the look' modules, not a spreadsheet.",
+            "title": "Curate your 3-artifact story",
+            "time": "40 min",
+            "detail": "You have a week of artifacts — now pick the THREE that together show range, and drop them into your Day 9 case-study scaffold. A strong trio: (1) the Day 0 competitive landscape map (shows strategic literacy — you understand the business and the field), (2) a craft piece — your Day 4 checkout micro-fixes OR the Day 6 cross-brand nav redesign (shows you can actually design the screen), and (3) the Day 8 metrics work (shows you tie design to business outcomes). For each, write a single-sentence PROBLEM and a single-sentence IMPACT now. Resist adding more than three — a focused story beats a tour of everything. This is the through-line you'll present and, later, the spine of your real summer case study.",
             "resources": [
               {
-                "title": "CSS custom properties (variables) - MDN Web Docs",
+                "title": "Portfolio Presentation for UX Design Internship Interviews — UX Planet",
                 "type": "doc",
-                "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties"
-              },
-              {
-                "title": "WebAIM Contrast Checker",
-                "type": "doc",
-                "url": "https://webaim.org/resources/contrastchecker/"
+                "url": "https://uxplanet.org/portfolio-presentation-for-ux-design-internship-interviews-808c571b7119"
               }
             ]
           },
           {
-            "title": "Performance & accessibility hardening: avoid the WSI JavaScript-gating trap",
+            "title": "Rehearse out loud and record yourself",
+            "time": "35 min",
+            "detail": "Presentation is a muscle — rehearsal is the entire game. Using your Step 1 script skeleton, present your three artifacts in about five minutes, recording yourself on your phone. Lead each artifact with the PROBLEM, then your key decision + one trade-off, then the outcome. Watch the recording back once and mark three things: filler words / rambling, any moment you led with the screen instead of the problem, and whether you could land it without reading notes. Re-record once. The goal isn't perfection; it's being able to tell the story conversationally, which is exactly what a WSI portfolio review or a hallway 'so what did you work on?' demands.",
+            "resources": [
+              {
+                "title": "How to Structure the UX Research/Portfolio Presentation — Zero to UX (YouTube)",
+                "type": "video",
+                "url": "https://www.youtube.com/watch?v=C6KsXwJFmBg"
+              }
+            ]
+          },
+          {
+            "title": "Run a structured self- or peer-critique",
             "time": "30 min",
-            "detail": "Read the friction research deliberately: WSI's 'pervasive JavaScript gating' means core pages 'return JS-required shells' that hurt 'performance, accessibility, and SEO/resilience', and prices can become 'slow or invisible if scripts fail.' Make one or two concrete choices so your dashboard degrades gracefully and stays fast: (1) put meaningful static fallback content or a <noscript> message in the HTML so the page isn't an empty shell if JS fails; (2) add semantic HTML (proper headings h1-h3, nav, main, section, button elements for interactive controls) and an aria-label on your nav so a screen reader can parse it. Then run a Lighthouse audit in Chrome DevTools and record your Performance and Accessibility scores. Fix the top one or two flagged issues (often: missing alt text, low contrast, missing labels). Note your before/after scores; you'll cite them in your README.",
+            "detail": "Critique is how design teams actually improve work — learn to run and receive one. Read NN/g's design-critique guidance and watch the short 'get helpful feedback' video, then run a critique on your walkthrough. Set the stage first (state the context and the SPECIFIC feedback you want — e.g., 'is my impact claim believable?' not 'thoughts?'), then either present to a friend or self-critique against the rubric: Is the problem clear in 10 seconds? Is there a visible decision + trade-off? Is the outcome quantified? Capture at least three concrete revisions (e.g., 'cut the intro by half,' 'add the abandonment % to artifact 2,' 'reorder so the strongest piece is first'). Apply them to your deck. Receiving critique gracefully is itself a return-offer skill.",
             "resources": [
               {
-                "title": "Lighthouse: get started - Chrome for Developers",
+                "title": "Design Critiques: Encourage a Positive Culture to Improve Products — NN/g",
                 "type": "doc",
-                "url": "https://developer.chrome.com/docs/lighthouse/overview/"
+                "url": "https://www.nngroup.com/articles/design-critiques/"
               },
               {
-                "title": "<noscript> element - MDN Web Docs",
-                "type": "doc",
-                "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/noscript"
-              }
-            ]
-          },
-          {
-            "title": "Initialize Git, write a README, and push to a GitHub repo",
-            "time": "35 min",
-            "detail": "In the VS Code integrated terminal, run git init, create a .gitignore (ignore OS junk like .DS_Store), and write a README.md that states: what the dashboard is, the sections it contains, your tech stack (HTML/CSS/vanilla JS), how to run it locally (open index.html or use Live Server), and your Lighthouse scores from the previous step. Make your first commit, then create a new GitHub repo (decide private vs. public; the diary section is personal, so private is the safer default, or keep diary entries in a gitignored file). Push with the standard remote-add + push flow. If you want it live, enable GitHub Pages for a public URL. Confirm the repo loads and the README renders. This shipped, version-controlled artifact is the deliverable a hiring manager or mentor can actually open.",
-            "resources": [
-              {
-                "title": "Create a repo & push existing project - GitHub Docs",
-                "type": "doc",
-                "url": "https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github"
-              },
-              {
-                "title": "Git & GitHub for beginners crash course (freeCodeCamp, YouTube)",
+                "title": "How to Get Helpful Feedback (video) — NN/g",
                 "type": "video",
-                "url": "https://www.youtube.com/watch?v=RGOj5yH7evk"
-              },
-              {
-                "title": "Configuring a publishing source for GitHub Pages",
-                "type": "doc",
-                "url": "https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site"
+                "url": "https://www.nngroup.com/videos/get-helpful-feedback/"
               }
             ]
           },
           {
-            "title": "Final QA, self-review, and write a short reflection",
-            "time": "20 min",
-            "detail": "Do a final pass as if you were a WSI Design Crew reviewer evaluating a customer-facing surface. Click every nav item, confirm each section renders its real data, resize the window to test the mobile breakpoint, and intentionally check one accessibility detail (tab through with the keyboard, can you reach the nav?). In your diary section (or a CHANGELOG), write a 4-6 sentence reflection capturing: what you built across these 10 days, the single biggest UX friction you learned to spot in WSI's funnel (e.g., late-revealed shipping costs, siloed Olive, JS-gated PDPs), and how you'll keep using this dashboard through your internship. Take a screenshot of the finished dashboard for your records and for the Figma exercise.",
+            "title": "Write your X-Y-Z impact bullets",
+            "time": "30 min",
+            "detail": "Turn each artifact's outcome into a resume-and-review-ready bullet using Google's X-Y-Z formula: 'Accomplished [X], as measured by [Y], by doing [Z].' X = the result, Y = the metric, Z = the method. Ground Y in the real benchmarks you gathered on Day 8 so the claims are credible, e.g., 'Redesigned the multi-brand checkout to surface total cost earlier (Z), targeting the late-revealed-shipping friction behind ~80% home/furniture cart abandonment (Y), projected to reduce checkout drop-off (X).' For a prep project you'll phrase impact as a target/projection, not a fabricated result — honesty matters. Write one bullet per artifact (three total) and paste them into this lesson's notes. These become the literal bullets on your resume and the spine of every 'tell me about a project' answer.",
+            "resources": [
+              {
+                "title": "How To Use the XYZ Method Resume (template + example) — Teal",
+                "type": "doc",
+                "url": "https://www.tealhq.com/post/xyz-resume"
+              },
+              {
+                "title": "Google recruiters: the X-Y-Z formula improves your odds — Inc.",
+                "type": "article",
+                "url": "https://www.inc.com/bill-murphy-jr/google-recruiters-say-these-5-resume-tips-including-x-y-z-formula-will-improve-your-odds-of-getting-hired-at-google.html"
+              }
+            ]
+          },
+          {
+            "title": "Draft your return-offer game plan + Intern-Log ritual",
+            "time": "35 min",
+            "detail": "Close the loop by writing a one-page plan that makes day one calm and intentional. Include: (1) FIRST-WEEK QUESTIONS — 5 questions to ask your manager Jamie / team (e.g., 'what does a great summer look like to you?', 'which metric does our team own?', 'how do you prefer design work shared — Figma, Loom, live?'); (2) a 30/60/90 FOCUS — 30 days = absorb the design system + ship one small thing, 60 = own a feature/flow, 90 = present a measurable win; (3) your INTERN-LOG RITUAL — commit to a standing Friday afternoon brain-dump of wins/blockers/iterations, then synthesize it into X-Y-Z bullets, so by August you have a metrics-backed case study instead of a scramble. This plan turns the internship from 'hope it goes well' into a designed outcome aimed at the return offer.",
             "resources": []
           }
         ],
         "figmaExercise": {
-          "brief": "Create a one-frame 'Dashboard Design System & Annotated Screenshot' in Figma that documents the dashboard you just built. Left half: paste your final dashboard screenshot and add 4-6 annotation callouts (numbered pins + short notes) pointing to specific UX decisions, e.g., 'unified nav prevents the siloed/fragmented experience WSI is criticized for,' 'WCAG AA contrast on body text,' '<noscript> fallback so the page isn't an empty JS shell like WSI PDPs,' 'card vignette per section, not a spreadsheet wall.' Right half: lay out a mini design system, your actual type scale (show each size with px/rem), your spacing scale as labeled rectangles, and your color palette as swatches with hex codes and the contrast ratio of text-on-background. Title the frame, add your name and the date. The goal is to show you can articulate design rationale, not just produce pixels, the way a design-led WSI team must justify choices.",
-          "deliverable": "One Figma frame exported as PNG plus a shareable (view-access) Figma link. Upload the PNG screenshot into your dashboard (e.g., an 'Artifacts' or 'Design System' card) and paste the Figma link in your README under a 'Design rationale' heading, so the dashboard documents its own design."
+          "brief": "Build a short 'Portfolio Walkthrough' deck (3–5 slides) in Figma plus a one-page Return-Offer Plan. Each artifact slide uses one consistent template and contains: the PROBLEM (one line), your KEY DECISION + one trade-off you weighed, and the OUTCOME written as an X-Y-Z impact bullet tied to a real benchmark from Day 8. Open with a 10-second 'who I am + the three things I'll show' slide and close with a slide holding your 30/60/90 focus and the Friday Intern-Log ritual you'll run. Keep type, spacing, and layout identical across slides so it reads as a portfolio, not a pile of screenshots. The point is to prove you can articulate design VALUE and a point of view — exactly what converts a WSI internship into an offer.",
+          "deliverable": "Upload a PNG of the deck AND a view-access Figma link to your dashboard, and paste your three X-Y-Z impact bullets into this lesson's notes field."
         },
-        "output": "A live or locally runnable single-page web dashboard (HTML/CSS/vanilla JS) in a GitHub repo, with: (1) a JS data layer driving 4-5 navigable sections covering both professional data (the embedded 10-day curriculum + prep tracking) and personal logs (gym, habits, diary/summer goals); (2) a design-led UI with a documented type/spacing/color system and WCAG AA contrast; (3) graceful degradation (semantic HTML + <noscript> fallback) and recorded Lighthouse Performance/Accessibility scores; (4) a README documenting the stack, run instructions, scores, and a link to the Figma design-system frame; and (5) an annotated Figma frame (PNG + link) embedded in the dashboard. This becomes the intern's working professional + personal command center for the summer.",
-        "wsiContext": "Williams-Sonoma, Inc. brands itself as 'the world's largest digital-first, design-led and sustainable home furnishings retailer,' with ~65% of fiscal 2025 net revenue from e-commerce, so the front end IS the business. This day puts the intern on the engineering side of that reality. Three documented WSI friction points directly shape the build: (1) 'Pervasive JavaScript gating', WSI's PDPs and Olive 'return JS-required shells' that harm performance, accessibility, and resilience, motivating the intern's <noscript> fallback, semantic HTML, and Lighthouse audit. (2) Fragmentation/siloing, WSI's cross-brand discovery is 'fragmented across distinct branded storefronts' with no unified cart, and Olive is 'siloed' rather than embedded; the intern instead builds ONE coherent dashboard with unified navigation. (3) Content-to-commerce gaps, WSI's 'rich recipes/guides and the shop are loosely linked'; the intern's data layer is the connective tissue tying content to action. Building, polishing, and shipping a real interface, the same design-to-deployment loop behind WSI's storefronts and its Design Crew Room Planner, gives the intern firsthand fluency in the constraints engineers face, making them a far more credible collaborator on a design-led team.",
+        "output": "A rehearsed 3-artifact portfolio walkthrough (Figma deck, 3–5 slides with a consistent template), three Google X-Y-Z impact bullets grounded in real WSI/retail benchmarks, a set of concrete revisions captured from a self- or peer-critique, and a one-page return-offer game plan (first-week questions + a 30/60/90 focus + a committed Friday Intern-Log ritual). Submitted as a PNG screenshot plus a Figma share link, with the three bullets pasted into the lesson notes.",
+        "wsiContext": "A Williams-Sonoma, Inc. internship is an extended audition — the real goal is the return offer, and design-led teams convert interns who can articulate WHY a decision served the premium, digital-first business, not just that it looked good. Everything you built this prep week is raw material: the Day 0 landscape map proves strategic literacy, the brand/checkout/navigation work proves craft, and the Day 8 metrics let you speak the language leadership rewards (conversion, cart abandonment, AOV). WSI's culture is documented as design-led and digital-first (~65% of revenue is e-commerce), so a portfolio review there rewards a crisp problem-to-impact narrative over raw pixels. The Friday Intern-Log ritual — a weekly raw brain-dump of wins, blockers, and iterations, then synthesized into X-Y-Z bullets — is what turns a summer of scattered tasks into a senior-grade, metrics-backed case study and a confident offer conversation. This capstone rehearses that exact muscle before day one.",
         "feedbackCriteria": [
-          "The GitHub repo is reachable and runnable: the README documents the tech stack, local run instructions, and explicitly lists Lighthouse Performance and Accessibility scores; the dashboard opens without console errors.",
-          "Content and presentation are separated: sections render from a JavaScript data object/array (not hand-coded static HTML per item), and the dashboard contains all required sections, the embedded 10-day curriculum plus at least three personal logs (gym, habits, diary/goals), reachable through a single unified navigation.",
-          "Accessibility and resilience are demonstrably addressed: semantic HTML landmarks (nav/main/section, h1-h3 hierarchy) are present, a <noscript> or static fallback exists so the page is not an empty JS shell, and body-text color contrast meets WCAG AA (>=4.5:1), verifiable with a contrast checker.",
-          "The Figma deliverable is complete and linked: a single annotated frame with 4-6 callouts tied to specific UX decisions AND a mini design system (type scale, spacing scale, color swatches with hex + contrast ratios); the PNG is embedded in the dashboard and the Figma link appears in the README.",
-          "The reflection explicitly names at least one real WSI funnel friction from the research (e.g., late-revealed shipping cost, JS-gated PDPs, siloed Olive, content-to-commerce gap) and connects it to a concrete design choice made in the dashboard."
+          "The walkthrough presents exactly 3 curated artifacts with a clear problem → process/decision → impact spine, using one consistent slide template (not a pile of unrelated screenshots).",
+          "Each artifact's outcome is written as a Google X-Y-Z bullet (Accomplished X, as measured by Y, by doing Z) anchored to a real WSI/retail benchmark from Day 8 — phrased as an honest target/projection for prep work, not a fabricated result.",
+          "There is evidence of a real critique pass: at least three concrete, specific revisions captured from a self- or peer-critique (not generic 'make it better').",
+          "The return-offer plan is one page and concrete: first-week questions, a 30/60/90 focus, and a committed Friday Intern-Log (X-Y-Z) cadence.",
+          "You rehearsed aloud (ideally recorded) and can deliver the ~5-minute walkthrough leading with the problem and without reading from notes."
         ]
       }
     ];
