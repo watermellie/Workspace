@@ -1033,98 +1033,6 @@
   })();
 
   /* ==========================================================
-     7d · GCal — private Google Calendar via OAuth (read-only)
-       Uses Google Identity Services for a client-side access token
-       (no backend, no API key, calendar stays private). The OAuth
-       client id + tick state live in localStorage ONLY; the access
-       token is kept in memory and never persisted. Nothing is synced
-       to the cloud store or committed.
-     ========================================================== */
-  const GCal = (() => {
-    const CFG = 'wsi_gcal_config', DONE = 'wsi_gcal_done';
-    const SCOPE = 'https://www.googleapis.com/auth/calendar.readonly';
-    const read = (k) => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch { return {}; } };
-    function config() { const c = read(CFG); return { clientId: c.clientId || '', calId: c.calId || 'primary' }; }
-    function setConfig(clientId, calId) { localStorage.setItem(CFG, JSON.stringify({ clientId: (clientId||'').trim(), calId: (calId||'').trim() || 'primary' })); }
-    function configured() { return !!config().clientId; }
-    function clear() { localStorage.removeItem(CFG); token = null; tokenExp = 0; }
-
-    const doneSet = () => { try { return new Set(JSON.parse(localStorage.getItem(DONE)) || []); } catch { return new Set(); } };
-    function isDone(id) { return doneSet().has(id); }
-    function toggleDone(id, on) { const s = doneSet(); on ? s.add(id) : s.delete(id); localStorage.setItem(DONE, JSON.stringify([...s])); }
-
-    /* load Google Identity Services once, on demand (keeps app offline-clean) */
-    let gisReady = null;
-    function loadGis() {
-      if (gisReady) return gisReady;
-      gisReady = new Promise((resolve, reject) => {
-        if (window.google?.accounts?.oauth2) return resolve();
-        const s = document.createElement('script');
-        s.src = 'https://accounts.google.com/gsi/client'; s.async = true; s.defer = true;
-        s.onload = () => resolve();
-        s.onerror = () => { gisReady = null; reject(new Error('couldn’t load Google sign-in (offline?)')); };
-        document.head.appendChild(s);
-      });
-      return gisReady;
-    }
-
-    let tokenClient = null, token = null, tokenExp = 0;
-    async function getClient() {
-      await loadGis();
-      const { clientId } = config();
-      if (!clientId) throw new Error('not configured');
-      if (!tokenClient) tokenClient = window.google.accounts.oauth2.initTokenClient({ client_id: clientId, scope: SCOPE, callback: () => {} });
-      return tokenClient;
-    }
-    function requestToken(prompt) {
-      return new Promise((resolve, reject) => {
-        getClient().then(client => {
-          client.callback = (resp) => {
-            if (resp.error) { reject(new Error(resp.error_description || resp.error)); return; }
-            token = resp.access_token;
-            tokenExp = Date.now() + ((resp.expires_in ? resp.expires_in * 1000 : 3600000) - 60000);
-            resolve(token);
-          };
-          client.requestAccessToken({ prompt });
-        }).catch(reject);
-      });
-    }
-    function signedIn() { return !!token && Date.now() < tokenExp; }
-    async function ensureToken(interactive) {
-      if (signedIn()) return token;
-      try { return await requestToken(''); }            // silent — no popup if already granted
-      catch (e) { if (interactive) return await requestToken('consent'); throw e; }
-    }
-    function signIn() { return ensureToken(true); }
-    function signOut() { token = null; tokenExp = 0; }
-
-    async function fetchUpcoming(days = 7, max = 15) {
-      const { calId } = config();
-      const t = await ensureToken(false);
-      const now = new Date(), tMax = new Date(Date.now() + days * 864e5);
-      const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`
-        + `?timeMin=${encodeURIComponent(now.toISOString())}`
-        + `&timeMax=${encodeURIComponent(tMax.toISOString())}`
-        + `&singleEvents=true&orderBy=startTime&maxResults=${max}`;
-      const res = await fetch(url, { headers: { Authorization: 'Bearer ' + t } });
-      if (!res.ok) {
-        if (res.status === 401) { signOut(); }
-        let msg = `error ${res.status}`;
-        try { const j = await res.json(); if (j.error?.message) msg = j.error.message; } catch {}
-        throw new Error(msg);
-      }
-      const data = await res.json();
-      return (data.items || []).map(ev => ({
-        id: ev.id,
-        title: ev.summary || '(busy)',
-        start: ev.start?.dateTime || ev.start?.date,
-        allDay: !ev.start?.dateTime,
-      })).filter(e => e.start);
-    }
-    return { config, setConfig, configured, clear, isDone, toggleDone, fetchUpcoming, signIn, signOut, signedIn, ensureToken };
-  })();
-
-  /* ==========================================================
      8 · Dashboard
      ========================================================== */
   const Dashboard = (() => {
@@ -1270,16 +1178,24 @@
       document.addEventListener('pointermove', move); document.addEventListener('pointerup', up);
     }
 
-    /* ── Google Calendar → upcoming events as a checklist (draggable widget) ── */
+    /* ── Google Calendar embed (draggable widget) — plain agenda, white bg ── */
+    function buildCalEmbedUrl(raw) {
+      raw = (raw || '').trim();
+      if (!raw) return '';
+      const tag = raw.match(/src="([^"]+)"/i);                 // pasted a full <iframe …> tag
+      if (tag) return tag[1];
+      if (/^https?:\/\//i.test(raw)) return raw;               // already an embed URL
+      return `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(raw)}` +
+             `&ctz=America/Los_Angeles&mode=AGENDA&showTitle=0&showPrint=0&showCalendars=0&showTz=0&showTabs=0&showNav=1&showDate=1`;
+    }
     function calendarWidget() {
       const meta = Store.get().meta;
       const pos = meta.calPos || { x: 26, y: 372 };
       const w = el('div', { class:'cal-widget', style:`left:${pos.x}px; top:${pos.y}px` });
       const body = el('div', { class:'cal-body' });
       const head = el('div', { class:'cal-head' }, [
-        el('span', { class:'stamp', text:'📅 upcoming' }),
+        el('span', { class:'stamp', text:'📅 calendar' }),
         el('div', { class:'cal-head-tools' }, [
-          el('button', { class:'cal-edit', title:'refresh', html: svg('restore'), onclick: () => renderCal(body) }),
           el('button', { class:'cal-edit', title:'calendar settings', html: svg('gear'), onclick: () => calSetup(body) }),
           el('span', { class:'stamp cal-grip', text:'drag' }),
         ]),
@@ -1290,87 +1206,26 @@
       return w;
     }
     function renderCal(body) {
+      const meta = Store.get().meta;
       body.innerHTML = '';
-      if (!GCal.configured()) { calSetup(body); return; }
-      const list = el('div', { class:'cal-list' }, el('div', { class:'cal-loading', text:'loading your calendar…' }));
-      body.append(list);
-
-      const showEvents = () => GCal.fetchUpcoming().then(events => {
-        list.innerHTML = '';
-        if (!events.length) { list.append(el('div', { class:'empty-line', text:'nothing coming up 🌿' })); return; }
-        let lastDay = '';
-        events.forEach(ev => {
-          const d = new Date(ev.start);
-          const label = calDayLabel(d);
-          if (label !== lastDay) { list.append(el('div', { class:'cal-day', text: label })); lastDay = label; }
-          list.append(calEventRow(ev, d));
-        });
-      }).catch(err => showCalError(body, list, err));
-
-      const showSignIn = () => {
-        list.innerHTML = '';
-        list.append(
-          el('div', { class:'cal-setup-hint', text:'sign in to load your private calendar.' }),
-          el('button', { class:'btn primary sm', style:'margin-top:8px', text:'sign in with Google', onclick: () => {
-            list.innerHTML = ''; list.append(el('div', { class:'cal-loading', text:'opening Google…' }));
-            GCal.signIn().then(showEvents).catch(err => showCalError(body, list, err));
-          } }),
-        );
-      };
-
-      if (GCal.signedIn()) showEvents();
-      else GCal.ensureToken(false).then(showEvents).catch(showSignIn);   // try silent, else offer button
-    }
-    function showCalError(body, list, err) {
-      list.innerHTML = '';
-      list.append(
-        el('div', { class:'cal-error', text:'couldn’t load your calendar.' }),
-        el('div', { class:'cal-setup-hint', text: String(err && err.message || err) }),
-        el('div', { style:'display:flex; gap:6px; margin-top:6px; flex-wrap:wrap' }, [
-          el('button', { class:'btn ghost sm', text:'try sign-in', onclick: () => { list.innerHTML=''; list.append(el('div',{class:'cal-loading',text:'opening Google…'})); GCal.signIn().then(() => renderCal(body)).catch(e => showCalError(body, list, e)); } }),
-          el('button', { class:'btn ghost sm', text:'settings', onclick: () => calSetup(body) }),
-        ]),
-      );
-    }
-    function calDayLabel(d) {
-      const today = new Date().toDateString();
-      const tomorrow = new Date(Date.now() + 864e5).toDateString();
-      if (d.toDateString() === today) return 'today';
-      if (d.toDateString() === tomorrow) return 'tomorrow';
-      return d.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
-    }
-    function calEventRow(ev, d) {
-      const row = el('label', { class:'cal-evt' + (GCal.isDone(ev.id) ? ' done' : '') });
-      const cb = el('input', { type:'checkbox' }); cb.checked = GCal.isDone(ev.id);
-      cb.addEventListener('change', () => { GCal.toggleDone(ev.id, cb.checked); row.classList.toggle('done', cb.checked); });
-      const time = ev.allDay ? 'all day' : d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
-      row.append(cb, el('span', { class:'cal-evt-time', text: time }), el('span', { class:'cal-evt-title', text: ev.title }));
-      return row;
+      const url = buildCalEmbedUrl(meta.calUrl);
+      if (url) body.append(el('iframe', { class:'cal-frame', src: url, loading:'lazy', title:'Google Calendar' }));
+      else calSetup(body);
     }
     function calSetup(body) {
-      const cfg = GCal.config();
+      const meta = Store.get().meta;
       body.innerHTML = '';
-      const cid = el('input', { class:'field cal-input', value: cfg.clientId, placeholder:'OAuth Client ID (…apps.googleusercontent.com)' });
-      const id = el('input', { class:'field cal-input', value: cfg.calId === 'primary' ? '' : cfg.calId, placeholder:'calendar ID (optional — blank = your main calendar)' });
-      const save = () => {
-        if (!cid.value.trim()) { toast('paste your OAuth Client ID'); return; }
-        GCal.setConfig(cid.value, id.value); toast('saved — now sign in'); renderCal(body);
-      };
-      cid.addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
+      const inp = el('input', { class:'field cal-input', value: meta.calUrl || '', placeholder:'you@gmail.com  or  embed URL' });
+      const save = () => { meta.calUrl = inp.value.trim(); Store.save(true); renderCal(body); };
+      inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
       body.append(el('div', { class:'cal-setup' }, [
-        el('div', { class:'cal-setup-title', text:'connect Google Calendar (private)' }),
+        el('div', { class:'cal-setup-title', text:'connect Google Calendar' }),
         el('div', { class:'cal-setup-hint', html:
-          'shows your upcoming events as a checklist — your calendar stays private (read-only sign-in, no API key, no public sharing). one-time setup:<br>' +
-          '<b>1.</b> <b>console.cloud.google.com</b> → enable the <b>Google Calendar API</b>.<br>' +
-          '<b>2.</b> Credentials → <b>Create OAuth client ID</b> → type <b>Web application</b>.<br>' +
-          '<b>3.</b> under <b>Authorized JavaScript origins</b> add this site’s address (e.g. <b>https://watermellie.com</b>).<br>' +
-          '<b>4.</b> on the OAuth consent screen, add your Google account as a <b>test user</b>.<br>' +
-          '<b>5.</b> copy the <b>Client ID</b> and paste it below.<br>' +
-          'the Client ID is stored on this device only — never synced or shared.' }),
-        cid, id,
+          'paste your calendar address (e.g. <b>you@gmail.com</b>) or a full embed URL from Google Calendar → Settings → “Integrate calendar”. it shows whenever you’re signed in to that account in this browser.' }),
+        inp,
         el('div', { style:'display:flex; gap:6px; flex-wrap:wrap' }, [
-          el('button', { class:'btn primary sm', text:'save', onclick: save }),
-          GCal.configured() ? el('button', { class:'btn ghost sm', text:'disconnect', onclick: () => { GCal.clear(); toast('disconnected'); renderCal(body); } }) : el('span'),
+          el('button', { class:'btn primary sm', text:'show calendar', onclick: save }),
+          meta.calUrl ? el('button', { class:'btn ghost sm', text:'clear', onclick: () => { meta.calUrl=''; Store.save(true); renderCal(body); } }) : el('span'),
         ]),
       ]));
     }
