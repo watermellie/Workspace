@@ -398,6 +398,7 @@ body.pen-mode .note-doodle { pointer-events: all; touch-action: none; cursor: cr
 .plan-chip { display: inline-block; font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; background: var(--line); color: var(--ink-soft); }
 .plan-chip.today { background: var(--blue, #2f6df0); color: #fff; }
 .plan-chip.overdue { background: var(--red); color: #fff; }
+.feed-card.finance .feed-thumb { color: var(--green); font-weight: 700; }
 
 .sched-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 6px 0 12px; }
 .sched-label { font-size: 12px; color: var(--ink-soft); }

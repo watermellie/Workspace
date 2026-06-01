@@ -175,6 +175,228 @@
       output:'A rehearsed portfolio walkthrough deck + three X-Y-Z impact bullets + a one-page return-offer plan.' },
   ];
 
+  /* ===== Financial-literacy track — a separate, self-paced starter curriculum ===== */
+  const FINANCE_BASE = [
+    {
+      slug: 'budgeting', n: 1,
+      title: 'Money Foundations: Budgeting & Cash Flow',
+      exerciseLabel: 'this week’s exercise',
+      coreConcept: `The whole of personal finance starts with one honest question: what comes in, and where does it go? Before investing or paying down debt, you build a budget — a plan that gives every dollar a job. Today you’ll see your real spending, learn the simple 50/30/20 framework (50% needs, 30% wants, 20% savings/debt), and build a monthly budget you’ll actually keep. This isn’t about restriction; it’s about telling your money where to go instead of wondering where it went.`,
+      objectives: [
+        'Track one to two months of real income and spending and sort it into needs, wants, and savings/debt.',
+        'Explain the 50/30/20 framework and why it flexes to your situation (e.g., high rent, aggressive saving).',
+        'Build a monthly budget from your actual take-home (net) pay.',
+        'Set up one automatic transfer to savings and identify one recurring “want” to trim.',
+      ],
+      steps: [
+        { title: 'See where your money actually goes', time: '30 min',
+          detail: `Open your bank and credit-card statements for the last one to two months and list every expense. Sort each into three buckets: NEEDS (rent, groceries, transit, phone, insurance), WANTS (eating out, subscriptions, shopping), and SAVINGS/DEBT. Total each bucket. Most people are surprised by the “wants” number — that’s the point. Don’t judge it yet; just get an honest baseline. Use NerdWallet’s free worksheet to structure it.`,
+          resources: [
+            { title: 'How to Budget Money: a step-by-step guide (NerdWallet)', type: 'doc', url: 'https://www.nerdwallet.com/article/finance/how-to-budget' },
+            { title: 'Free budget worksheet template (NerdWallet)', type: 'doc', url: 'https://www.nerdwallet.com/article/finance/budget-worksheet' },
+          ] },
+        { title: 'Learn the 50/30/20 framework', time: '25 min',
+          detail: `Read how 50/30/20 works: aim ~50% of take-home pay at needs, ~30% at wants, ~20% at savings and debt paydown. It’s a starting guide, not a rule — if you live somewhere expensive or want to save hard, shift the percentages. Compare the framework to the baseline you just totaled: which bucket is over, which is under?`,
+          resources: [
+            { title: 'What is the 50/30/20 rule? (Experian)', type: 'doc', url: 'https://www.experian.com/blogs/ask-experian/what-is-the-50-30-20-rule/' },
+            { title: '50/30/20 budget calculator (NerdWallet)', type: 'doc', url: 'https://www.nerdwallet.com/finance/learn/nerdwallet-budget-calculator' },
+          ] },
+        { title: 'Build your budget', time: '40 min',
+          detail: `Take your monthly net (after-tax) income and assign it across the three buckets using the calculator and a simple sheet. Give every dollar a job until income minus the plan equals zero. Set a concrete target for each category (e.g., “eating out: $120/mo”). A budget you can keep beats a perfect one you abandon — start loose and tighten next month.`,
+          resources: [] },
+        { title: 'Automate one save + trim one want', time: '20 min',
+          detail: `Make it run without willpower: set up an automatic transfer to savings the day after payday (even $25 counts), and pick ONE recurring “want” to cut or pause this month. Note both on your budget. Automation is the single highest-leverage habit in personal finance — you save first, then spend what’s left.`,
+          resources: [] },
+      ],
+      figmaExercise: {
+        brief: 'Build a one-page monthly budget (a spreadsheet, Notion, or Figma frame) with your real take-home income split into needs / wants / savings & debt using 50/30/20 as a starting point. Include a per-category target, the single automatic transfer you set up, and the one “want” you’re trimming this month. It should balance to zero (every dollar assigned).',
+        deliverable: 'Upload a screenshot of your monthly budget showing the three buckets, your targets, and your automation + cut.',
+      },
+      output: 'A working, balanced monthly budget with needs/wants/savings targets, one automated save, and one trimmed expense.',
+      feedbackCriteria: [
+        'The budget uses your real take-home pay and assigns every dollar (balances to ~zero).',
+        'Spending is sorted into needs / wants / savings & debt with a concrete target per category.',
+        'At least one automatic transfer to savings is set up and noted.',
+        'One specific recurring “want” is identified to trim or pause.',
+      ],
+    },
+    {
+      slug: 'banking', n: 2,
+      title: 'Banking & Your Emergency Fund',
+      exerciseLabel: 'this week’s exercise',
+      coreConcept: `An emergency fund is the foundation everything else stands on — it’s what keeps a surprise (car repair, medical bill, lost income) from becoming credit-card debt. Today you’ll learn the difference between checking, savings, and a high-yield savings account (HYSA), why your emergency cash belongs in a HYSA earning ~4% instead of a checking account earning ~0%, and how much to save. You’ll set a starter target and automate it.`,
+      objectives: [
+        'Distinguish checking vs. savings vs. high-yield savings (HYSA) and when to use each.',
+        'Explain why an emergency fund comes before investing, and how big it should be (3–6 months of essentials).',
+        'Compare HYSA options and understand FDIC/NCUA insurance.',
+        'Set a starter emergency-fund target and an automatic monthly contribution.',
+      ],
+      steps: [
+        { title: 'Checking vs. savings vs. HYSA', time: '25 min',
+          detail: `Learn the three core accounts. Checking = daily spending. Savings = short-term goals. A HYSA = a savings account that pays far more interest (often 3.5–5% APY vs ~0.01% at big banks). On a $10,000 fund that’s roughly $400/yr vs $1/yr. HYSAs are FDIC/NCUA-insured (up to $250k) and let you withdraw within a day or two — ideal for emergencies.`,
+          resources: [
+            { title: 'Using a HYSA as an emergency fund (Broadview)', type: 'doc', url: 'https://www.broadviewfcu.com/blogs/high-yield-savings-account-emergency-fund-guide/' },
+          ] },
+        { title: 'Why the emergency fund comes first', time: '25 min',
+          detail: `Understand the “why”: without a cash cushion, any shock goes on a credit card at ~25% interest and snowballs. Planners suggest 3–6 months of ESSENTIAL expenses (rent, utilities, groceries, insurance, transit, minimum debt payments). As a student/intern, start smaller: a $1,000 starter fund, then build to one month, then three.`,
+          resources: [
+            { title: 'Emergency fund: what it is and how to start one (Bankrate)', type: 'doc', url: 'https://www.bankrate.com/banking/savings/starting-an-emergency-fund/' },
+          ] },
+        { title: 'Compare and pick a HYSA', time: '30 min',
+          detail: `Skim a current best-of list and compare on: APY, minimum balance, fees (avoid them), and whether it’s FDIC/NCUA insured. Many top HYSAs are online banks. You do NOT need to leave your main bank — you can open a HYSA elsewhere and link it. Pick one you’d realistically open.`,
+          resources: [
+            { title: 'Best high-yield savings accounts (CNBC Select)', type: 'doc', url: 'https://www.cnbc.com/select/best-high-yield-savings-accounts/' },
+          ] },
+        { title: 'Set your target + automate it', time: '20 min',
+          detail: `Calculate your number: total monthly essentials × your target months (start with $1,000). Then set an automatic transfer into the HYSA each payday so it grows without thought. Name the account something motivating (“safety net”). This account is for emergencies only — not vacations.`,
+          resources: [] },
+      ],
+      figmaExercise: {
+        brief: 'Create a one-page emergency-fund plan: your total monthly ESSENTIAL expenses, your target (starter $1,000 → 3 months of essentials), the HYSA you’d open (name + APY), and the automatic monthly transfer amount + date. Show the math for your 3-month number.',
+        deliverable: 'Upload a screenshot of your emergency-fund plan with the target math, chosen HYSA, and automation.',
+      },
+      output: 'An emergency-fund plan with a target amount, a chosen HYSA, and an automated monthly contribution.',
+      feedbackCriteria: [
+        'Essential monthly expenses are totaled and a 3-month target is calculated.',
+        'A starter target ($1,000 or similar) is set as the first milestone.',
+        'A specific HYSA is chosen with its APY and insurance noted.',
+        'An automatic recurring transfer (amount + cadence) is defined.',
+      ],
+    },
+    {
+      slug: 'credit', n: 3,
+      title: 'Credit Scores & Using Credit Cards Wisely',
+      exerciseLabel: 'this week’s exercise',
+      coreConcept: `Your credit score (300–850) quietly shapes your adult life — apartment approvals, loan rates, sometimes even jobs. The good news: it’s built from a few factors you control, and a credit card used responsibly is the simplest way to build it. Today you’ll learn what a score is, the factors that move it, how to build credit from scratch, and how to use a card as a tool without ever carrying debt.`,
+      objectives: [
+        'Explain what a credit score is and why it matters for rates and approvals.',
+        'Identify the main scoring factors — payment history and credit utilization above all.',
+        'Choose a realistic path to build credit from scratch (student/secured card or becoming an authorized user).',
+        'Use a credit card with autopay-in-full and low utilization so it builds credit, never debt.',
+      ],
+      steps: [
+        { title: 'What a credit score is and why it matters', time: '25 min',
+          detail: `A credit score is a 300–850 number lenders use to judge how risky it is to lend to you. Higher = better rates on cards, car loans, and mortgages, and easier apartment approvals. Read the CFPB and NerdWallet basics so you understand what lenders actually see on your reports.`,
+          resources: [
+            { title: 'How do I get and keep a good credit score? (CFPB)', type: 'doc', url: 'https://www.consumerfinance.gov/ask-cfpb/how-do-i-get-and-keep-a-good-credit-score-en-318/' },
+            { title: 'The ultimate credit score guide (NerdWallet)', type: 'doc', url: 'https://www.nerdwallet.com/finance/hubs/the-ultimate-credit-score-guide' },
+          ] },
+        { title: 'The factors you actually control', time: '25 min',
+          detail: `Two factors dominate: PAYMENT HISTORY (pay on time, every time — automate it) and CREDIT UTILIZATION (keep balances under ~30% of your limit, ideally under 10%). Length of history, credit mix, and new applications matter less. The takeaway: never miss a payment, and don’t max out cards.`,
+          resources: [
+            { title: 'Understand, get, and improve your credit score (USAGov)', type: 'doc', url: 'https://www.usa.gov/credit-score' },
+          ] },
+        { title: 'Build credit from scratch', time: '30 min',
+          detail: `With little/no history, start with one of: a STUDENT credit card, a SECURED card (you put down a deposit that becomes your limit), a credit-builder loan, or becoming an AUTHORIZED USER on a trusted family member’s card. Pick the route that fits you and note the steps to open it.`,
+          resources: [
+            { title: 'How to build credit from scratch at any age (NerdWallet)', type: 'doc', url: 'https://www.nerdwallet.com/finance/learn/how-to-build-credit' },
+          ] },
+        { title: 'Use a card without ever carrying debt', time: '20 min',
+          detail: `A card is a tool, not free money. Rules: set AUTOPAY for the full statement balance (so you never pay interest or miss a due date), keep utilization low, and treat the card like a debit card — only spend what’s already in your budget. Done this way, the card silently builds your score while costing you nothing.`,
+          resources: [] },
+      ],
+      figmaExercise: {
+        brief: 'Write a one-page credit action plan: your current credit situation (no history / thin / established), the specific build route you’ll take (student/secured/authorized user/credit-builder loan), how you’ll guarantee on-time payments (autopay setup), and your target utilization (<30%, ideally <10%).',
+        deliverable: 'Upload a screenshot of your credit action plan.',
+      },
+      output: 'A credit action plan: your starting point, a build route, an autopay-in-full setup, and a utilization target.',
+      feedbackCriteria: [
+        'Correctly explains payment history and utilization as the top two factors.',
+        'Selects a realistic, specific path to build or strengthen credit.',
+        'Includes an autopay-in-full plan so payments are never missed.',
+        'States a concrete utilization target (≤30%).',
+      ],
+    },
+    {
+      slug: 'investing', n: 4,
+      title: 'Investing 101: Compounding, Index Funds & the Roth IRA',
+      exerciseLabel: 'this week’s exercise',
+      coreConcept: `Investing is how money grows faster than inflation — and your single biggest advantage is TIME, through compound interest (your returns earning returns). Today you’ll feel the power of compounding, learn why low-cost index funds beat trying to pick stocks, and meet the Roth IRA: an account that lets your investments grow and be withdrawn TAX-FREE in retirement — ideal when you’re young and in a low tax bracket. Starting small in your 20s beats starting big later.`,
+      objectives: [
+        'Explain compound interest and why starting early matters more than starting big.',
+        'Describe what an index fund is and why low cost + diversification wins long-term.',
+        'Explain why a Roth IRA is especially powerful for a young, lower-income earner.',
+        'Draft a starter investing plan: account type, a broad index fund, and an automatic contribution.',
+      ],
+      steps: [
+        { title: 'Feel the magic of compound interest', time: '25 min',
+          detail: `Open the SEC’s free compound-interest calculator and run a scenario: e.g., $100/month at a 7% average annual return for 40 years. Watch how most of the final number is GROWTH, not your contributions. Try moving the start date 10 years later — the drop is the cost of waiting. This is why “time in the market” is the whole game.`,
+          resources: [
+            { title: 'Compound interest calculator (Investor.gov / SEC)', type: 'doc', url: 'https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator' },
+          ] },
+        { title: 'Index funds, explained', time: '30 min',
+          detail: `An index fund holds a tiny slice of hundreds/thousands of companies (e.g., an S&P 500 or total-market fund), so you get instant diversification at very low cost — and historically it beats most stock-pickers. Learn the basics, then note one or two broad, low-fee funds (look for low “expense ratio”).`,
+          resources: [
+            { title: 'Index fund — definition & how it works (Investopedia)', type: 'doc', url: 'https://www.investopedia.com/terms/i/indexfund.asp' },
+            { title: 'How to Invest for Beginners (YouTube)', type: 'video', url: 'https://www.youtube.com/watch?v=NQRtpKHAv6o' },
+          ] },
+        { title: 'Why a Roth IRA is your best friend right now', time: '30 min',
+          detail: `A Roth IRA is a retirement account you fund with already-taxed money; in exchange, all growth and withdrawals in retirement are TAX-FREE. Because you’re young and likely in a low tax bracket, paying tax now and never again is a great deal. You can open one at a major brokerage and hold index funds inside it. Note the annual contribution limit and that you need earned income.`,
+          resources: [
+            { title: 'Roth IRA Made Easy for Beginners (YouTube)', type: 'video', url: 'https://www.youtube.com/watch?v=JYmWRCOV5vU' },
+          ] },
+        { title: 'Draft your starter plan', time: '20 min',
+          detail: `Write a simple plan you could act on: which account (a Roth IRA at a major low-cost brokerage is a great default once you have earned income + an emergency fund), one broad index fund to hold, and a small automatic monthly contribution (even $25–$50). The habit matters more than the amount. Never invest your emergency fund or money you need within ~5 years.`,
+          resources: [] },
+      ],
+      figmaExercise: {
+        brief: 'Create a one-page investing starter plan: a screenshot from the compound-interest calculator showing a scenario you ran (contribution, rate, years, final value), the account type you’d open (e.g., Roth IRA), one broad low-cost index fund you’d hold, and the automatic monthly amount you’d contribute. Add a one-line note on why you’re starting now.',
+        deliverable: 'Upload a screenshot of your investing starter plan (including the compounding projection).',
+      },
+      output: 'An investing starter plan: a compounding projection, a chosen account type, a broad index fund, and an automated contribution.',
+      feedbackCriteria: [
+        'Demonstrates compound interest with a real projection from the calculator.',
+        'Explains index funds (diversification + low cost) and names a broad fund.',
+        'Correctly explains the Roth IRA’s tax-free growth and why it suits a young earner.',
+        'States a specific (even tiny) automatic monthly contribution and respects “emergency fund first.”',
+      ],
+    },
+    {
+      slug: 'taxes', n: 5,
+      title: 'Taxes & Your Paycheck',
+      exerciseLabel: 'this week’s exercise',
+      coreConcept: `Your first “real” paycheck is smaller than you expect — because of taxes and withholding. Understanding your paycheck (gross vs. net), the W-4 you fill out when hired, and the W-2 you get in January means no surprises at tax time. This is directly relevant to your WSI internship pay: you’ll know what to expect, what to set aside, and how to avoid both a shock bill and a needlessly tiny paycheck.`,
+      objectives: [
+        'Read a paycheck: gross pay, taxes/withholding (federal, Social Security, Medicare, state), and net (take-home) pay.',
+        'Explain what the W-4 does and how withholding works.',
+        'Explain what a W-2 is and its role in filing a tax return.',
+        'Estimate your internship take-home pay and what to set aside.',
+      ],
+      steps: [
+        { title: 'Read your paycheck', time: '25 min',
+          detail: `Learn the anatomy of a pay stub: GROSS pay (before deductions), the taxes withheld (federal income tax, Social Security, Medicare, and state tax where applicable), and NET pay (what hits your account). The IRS “Your First Job” page is a clean primer on why money is withheld.`,
+          resources: [
+            { title: 'Your first job (IRS)', type: 'doc', url: 'https://www.irs.gov/individuals/your-first-job' },
+          ] },
+        { title: 'The W-4 and withholding', time: '25 min',
+          detail: `When you start a job you fill out a W-4, which tells your employer how much tax to withhold. Too little withheld → a surprise bill (and maybe a penalty); too much → a smaller paycheck and a refund later. Use the IRS Tax Withholding Estimator to sanity-check your W-4 once you know your internship pay.`,
+          resources: [
+            { title: 'What new workers should know about withholding (IRS)', type: 'doc', url: 'https://www.irs.gov/newsroom/what-people-new-to-the-workforce-need-to-know-about-income-tax-withholding' },
+            { title: 'Tax Withholding Estimator (IRS)', type: 'doc', url: 'https://www.irs.gov/individuals/tax-withholding-estimator' },
+          ] },
+        { title: 'The W-2 and filing', time: '25 min',
+          detail: `In January, each employer sends a W-2 summarizing your year’s wages and the tax withheld. You use it to file a tax return — often you’ll get a refund if too much was withheld. Learn how to read the key W-2 boxes so the form isn’t intimidating.`,
+          resources: [
+            { title: 'W-2 form: what it is and how to read it (NerdWallet)', type: 'doc', url: 'https://www.nerdwallet.com/article/taxes/what-is-w-2-form' },
+          ] },
+        { title: 'Plan for your internship pay', time: '20 min',
+          detail: `Estimate it: take your expected hourly or salary rate, compute monthly GROSS, then subtract a rough ~15–25% for taxes to approximate NET (use the estimator for a better number). Decide ahead of time how each paycheck splits — e.g., into your budget buckets and an automatic transfer to savings. Knowing your real take-home prevents lifestyle creep before it starts.`,
+          resources: [] },
+      ],
+      figmaExercise: {
+        brief: 'Create a one-page paycheck breakdown for your internship: estimated monthly GROSS pay, an estimate of taxes/withholding, your approximate NET (take-home) pay, and how you’ll split each paycheck (budget buckets + automatic savings). Note one thing you’ll check on your W-4.',
+        deliverable: 'Upload a screenshot of your paycheck breakdown and split plan.',
+      },
+      output: 'A paycheck breakdown estimating gross → withholding → net for your internship, plus a per-paycheck split plan.',
+      feedbackCriteria: [
+        'Correctly labels gross pay, withholding (federal/SS/Medicare/state), and net pay.',
+        'Explains the role of the W-4 (withholding) and the W-2 (year-end summary for filing).',
+        'Produces a realistic take-home estimate from a gross figure.',
+        'Defines how each paycheck is split, including an automatic save.',
+      ],
+    },
+  ];
+
   /* ==========================================================
      1 · Helpers
      ========================================================== */
@@ -276,6 +498,7 @@
       d.doodles ||= {}; d.doodles.dashboard ||= {}; d.doodles.personal ||= {};
       d.stickers ||= {}; d.stickers.dashboard ||= {}; d.stickers.personal ||= {};
       d.work ||= {}; d.work.lessons ||= {}; d.work.customLessons ||= []; d.work.entries ||= [];
+      d.work.customLessons.forEach(L => { if (!L.track) L.track = 'curriculum'; });
       d.meta ||= {}; d.meta.focusPos ||= { x: 26, y: 20 };
       if (!('catImage' in d.meta)) d.meta.catImage = '';
       if (!Array.isArray(d.meta.recurring)) d.meta.recurring = ['gym', 'breakfast', 'lunch', 'dinner'];
@@ -1211,7 +1434,7 @@
       const cd = Plan.daysUntilStart();
       rows.append(digestRow('⏳', cd > 0 ? `${cd} day${cd>1?'s':''} until your internship` : cd === 0 ? 'internship starts today 🎉' : 'internship in progress 💪', '', '#work'));
 
-      const lessons = Work.allLessons();
+      const lessons = Work.allLessons().filter(L => L.track === 'curriculum');
       const done = lessons.reduce((a, L) => a + (Store.lesson(L.id).complete ? 1 : 0), 0);
       const next = lessons.find(L => !Store.lesson(L.id).complete);
       rows.append(digestRow('📘', next ? `next: ${next.builtin ? 'day '+next.day+' — ' : ''}${next.title}` : 'curriculum complete 🎉',
@@ -1425,8 +1648,9 @@
     let sort = 'all';
     const lessonId = (L) => `d${L.day}`;        // stable, day-based — survives reordering
     const allLessons = () => [
-      ...CURRICULUM_BASE.map((L) => ({ ...L, id: lessonId(L), builtin: true })),
-      ...Store.get().work.customLessons.map(L => ({ ...L, builtin: false })),
+      ...CURRICULUM_BASE.map((L) => ({ ...L, id: lessonId(L), builtin: true, track: 'curriculum' })),
+      ...FINANCE_BASE.map((L) => ({ ...L, id: `f-${L.slug}`, builtin: true, track: 'finance' })),
+      ...Store.get().work.customLessons.map(L => ({ ...L, builtin: false, track: L.track || 'curriculum' })),
     ];
     const findLesson = (id) => allLessons().find(L => L.id === id);
 
@@ -1440,14 +1664,15 @@
     function mountFeed(root) {
       const wrap = el('div', { class:'work-wrap' });
       const lessons = allLessons();
-      const done = lessons.reduce((a, L) => a + (Store.lesson(L.id).complete ? 1 : 0), 0);
+      const curric = lessons.filter(L => L.track === 'curriculum');
+      const done = curric.reduce((a, L) => a + (Store.lesson(L.id).complete ? 1 : 0), 0);
 
       wrap.append(el('div', { class:'work-head' }, [
         el('div', { class:'kicker', text:'curriculum // williams-sonoma internship prep' }),
         el('h1', { text:'work hub' }),
-        progressTrack(done, lessons.length),
+        progressTrack(done, curric.length),
       ]));
-      wrap.append(prepBar(lessons));
+      wrap.append(prepBar(curric));
 
       const addBtn = el('button', { class:'btn primary icon-only', html: svg('plus'), title:'add lesson or journal entry', 'aria-label':'add lesson or journal entry' });
       addBtn.addEventListener('click', () => popover(addBtn, [
@@ -1455,14 +1680,15 @@
         { icon:'note', label:'journal entry', onClick: addEntry },
       ]));
       wrap.append(el('div', { class:'work-toolbar' }, [
-        el('div', { class:'sortseg' }, [ segBtn('all','all'), segBtn('curriculum','curriculum'), segBtn('journal','journal') ]),
+        el('div', { class:'sortseg' }, [ segBtn('all','all'), segBtn('curriculum','curriculum'), segBtn('finance','finance'), segBtn('journal','journal') ]),
         addBtn,
       ]));
 
       const feed = el('div', { class:'feed' });
       const items = [];
-      if (sort !== 'journal') lessons.forEach(L => items.push({ kind:'lesson', L }));
-      if (sort !== 'curriculum') Store.get().work.entries.slice().sort((a,b)=>b.ts-a.ts).forEach(e => items.push({ kind:'journal', e }));
+      const showLessons = sort === 'all' || sort === 'curriculum' || sort === 'finance';
+      if (showLessons) lessons.filter(L => sort === 'all' || L.track === sort).forEach(L => items.push({ kind:'lesson', L }));
+      if (sort === 'all' || sort === 'journal') Store.get().work.entries.slice().sort((a,b)=>b.ts-a.ts).forEach(e => items.push({ kind:'journal', e }));
       if (!items.length) feed.append(el('div', { class:'empty-line', text:'nothing here yet.' }));
       items.forEach(it => feed.append(it.kind === 'lesson' ? lessonCard(it.L) : journalCard(it.e)));
       wrap.append(feed);
@@ -1529,10 +1755,13 @@
       const mins = lessonMinutes(L), n = (L.steps||[]).length;
       const lmeta = `${n} step${n>1?'s':''}${mins?` · ~${fmtMins(mins)}`:''}`;
       const metaRow = el('div', { class:'lmeta' }, [ n ? el('span', { text: lmeta }) : el('span'), planChip(L.id, st.complete) ].filter(Boolean));
-      return el('a', { class:'feed-card' + (st.complete?' done':''), href:`#work/lesson/${L.id}` }, [
-        el('div', { class:'feed-thumb', text: L.builtin ? String(L.day).padStart(2,'0') : '✎' }, el('span', { class:'feed-badge', text:'lesson' })),
+      const isFin = L.track === 'finance';
+      const thumb = isFin ? '$' : (L.builtin ? String(L.day).padStart(2,'0') : '✎');
+      const lnum = isFin ? `finance · ${L.n}` : (L.builtin ? `day ${L.day}` : 'custom') + (L.week?` · week ${L.week}`:'');
+      return el('a', { class:'feed-card' + (st.complete?' done':'') + (isFin?' finance':''), href:`#work/lesson/${L.id}` }, [
+        el('div', { class:'feed-thumb', text: thumb }, el('span', { class:'feed-badge', text: isFin?'finance':'lesson' })),
         el('div', { class:'feed-meta' }, [
-          el('div', { class:'lnum', text: (L.builtin ? `day ${L.day}` : 'custom') + (L.week?` · week ${L.week}`:'') }),
+          el('div', { class:'lnum', text: lnum }),
           el('h3', { text: L.title }),
           metaRow,
           el('div', { class:'lstatus' + (st.complete?' ok':'') }, [ el('span', { class:'dot-mark'+(st.complete?' fill':'') }), el('span', { text: st.complete?'complete':(st.submitted?'submitted':'not started') }) ]),
@@ -1585,12 +1814,17 @@
         const title = el('input', { class:'field', placeholder:'lesson title' });
         const concept = el('textarea', { class:'field', placeholder:'core concept', style:'min-height:70px' });
         const output = el('input', { class:'field', placeholder:'target output / deliverable' });
-        body.append(row('Title', title), row('Core concept', concept), row('Output', output),
+        const trackSel = el('select', { class:'field' }, [
+          el('option', { value:'curriculum', text:'Curriculum (internship prep)' }),
+          el('option', { value:'finance', text:'Finance (financial literacy)' }),
+        ]);
+        trackSel.value = (sort === 'finance') ? 'finance' : 'curriculum';
+        body.append(row('Title', title), row('Track', trackSel), row('Core concept', concept), row('Output', output),
           el('div', { class:'modal-actions' }, [
             el('button', { class:'btn ghost', text:'cancel', onclick: close }),
             el('button', { class:'btn primary', text:'create', onclick: () => {
               const id = 'x'+uid();
-              Store.get().work.customLessons.push({ id, title:title.value.trim()||'Untitled lesson', coreConcept:concept.value.trim(), output:output.value.trim(), steps:[], objectives:[], feedbackCriteria:[], figmaExercise:null, week:null, day:null });
+              Store.get().work.customLessons.push({ id, track: trackSel.value, title:title.value.trim()||'Untitled lesson', coreConcept:concept.value.trim(), output:output.value.trim(), steps:[], objectives:[], feedbackCriteria:[], figmaExercise:null, week:null, day:null });
               Store.save(true); close(); toast('lesson created — now add the details'); editLesson(id);
             } }),
           ]));
@@ -1701,7 +1935,7 @@
       allLessons().forEach(item => {
         const s = Store.lesson(item.id);
         index.append(el('a', { class:'ix-link' + (item.id===id?' active':'') + (s.complete?' complete':''), href:`#work/lesson/${item.id}` },
-          [ el('span', { class:'ix-n', text: item.builtin ? String(item.day).padStart(2,'0') : '✎' }), el('span', { text:item.title }) ]));
+          [ el('span', { class:'ix-n', text: item.track==='finance' ? '$' : (item.builtin ? String(item.day).padStart(2,'0') : '✎') }), el('span', { text:item.title }) ]));
       });
 
       const pane = el('div', { class:'lesson-pane' });
@@ -1714,7 +1948,7 @@
     function lessonBody(L, st, pane) {
       if (st.complete) return archiveCard(L, st, pane);
       const box = el('div');
-      box.append(el('div', { class:'kicker', text: L.builtin ? `day ${L.day} · week ${L.week}` : 'custom lesson' }));
+      box.append(el('div', { class:'kicker', text: L.track==='finance' ? `financial literacy · ${L.n}` : (L.builtin ? `day ${L.day} · week ${L.week}` : 'custom lesson') }));
       box.append(el('h2', { text: L.title }));
       box.append(scheduleRow(L));
       box.append(el('p', { class:'concept', text: L.coreConcept }));
@@ -1734,8 +1968,8 @@
         box.append(el('div', { class:'empty-line', text:'detailed steps are being compiled — or add your own with “new” on the work page.' }));
       }
 
-      /* figma exercise + submission */
-      box.append(el('div', { class:'section-label', text:'figma exercise' }));
+      /* exercise + submission */
+      box.append(el('div', { class:'section-label', text: L.exerciseLabel || 'figma exercise' }));
       if (L.figmaExercise) box.append(el('div', { class:'exercise-box' }, [
         el('div', { class:'ex-brief', text: L.figmaExercise.brief }),
         el('div', { class:'ex-deliv', text: '→ ' + L.figmaExercise.deliverable }),
@@ -1945,7 +2179,7 @@
       const crit = L.feedbackCriteria?.length ? L.feedbackCriteria : [];
       const card = el('div', { class:'archive-card' });
       card.append(el('div', { class:'ac-head' }, [
-        el('div', {}, [ el('div', { class:'kicker', text:(L.builtin?`day ${L.day} · `:'')+'complete' }), el('h2', { style:'margin:4px 0 0', text:L.title }) ]),
+        el('div', {}, [ el('div', { class:'kicker', text:(L.track==='finance'?'finance · ':(L.builtin?`day ${L.day} · `:''))+'complete' }), el('h2', { style:'margin:4px 0 0', text:L.title }) ]),
         el('span', { class:'read-only-flag', text:'● read-only reference' }),
       ]));
       card.append(el('div', { class:'ac-stamp', text:`completed ${when}` }));
@@ -1983,10 +2217,10 @@
 
     /* prev / next lesson footer — makes the curriculum read as one arc */
     function lessonNav(L) {
-      const all = allLessons();
+      const all = allLessons().filter(x => x.track === L.track);   // navigate within the same track
       const i = all.findIndex(x => x.id === L.id);
       if (i < 0) return el('span');
-      const tag = (x) => x.builtin ? (x.day === 0 ? 'orientation' : 'day ' + x.day) : 'custom';
+      const tag = (x) => x.track === 'finance' ? `finance ${x.n}` : x.builtin ? (x.day === 0 ? 'orientation' : 'day ' + x.day) : 'custom';
       const link = (x, dir) => el('a', { class:'lnav ' + dir, href:`#work/lesson/${x.id}` }, [
         el('span', { class:'lnav-dir', text: dir === 'prev' ? '← previous' : 'next →' }),
         el('span', { class:'lnav-t', text: `${tag(x)} · ${x.title}` }),
@@ -2687,7 +2921,7 @@
             el('div', { style:'display:flex;gap:8px;flex-wrap:wrap;align-items:center' }, [
               d,
               el('button', { class:'btn blue sm', text:'plan my prep', onclick: () => {
-                const ok = Plan.assign(Work.allLessons().map(L => ({ id:L.id, complete: Store.lesson(L.id).complete })));
+                const ok = Plan.assign(Work.allLessons().filter(L => L.track === 'curriculum').map(L => ({ id:L.id, complete: Store.lesson(L.id).complete })));
                 toast(ok ? 'prep plan spread across your days ✓' : 'pick a later start date to leave prep days');
               } }),
               el('button', { class:'btn ghost sm', text:'clear plan', onclick: () => { Plan.clearAll(); toast('plan cleared'); } }),
