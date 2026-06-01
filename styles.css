@@ -380,6 +380,8 @@ body.pen-mode .note-doodle { pointer-events: all; touch-action: none; cursor: cr
 .steps-editor { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
 .step-edit { display: flex; flex-direction: column; gap: 6px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--wash); }
 
+.lmeta { font-size: 11px; color: var(--ink-faint); margin: 1px 0 3px; }
+
 /* prev / next lesson footer */
 .lesson-nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); }
 .lnav { display: flex; flex-direction: column; gap: 2px; max-width: 47%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; text-decoration: none; transition: border-color var(--t) var(--ease), background var(--t) var(--ease); }

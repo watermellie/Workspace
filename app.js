@@ -1428,13 +1428,26 @@
       ]);
     }
 
+    /* ---- lesson time estimate (summed from step.time strings) ---- */
+    function stepMinutes(t) {
+      if (!t) return 0;
+      let m = 0;
+      const hr = String(t).match(/(\d+(?:\.\d+)?)\s*h/i); if (hr) m += parseFloat(hr[1]) * 60;
+      const mn = String(t).match(/(\d+)\s*m/i); if (mn) m += parseInt(mn[1], 10);
+      return m;
+    }
+    const lessonMinutes = (L) => (L.steps || []).reduce((a, s) => a + stepMinutes(s.time), 0);
+    function fmtMins(m) { if (!m) return ''; const h = Math.floor(m/60), mm = m%60; return h ? (mm ? `${h}h ${mm}m` : `${h}h`) : `${mm}m`; }
+
     function lessonCard(L) {
       const st = Store.lesson(L.id);
+      const mins = lessonMinutes(L), n = (L.steps||[]).length;
       return el('a', { class:'feed-card' + (st.complete?' done':''), href:`#work/lesson/${L.id}` }, [
         el('div', { class:'feed-thumb', text: L.builtin ? String(L.day).padStart(2,'0') : '✎' }, el('span', { class:'feed-badge', text:'lesson' })),
         el('div', { class:'feed-meta' }, [
           el('div', { class:'lnum', text: (L.builtin ? `day ${L.day}` : 'custom') + (L.week?` · week ${L.week}`:'') }),
           el('h3', { text: L.title }),
+          n ? el('div', { class:'lmeta', text: `${n} step${n>1?'s':''}${mins?` · ~${fmtMins(mins)}`:''}` }) : el('span'),
           el('div', { class:'lstatus' + (st.complete?' ok':'') }, [ el('span', { class:'dot-mark'+(st.complete?' fill':'') }), el('span', { text: st.complete?'complete':(st.submitted?'submitted':'not started') }) ]),
         ]),
       ]);
@@ -1613,7 +1626,7 @@
 
       /* steps — one at a time via carousel */
       if (L.steps?.length) {
-        box.append(el('div', { class:'section-label', text:'step-by-step  ·  ~3–4 hrs' }));
+        box.append(el('div', { class:'section-label', text:'step-by-step' + (lessonMinutes(L) ? `  ·  ~${fmtMins(lessonMinutes(L))}` : '  ·  ~3–4 hrs') }));
         box.append(stepCarousel(L, st));
       } else {
         box.append(el('div', { class:'section-label', text:'plan' }));
