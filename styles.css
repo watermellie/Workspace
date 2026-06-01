@@ -389,6 +389,33 @@ body.pen-mode .note-doodle { pointer-events: all; touch-action: none; cursor: cr
 .lnav.next { text-align: right; margin-left: auto; }
 .lnav-dir { font-size: 10.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-faint); }
 .lnav-t { font-size: 12.5px; color: var(--ink); line-height: 1.3; }
+
+/* time management: prep bar, schedule chips, step timers, focus pill */
+.prep-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--line-bold); border-radius: 10px; background: var(--wash); }
+.prep-count { font-size: 14px; font-weight: 600; color: var(--ink); }
+.prep-sub { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+.lmeta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.plan-chip { display: inline-block; font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; background: var(--line); color: var(--ink-soft); }
+.plan-chip.today { background: var(--blue, #2f6df0); color: #fff; }
+.plan-chip.overdue { background: var(--red); color: #fff; }
+
+.sched-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 6px 0 12px; }
+.sched-label { font-size: 12px; color: var(--ink-soft); }
+.sched-date { font: inherit; font-size: 12px; padding: 4px 8px; border: 1px solid var(--line-bold); border-radius: 6px; background: var(--paper); color: var(--ink); }
+
+.st-head-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.st-timer { border: 1px solid var(--line-bold); background: var(--paper); color: var(--ink-soft); border-radius: 6px; font-size: 11px; padding: 0 7px; cursor: pointer; line-height: 1.6; }
+.st-timer:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+#focus-timer { position: fixed; left: 18px; bottom: 18px; z-index: 96; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: var(--ink); color: #fff; box-shadow: var(--shadow-lg); animation: ftpop .18s var(--ease); }
+#focus-timer.hidden { display: none; }
+#focus-timer.done { background: var(--green, #1f9d57); }
+.ft-label { font-size: 11px; opacity: .82; }
+.ft-time { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px; min-width: 46px; text-align: center; }
+.ft-btn { background: rgba(255,255,255,.16); color: #fff; border: 0; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; font-size: 10px; display: grid; place-items: center; }
+.ft-btn:hover { background: rgba(255,255,255,.32); }
+@keyframes ftpop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (max-width: 560px) { #focus-timer { bottom: calc(70px + env(safe-area-inset-bottom, 0)); } }
 .focus-widget:hover { box-shadow: var(--shadow-md); }
 .focus-widget.dragging { box-shadow: var(--shadow-lg); z-index: 40; transition: none; }
 .fw-head { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px 6px 11px; cursor: grab; }

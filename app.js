@@ -208,6 +208,10 @@
     return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`;
   };
   const todayKey = () => dKey(logicalDate());
+  const DAY_MS = 86400000;
+  const parseKey = (k) => new Date(k + 'T12:00:00');            // local noon — avoids tz drift
+  const addDays = (k, n) => dKey(new Date(parseKey(k).getTime() + n * DAY_MS));
+  const daysBetween = (a, b) => Math.round((parseKey(b) - parseKey(a)) / DAY_MS);
 
   const ORD = (n) => { const s=['th','st','nd','rd'], v=n%100; return n + (s[(v-20)%10] || s[v] || s[0]); };
   const DOW  = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
@@ -249,6 +253,7 @@
       meta: {
         catImage: '', focusPos: { x: 26, y: 20 }, weather: null, coords: null,
         recurring: ['gym', 'breakfast', 'lunch', 'dinner'], mealsSeeded: true, lessonIdsMigrated: true,
+        startDate: '2026-06-10', lessonDates: {},
         mood: {}, delight: true, collected: [], digestPos: null,
         calPos: null, calUrl: '',
         name: 'neli', nicknames: ['dani', 'dania', 'neli', 'nellie'],
@@ -292,6 +297,8 @@
       if (d.meta.delight === undefined) d.meta.delight = true;
       if (!Array.isArray(d.meta.collected)) d.meta.collected = [];
       d.meta.digestPos ||= null;
+      d.meta.startDate ||= '2026-06-10';
+      d.meta.lessonDates ||= {};
       d.meta.calPos ||= null;
       if (typeof d.meta.calUrl !== 'string') d.meta.calUrl = '';
       // personalization
@@ -370,6 +377,33 @@
       },
       lesson(id) { return (data.work.lessons[id] ||= { stepsDone:{}, notes:'', shots:[], figmaLink:'', reflect:'', criteria:{}, submitted:false, complete:false, completedAt:null }); },
     };
+  })();
+
+  /* ==========================================================
+     2c · Plan — prep schedule + countdown to the start date
+     ========================================================== */
+  const Plan = (() => {
+    const startDate = () => Store.get().meta.startDate || '2026-06-10';
+    const lessonDates = () => (Store.get().meta.lessonDates ||= {});
+    const dateOf = (id) => lessonDates()[id] || '';
+    const setDate = (id, k) => { const ld = lessonDates(); if (k) ld[id] = k; else delete ld[id]; Store.save(true); };
+    const daysUntilStart = () => daysBetween(todayKey(), startDate());     // >0 before, 0 on, <0 after
+    function prepDays() {                                                  // today … day-before-start
+      const start = startDate(); let k = todayKey(); const out = [];
+      while (k < start) { out.push(k); k = addDays(k, 1); }
+      return out;
+    }
+    /* spread incomplete lessons evenly across the remaining prep days */
+    function assign(lessons) {
+      const days = prepDays(), incomplete = lessons.filter(L => !L.complete);
+      if (!days.length || !incomplete.length) return false;
+      const ld = lessonDates();
+      incomplete.forEach((L, i) => { ld[L.id] = days[Math.min(Math.floor(i * days.length / incomplete.length), days.length - 1)]; });
+      Store.save(true);
+      return true;
+    }
+    function clearAll() { Store.get().meta.lessonDates = {}; Store.save(true); }
+    return { startDate, lessonDates, dateOf, setDate, daysUntilStart, prepDays, assign, clearAll };
   })();
 
   /* ==========================================================
@@ -1174,6 +1208,9 @@
       card.append(head);
       const rows = el('div', { class:'digest-rows' });
 
+      const cd = Plan.daysUntilStart();
+      rows.append(digestRow('⏳', cd > 0 ? `${cd} day${cd>1?'s':''} until your internship` : cd === 0 ? 'internship starts today 🎉' : 'internship in progress 💪', '', '#work'));
+
       const lessons = Work.allLessons();
       const done = lessons.reduce((a, L) => a + (Store.lesson(L.id).complete ? 1 : 0), 0);
       const next = lessons.find(L => !Store.lesson(L.id).complete);
@@ -1410,6 +1447,7 @@
         el('h1', { text:'work hub' }),
         progressTrack(done, lessons.length),
       ]));
+      wrap.append(prepBar(lessons));
 
       const addBtn = el('button', { class:'btn primary icon-only', html: svg('plus'), title:'add lesson or journal entry', 'aria-label':'add lesson or journal entry' });
       addBtn.addEventListener('click', () => popover(addBtn, [
@@ -1429,6 +1467,41 @@
       items.forEach(it => feed.append(it.kind === 'lesson' ? lessonCard(it.L) : journalCard(it.e)));
       wrap.append(feed);
       root.append(wrap);
+    }
+
+    /* countdown + pace + one-tap prep scheduler */
+    function prepBar(lessons) {
+      const total = lessons.length;
+      const done = lessons.filter(L => Store.lesson(L.id).complete).length;
+      const today = todayKey();
+      const dueNow = lessons.filter(L => { const dt = Plan.dateOf(L.id); return dt && dt <= today && !Store.lesson(L.id).complete; }).length;
+      const days = Plan.daysUntilStart();
+      const countdown = days > 0 ? `${days} day${days>1?'s':''} until day 1 (${prettyKey(Plan.startDate())})`
+        : days === 0 ? 'internship starts today 🎉' : 'internship in progress 💪';
+      const scheduled = Object.keys(Plan.lessonDates()).length > 0;
+      const sub = `${done}/${total} done · ` + (!scheduled ? 'tap “plan my prep” to schedule' : dueNow ? `${dueNow} due now — keep going` : 'on pace ✓');
+      return el('div', { class:'prep-bar' }, [
+        el('div', { class:'prep-left' }, [
+          el('div', { class:'prep-count', text: countdown }),
+          el('div', { class:'prep-sub', text: sub }),
+        ]),
+        el('button', { class:'btn ghost sm', text: scheduled ? 'replan' : 'plan my prep', onclick: () => {
+          const ok = Plan.assign(lessons.map(L => ({ id:L.id, complete: Store.lesson(L.id).complete })));
+          toast(ok ? 'prep plan spread across your days ✓' : 'set a later start date to leave prep days');
+          const r=$('#view'); r.innerHTML=''; mountFeed(r);
+        } }),
+      ]);
+    }
+    const prettyKey = (k) => { const d = parseKey(k); return `${MON[d.getMonth()].slice(0,3)} ${d.getDate()}`; };
+
+    /* per-lesson schedule date + a quick focus-timer launcher */
+    function scheduleRow(L) {
+      const wrap = el('div', { class:'sched-row' });
+      const inp = el('input', { class:'sched-date', type:'date', value: Plan.dateOf(L.id) || '' });
+      inp.addEventListener('change', () => { Plan.setDate(L.id, inp.value); toast(inp.value ? 'scheduled' : 'unscheduled'); });
+      wrap.append(el('span', { class:'sched-label', text:'📅 do this on' }), inp,
+        el('button', { class:'btn ghost sm', text:'▶ 25-min focus', onclick: () => Timer.start(25, 'focus') }));
+      return wrap;
     }
     const segBtn = (id,label) => el('button', { class: sort===id?'active':'', text:label, onclick:() => { sort=id; const r=$('#view'); r.innerHTML=''; mountFeed(r); } });
 
@@ -1454,15 +1527,30 @@
     function lessonCard(L) {
       const st = Store.lesson(L.id);
       const mins = lessonMinutes(L), n = (L.steps||[]).length;
+      const lmeta = `${n} step${n>1?'s':''}${mins?` · ~${fmtMins(mins)}`:''}`;
+      const metaRow = el('div', { class:'lmeta' }, [ n ? el('span', { text: lmeta }) : el('span'), planChip(L.id, st.complete) ].filter(Boolean));
       return el('a', { class:'feed-card' + (st.complete?' done':''), href:`#work/lesson/${L.id}` }, [
         el('div', { class:'feed-thumb', text: L.builtin ? String(L.day).padStart(2,'0') : '✎' }, el('span', { class:'feed-badge', text:'lesson' })),
         el('div', { class:'feed-meta' }, [
           el('div', { class:'lnum', text: (L.builtin ? `day ${L.day}` : 'custom') + (L.week?` · week ${L.week}`:'') }),
           el('h3', { text: L.title }),
-          n ? el('div', { class:'lmeta', text: `${n} step${n>1?'s':''}${mins?` · ~${fmtMins(mins)}`:''}` }) : el('span'),
+          metaRow,
           el('div', { class:'lstatus' + (st.complete?' ok':'') }, [ el('span', { class:'dot-mark'+(st.complete?' fill':'') }), el('span', { text: st.complete?'complete':(st.submitted?'submitted':'not started') }) ]),
         ]),
       ]);
+    }
+    /* a small scheduled-date chip (today / overdue / done / date) */
+    function planChip(id, complete) {
+      const dt = Plan.dateOf(id);
+      if (!dt) return null;
+      const today = todayKey();
+      const d = parseKey(dt), lbl = `${MON[d.getMonth()].slice(0,3)} ${d.getDate()}`;
+      let cls = 'plan-chip', txt = lbl;
+      if (complete) txt = `✓ ${lbl}`;
+      else if (dt < today) { cls += ' overdue'; txt = `overdue · ${lbl}`; }
+      else if (dt === today) { cls += ' today'; txt = 'today'; }
+      else if (dt === addDays(today, 1)) txt = `tomorrow`;
+      return el('span', { class: cls, text: txt });
     }
     function journalCard(e) {
       return el('a', { class:'feed-card journal', href:`#work/journal/${e.id}` }, [
@@ -1628,6 +1716,7 @@
       const box = el('div');
       box.append(el('div', { class:'kicker', text: L.builtin ? `day ${L.day} · week ${L.week}` : 'custom lesson' }));
       box.append(el('h2', { text: L.title }));
+      box.append(scheduleRow(L));
       box.append(el('p', { class:'concept', text: L.coreConcept }));
       if (L.wsiContext) box.append(el('div', { class:'wsi-context', text: L.wsiContext }));
 
@@ -1727,7 +1816,11 @@
       const s = L.steps[i];
       const wrap = el('div', { class:'step' + (st.stepsDone[i] ? ' done':'') });
       const main = el('div', { class:'step-main' }, [
-        el('div', {}, [ el('span', { class:'st-title', text: s.title }), el('span', { class:'st-time', text: s.time }) ]),
+        el('div', { class:'st-head-row' }, [
+          el('span', { class:'st-title', text: s.title }),
+          el('span', { class:'st-time', text: s.time }),
+          stepMinutes(s.time) ? el('button', { class:'st-timer', title:'start a focus timer for this step', text:'▶', onclick: (e) => { e.preventDefault(); Timer.start(stepMinutes(s.time), `step ${i+1}`); } }) : el('span'),
+        ]),
         el('div', { class:'st-detail', text: s.detail }),
       ]);
       if (s.resources?.length) {
@@ -2527,6 +2620,45 @@
     return { mount, teardown, celebrate };
   })();
 
+  /* ==========================================================
+     Timer — a floating focus / pomodoro countdown
+     ========================================================== */
+  const Timer = (() => {
+    let total = 0, left = 0, iv = null, label = '', running = false, pill = null;
+    const fmt = (s) => `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+    function ensure() {
+      if (pill) return;
+      pill = el('div', { id:'focus-timer', class:'hidden' });
+      document.body.appendChild(pill);
+    }
+    function render() {
+      ensure(); pill.classList.remove('hidden', 'done'); pill.innerHTML = '';
+      pill.append(
+        el('span', { class:'ft-label', text: label }),
+        el('span', { class:'ft-time', text: fmt(left) }),
+        el('button', { class:'ft-btn', title: running?'pause':'resume', text: running?'❚❚':'▶', onclick: () => running ? pause() : resume() }),
+        el('button', { class:'ft-btn', title:'reset', text:'↺', onclick: reset }),
+        el('button', { class:'ft-btn', title:'close', text:'✕', onclick: stop }),
+      );
+    }
+    function run() { clearInterval(iv); iv = setInterval(() => {
+      if (left <= 0) return finish();
+      left--; const t = pill?.querySelector('.ft-time'); if (t) t.textContent = fmt(left);
+    }, 1000); }
+    function start(mins, lbl) { total = left = Math.max(1, Math.round(mins)) * 60; label = lbl || 'focus'; running = true; render(); run(); toast(`focus timer · ${Math.round(mins)} min`); }
+    function pause() { running = false; clearInterval(iv); render(); }
+    function resume() { if (left <= 0) return; running = true; render(); run(); }
+    function reset() { left = total; running = true; render(); run(); }
+    function stop() { clearInterval(iv); running = false; pill?.classList.add('hidden'); }
+    function finish() {
+      clearInterval(iv); running = false; left = 0;
+      const t = pill?.querySelector('.ft-time'); if (t) t.textContent = '0:00';
+      pill?.classList.add('done'); toast(`⏰ ${label} — time’s up!`);
+      try { Pets.celebrate(); } catch {}
+    }
+    return { start, stop };
+  })();
+
   function applyTheme() {
     document.body.dataset.theme = Store.get().meta.theme || 'cream';
   }
@@ -2545,6 +2677,25 @@
           'data is stored locally in this browser. use <b>backup/restore</b> or turn on <b>cloud sync</b> below to move it to your iPad or phone.' })),
 
         personalizeSettings(),
+
+        (() => {
+          const r = el('div', { class:'modal-row' });
+          const d = el('input', { class:'field', type:'date', value: Store.get().meta.startDate || '2026-06-10', style:'max-width:200px' });
+          d.addEventListener('change', () => { Store.get().meta.startDate = d.value || '2026-06-10'; Store.save(true); toast('start date set'); });
+          r.append(
+            el('label', { text:'Internship start date & prep plan' }),
+            el('div', { style:'display:flex;gap:8px;flex-wrap:wrap;align-items:center' }, [
+              d,
+              el('button', { class:'btn blue sm', text:'plan my prep', onclick: () => {
+                const ok = Plan.assign(Work.allLessons().map(L => ({ id:L.id, complete: Store.lesson(L.id).complete })));
+                toast(ok ? 'prep plan spread across your days ✓' : 'pick a later start date to leave prep days');
+              } }),
+              el('button', { class:'btn ghost sm', text:'clear plan', onclick: () => { Plan.clearAll(); toast('plan cleared'); } }),
+            ]),
+            el('div', { style:'font-size:11px;color:var(--ink-soft);margin-top:4px', text:'spreads your unfinished lessons evenly across the days between today and your start date.' }),
+          );
+          return r;
+        })(),
 
         el('div', { class:'modal-row' }, [ el('label', { text:'Backup & restore (move data between devices)' }),
           el('div', { style:'display:flex;gap:8px;flex-wrap:wrap' }, [
