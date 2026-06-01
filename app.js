@@ -1185,8 +1185,12 @@
       const tag = raw.match(/src="([^"]+)"/i);                 // pasted a full <iframe …> tag
       if (tag) return tag[1];
       if (/^https?:\/\//i.test(raw)) return raw;               // already an embed URL
+      const ymd = (d) => `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+      const today = new Date();
+      const week = `${ymd(today)}/${ymd(new Date(Date.now() + 7 * 864e5))}`;   // next 7 days only
       return `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(raw)}` +
-             `&ctz=America/Los_Angeles&mode=AGENDA&showTitle=0&showPrint=0&showCalendars=0&showTz=0&showTabs=0&showNav=1&showDate=1`;
+             `&ctz=America/Los_Angeles&mode=AGENDA&dates=${week}` +
+             `&showTitle=0&showPrint=0&showCalendars=0&showTz=0&showTabs=0&showNav=1&showDate=1`;
     }
     function calendarWidget() {
       const meta = Store.get().meta;
