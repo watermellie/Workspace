@@ -140,7 +140,8 @@
       work: { lessons: {}, customLessons: [], entries: [] },
       meta: {
         catImage: '', focusPos: { x: 26, y: 20 }, weather: null, coords: null,
-        recurring: ['gym'], mood: {}, delight: true, collected: [], digestPos: null,
+        recurring: ['gym', 'breakfast', 'lunch', 'dinner'], mealsSeeded: true,
+        mood: {}, delight: true, collected: [], digestPos: null,
         calPos: null, calUrl: '',
         name: 'neli', nicknames: ['dani', 'dania', 'neli', 'nellie'],
         theme: 'cream', accent: '',
@@ -164,7 +165,9 @@
       d.work ||= {}; d.work.lessons ||= {}; d.work.customLessons ||= []; d.work.entries ||= [];
       d.meta ||= {}; d.meta.focusPos ||= { x: 26, y: 20 };
       if (!('catImage' in d.meta)) d.meta.catImage = '';
-      if (!Array.isArray(d.meta.recurring)) d.meta.recurring = ['gym'];
+      if (!Array.isArray(d.meta.recurring)) d.meta.recurring = ['gym', 'breakfast', 'lunch', 'dinner'];
+      // one-time: fold breakfast/lunch/dinner into existing users' recurring set
+      if (!d.meta.mealsSeeded) { d.meta.recurring = [...new Set([...d.meta.recurring, 'breakfast', 'lunch', 'dinner'])]; d.meta.mealsSeeded = true; }
       d.meta.mood ||= {};
       if (d.meta.delight === undefined) d.meta.delight = true;
       if (!Array.isArray(d.meta.collected)) d.meta.collected = [];
@@ -1150,7 +1153,7 @@
       if (tag) return tag[1];
       if (/^https?:\/\//i.test(raw)) return raw;               // already an embed URL
       return `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(raw)}` +
-             `&ctz=America/Los_Angeles&mode=WEEK&showTitle=0&showPrint=0&showCalendars=0&showTz=0`;
+             `&ctz=America/Los_Angeles&mode=AGENDA&showTitle=0&showPrint=0&showCalendars=0&showTz=0`;
     }
     function calendarWidget() {
       const meta = Store.get().meta;
@@ -1736,10 +1739,12 @@
       return wrap;
     }
 
+    const MEAL_LABELS = { breakfast: '🍳 breakfast', lunch: '🥗 lunch', dinner: '🍝 dinner' };
     const presetFor = (t) => {
       const preset = { tag: t };
       if (t === 'gym') preset.checklist = GYM_CHECKLIST.map(x => ({ id: uid(), html: esc(x), done:false }));
       if (t === 'journal') preset.html = `<b>${esc(pick(JOURNAL_PROMPTS))}</b><br>`;
+      if (MEAL_LABELS[t]) preset.html = `<b>${MEAL_LABELS[t]}</b><br>`;
       return preset;
     };
 
@@ -1752,18 +1757,22 @@
         Canvas.addNote(presetFor(t)); refreshCal();
       } })));
       wrap.append(tags);
-      const rec = Store.get().meta.recurring || [];
-      const recRow = el('label', { class:'recurring-row' });
-      const cb = el('input', { type:'checkbox' }); cb.checked = rec.includes('gym');
-      cb.addEventListener('change', () => {
-        const m = Store.get().meta;
-        m.recurring = cb.checked ? [...new Set([...(m.recurring||[]), 'gym'])] : (m.recurring||[]).filter(x => x!=='gym');
-        Store.save(true);
-        if (cb.checked && viewDate === todayKey()) { ensureDailyNotes(); Canvas.paint(); refreshCal(); }
-        toast(cb.checked ? 'gym auto-adds each day' : 'gym auto-add off');
+      const recWrap = el('div', { class:'recurring-wrap' });
+      recWrap.append(el('div', { class:'kicker', style:'margin:10px 0 5px', text:'auto-add each day' }));
+      ['gym', 'breakfast', 'lunch', 'dinner'].forEach(tag => {
+        const row = el('label', { class:'recurring-row' });
+        const cb = el('input', { type:'checkbox' }); cb.checked = (Store.get().meta.recurring || []).includes(tag);
+        cb.addEventListener('change', () => {
+          const m = Store.get().meta;
+          m.recurring = cb.checked ? [...new Set([...(m.recurring||[]), tag])] : (m.recurring||[]).filter(x => x!==tag);
+          Store.save(true);
+          if (cb.checked && viewDate === todayKey()) { ensureDailyNotes(); Canvas.paint(); refreshCal(); }
+          toast(cb.checked ? `${tag} auto-adds each day` : `${tag} auto-add off`);
+        });
+        row.append(cb, el('span', { text:`#${tag}` }));
+        recWrap.append(row);
       });
-      recRow.append(cb, el('span', { text:'auto-add gym checklist each day' }));
-      wrap.append(recRow);
+      wrap.append(recWrap);
       return wrap;
     }
 

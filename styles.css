@@ -463,6 +463,8 @@ body.pen-mode .note-doodle { pointer-events: all; touch-action: none; cursor: cr
 /* recurring toggle */
 .recurring-row { display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; font-size: 12px; color: var(--ink-soft); }
 .recurring-row input { margin-top: 2px; width: 14px; height: 14px; accent-color: var(--blue); }
+.recurring-wrap { display: flex; flex-direction: column; }
+.recurring-wrap .recurring-row { margin-top: 4px; text-transform: lowercase; }
 
 /* search */
 .search-results { margin-top: 12px; display: flex; flex-direction: column; gap: 4px; max-height: 60vh; overflow: auto; }
