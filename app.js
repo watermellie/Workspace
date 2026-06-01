@@ -2603,7 +2603,7 @@
   function exportData() {
     const blob = new Blob([JSON.stringify(Store.get(), null, 2)], { type:'application/json' });
     const url = URL.createObjectURL(blob);
-    const a = el('a', { href: url, download: `watermellie-backup-${todayKey()}.json` });
+    const a = el('a', { href: url, download: `w.workspace-backup-${todayKey()}.json` });
     document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     toast('backup downloaded');

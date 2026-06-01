@@ -1,6 +1,6 @@
 {
-  "name": "watermellie // workspace",
-  "short_name": "watermellie",
+  "name": "w.workspace",
+  "short_name": "w.workspace",
   "description": "Personal + professional dashboard: notes, curriculum, journal.",
   "start_url": "./index.html",
   "scope": "./",
