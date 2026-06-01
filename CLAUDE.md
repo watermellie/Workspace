@@ -37,13 +37,19 @@ There is **no build and no test runner**. To run: open `index.html` in a browser
 The file is organized into numbered sections:
 
 1. **Constants** — `LS_KEY`, `ROLLOVER_HOUR` (3 AM), tag lists, `GYM_CHECKLIST`,
-   `JOURNAL_PROMPTS`, `CURRICULUM_BASE` (the 10 lessons).
+   `JOURNAL_PROMPTS`, `CURRICULUM_BASE` (the WSI track: Day 0 orientation + Days 1–10, Day 10 is a
+   capstone), and `FINANCE_BASE` (a separate, fully-inline financial-literacy track).
 2. **Helpers** — `$`/`$$`, `el()` (declarative DOM builder — learn this, it's used everywhere),
-   `dKey`/`todayKey`/`logicalDate` (the 3 AM rollover lives here), date/time formatters.
-3. **Store** — the single source of truth. One `localStorage` key, `wsi_intern_workspace`.
+   `dKey`/`todayKey`/`logicalDate` (the 3 AM rollover lives here), date math
+   (`addDays`/`daysBetween`/`parseKey`), date/time formatters.
+3. **Store** + **Plan** — Store is the single source of truth. One `localStorage` key, `wsi_intern_workspace`.
    Debounced writes (`save()`); pass `save(true)` for an immediate flush (used for structural
    changes: spawn, move, archive, delete). Includes a v1→v2 note migration + shape-guards. **All
-   persistence goes through Store — never touch `localStorage` directly elsewhere.**
+   persistence goes through Store — never touch `localStorage` directly elsewhere.** `Plan` (section
+   2c) layers the time-management model on top: `meta.startDate` (internship day 1, default
+   2026-06-10), `meta.lessonDates` (per-lesson schedule), a countdown, and `assign()` which spreads
+   unfinished **curriculum-track** lessons across the remaining prep days. A `Timer` module (near
+   Pets) is a floating focus/pomodoro pill.
 4. **Icons** — inline SVG via `svg(name)` + `iconBtn()`.
 5. **Weather** — Open-Meteo (no API key) + BigDataCloud reverse-geocode. Browser geolocation with
    a San-Francisco fallback. Cached in `meta.weather`, refreshed every `WEATHER_TTL` (10 min).
@@ -56,10 +62,16 @@ The file is organized into numbered sections:
 9. **Dashboard** — the focus widget (photo + weather + "better days ahead twin" overlay) is itself
    a draggable pinned widget on the canvas, so the **entire page is one pinnable canvas**. Side
    panel = archived notes + date history.
-10. **Work hub** — combined feed of curriculum lessons + journal entries, with a sort segment
-    (all / curriculum / journal). Lesson detail = split view with steps (time-estimated),
-    Figma exercise, screenshot+link submission, and a post-submit self-review rubric
-    (`feedbackCriteria`). Users can add custom lessons and journal entries.
+10. **Work hub** — combined feed of lessons + journal entries, with a **track** sort segment
+    (all / curriculum / finance / journal) + a prep bar (countdown · pace · "plan my prep").
+    Lessons carry a `track` ('curriculum' | 'finance'); builtin lesson ids are **stable**
+    (`d{day}` for curriculum, `f-{slug}` for finance) — never array-index (a prepend once shifted
+    saved state). Lesson detail = split view with a schedule date + focus-timer launcher, steps
+    (each with a ▶ per-step timer), an exercise (label from `exerciseLabel`, defaults to "figma
+    exercise"), screenshot+link submission, a self-review rubric (`feedbackCriteria`), and a
+    prev/next footer that navigates **within the same track**. Users can add custom lessons (with a
+    track picker) + a full structured editor (`editLesson`: objectives, steps, resources, exercise,
+    rubric), and journal entries.
 11. **Personal** — per-day tagged canvas. `journal` tag is auto-pinned daily (mindful prompt,
     shuffleable). `gym` tag auto-loads a preset checklist. Calendar drawer archives past days.
 12. **Modal**, **Friday banner** (in-app Intern-Log nudge, Fri 12–6pm), **Router + boot**.
@@ -82,12 +94,19 @@ Note = { id, html, checklist:[{id,html,done}]|null, images:[{src,caption}], x, y
 
 ## Curriculum content pipeline
 
-`CURRICULUM_BASE` (in `app.js`) holds the 10 lessons as titles/concepts/outputs. The rich content
-(step-by-step plans with time estimates, real YouTube/doc resources, Figma exercises, feedback
-criteria, WSI context) lives in **`curriculum.js`** — an auto-generated file loaded by `index.html`
-right after `app.js`. It calls `window.__applyCurriculum(richArray)`, which merges each entry into
-`CURRICULUM_BASE` by `day`. Load order is handled both ways: if `curriculum.js` runs first it parks
-data on `window.__pendingCurriculum` and `app.js` drains it at the end of its IIFE.
+`CURRICULUM_BASE` (in `app.js`) holds the WSI track — Day 0 orientation + Days 1–10 — as
+titles/concepts/outputs. The rich content (step-by-step plans with time estimates, real YouTube/doc
+resources, Figma exercises, feedback criteria, WSI context) for Days 1–10 lives in **`curriculum.js`**
+— an auto-generated file loaded by `index.html` right after `app.js`. It calls
+`window.__applyCurriculum(richArray)`, which merges each entry into `CURRICULUM_BASE` **by matching
+`day` value** (not array index — so prepending Day 0 was safe). Load order is handled both ways: if
+`curriculum.js` runs first it parks data on `window.__pendingCurriculum` and `app.js` drains it at
+the end of its IIFE.
+
+Two lessons are authored **fully inline in `app.js`** instead of `curriculum.js`: **Day 0** (the
+orientation/landscape lesson) and the **entire `FINANCE_BASE` finance track** (5 lessons). Edit those
+directly in `CURRICULUM_BASE` / `FINANCE_BASE`. Day 10 is a capstone (portfolio story + return-offer
+pitch), not the old "code integration" lesson.
 
 `curriculum.js` was produced by the `wsi-internship-research` workflow (see `research/research.json`
 for the raw source data and `docs/` for the synthesized audit/primer/playbook). To regenerate:
