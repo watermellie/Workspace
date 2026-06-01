@@ -1185,8 +1185,11 @@
       const tag = raw.match(/src="([^"]+)"/i);                 // pasted a full <iframe …> tag
       if (tag) return tag[1];
       if (/^https?:\/\//i.test(raw)) return raw;               // already an embed URL
+      const BG = { cream:'fffdf8', pink:'fffafb', mint:'fafefb', lavender:'fdfbff', dark:'fbf7ef' };
+      const bg = BG[Store.get().meta.theme] || 'fffdf8';       // tint agenda to match the theme
       return `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(raw)}` +
-             `&ctz=America/Los_Angeles&mode=AGENDA&showTitle=0&showPrint=0&showCalendars=0&showTz=0`;
+             `&ctz=America/Los_Angeles&mode=AGENDA&bgcolor=%23${bg}` +
+             `&showTitle=0&showPrint=0&showCalendars=0&showTz=0&showTabs=0&showNav=1&showDate=1`;
     }
     function calendarWidget() {
       const meta = Store.get().meta;
