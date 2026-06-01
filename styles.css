@@ -375,6 +375,10 @@ body.pen-mode .note-doodle { pointer-events: all; touch-action: none; cursor: cr
 .cal-setup-title { font-size: 13px; font-weight: 600; }
 .cal-setup-hint { font-size: 11px; color: var(--ink-soft); line-height: 1.55; }
 .cal-input { width: 100%; }
+
+/* custom-lesson editor */
+.steps-editor { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+.step-edit { display: flex; flex-direction: column; gap: 6px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--wash); }
 .focus-widget:hover { box-shadow: var(--shadow-md); }
 .focus-widget.dragging { box-shadow: var(--shadow-lg); z-index: 40; transition: none; }
 .fw-head { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px 6px 11px; cursor: grab; }

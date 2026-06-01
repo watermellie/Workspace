@@ -1476,10 +1476,83 @@
           el('div', { class:'modal-actions' }, [
             el('button', { class:'btn ghost', text:'cancel', onclick: close }),
             el('button', { class:'btn primary', text:'create', onclick: () => {
-              Store.get().work.customLessons.push({ id:'x'+uid(), title:title.value.trim()||'Untitled lesson', coreConcept:concept.value.trim(), output:output.value.trim(), steps:[], objectives:[], feedbackCriteria:[], figmaExercise:null, week:null, day:null });
-              Store.save(true); close(); const r=$('#view'); r.innerHTML=''; mountFeed(r); toast('lesson created');
+              const id = 'x'+uid();
+              Store.get().work.customLessons.push({ id, title:title.value.trim()||'Untitled lesson', coreConcept:concept.value.trim(), output:output.value.trim(), steps:[], objectives:[], feedbackCriteria:[], figmaExercise:null, week:null, day:null });
+              Store.save(true); close(); toast('lesson created — now add the details'); editLesson(id);
             } }),
           ]));
+        setTimeout(() => title.focus(), 50);
+      });
+    }
+
+    /* full structured editor for a custom lesson — objectives, time-boxed
+       steps with resources, figma exercise, and a self-review rubric, so
+       your own lessons match the built-in structure */
+    function editLesson(id) {
+      const L = Store.get().work.customLessons.find(x => x.id === id);
+      if (!L) { toast('lesson not found'); return; }
+      Modal.open('Edit lesson', (body, close) => {
+        const title = el('input', { class:'field', value: L.title || '' });
+        const concept = el('textarea', { class:'field', style:'min-height:60px', value: L.coreConcept || '' });
+        const output = el('input', { class:'field', value: L.output || '' });
+        const objectives = el('textarea', { class:'field', style:'min-height:60px', placeholder:'one objective per line', value:(L.objectives||[]).join('\n') });
+
+        const stepsWrap = el('div', { class:'steps-editor' });
+        const stepRecs = [];
+        function addStepRow(s) {
+          s = s || { title:'', time:'', detail:'', resources:[] };
+          const t  = el('input', { class:'field', placeholder:'step title', value: s.title||'' });
+          const tm = el('input', { class:'field', placeholder:'time (e.g. 30 min)', value: s.time||'' });
+          const dt = el('textarea', { class:'field', style:'min-height:54px', placeholder:'what to do in this step', value: s.detail||'' });
+          const rs = el('textarea', { class:'field', style:'min-height:40px', placeholder:'resources — one per line:  Title | https://url', value:(s.resources||[]).map(r => `${r.title} | ${r.url}`).join('\n') });
+          const rec = { t, tm, dt, rs };
+          const wrap = el('div', { class:'step-edit' }, [
+            t, tm, dt, rs,
+            el('button', { class:'btn ghost sm', text:'remove step', onclick: () => { wrap.remove(); const i = stepRecs.indexOf(rec); if (i>=0) stepRecs.splice(i,1); } }),
+          ]);
+          stepRecs.push(rec); stepsWrap.append(wrap);
+        }
+        (L.steps && L.steps.length ? L.steps : [null]).forEach(addStepRow);
+        const addStepBtn = el('button', { class:'btn ghost sm', text:'+ add step', onclick: () => addStepRow() });
+
+        const figBrief = el('textarea', { class:'field', style:'min-height:54px', placeholder:'figma / activity brief', value: L.figmaExercise?.brief || '' });
+        const figDeliv = el('input', { class:'field', placeholder:'deliverable (what you submit)', value: L.figmaExercise?.deliverable || '' });
+        const feedback = el('textarea', { class:'field', style:'min-height:60px', placeholder:'one self-review criterion per line', value:(L.feedbackCriteria||[]).join('\n') });
+
+        const lines = (v) => v.split('\n').map(s => s.trim()).filter(Boolean);
+        const save = () => {
+          L.title = title.value.trim() || 'Untitled lesson';
+          L.coreConcept = concept.value.trim();
+          L.output = output.value.trim();
+          L.objectives = lines(objectives.value);
+          L.steps = stepRecs.map(r => ({
+            title: r.t.value.trim(), time: r.tm.value.trim(), detail: r.dt.value.trim(),
+            resources: lines(r.rs.value).map(line => {
+              const bar = line.indexOf('|');
+              const ti = bar >= 0 ? line.slice(0, bar).trim() : '';
+              const u  = bar >= 0 ? line.slice(bar + 1).trim() : line.trim();
+              if (!/^https?:\/\//i.test(u)) return null;
+              return { title: ti || u, url: u, type: /youtu\.?be/i.test(u) ? 'video' : 'doc' };
+            }).filter(Boolean),
+          })).filter(s => s.title || s.detail);
+          const fb = figBrief.value.trim(), fd = figDeliv.value.trim();
+          L.figmaExercise = (fb || fd) ? { brief: fb, deliverable: fd } : null;
+          L.feedbackCriteria = lines(feedback.value);
+          Store.save(true); close();
+          const r = $('#view'); r.innerHTML=''; mountLesson(r, id); toast('lesson saved');
+        };
+
+        body.append(
+          row('Title', title), row('Core concept', concept), row('Output / deliverable', output),
+          row('Objectives (one per line)', objectives),
+          el('div', { class:'modal-row' }, [ el('label', { text:'Steps' }), stepsWrap, addStepBtn ]),
+          row('Figma / activity brief', figBrief), row('Deliverable', figDeliv),
+          row('Self-review criteria (one per line)', feedback),
+          el('div', { class:'modal-actions' }, [
+            el('button', { class:'btn ghost', text:'done', onclick: close }),
+            el('button', { class:'btn primary', text:'save lesson', onclick: save }),
+          ]),
+        );
         setTimeout(() => title.focus(), 50);
       });
     }
@@ -1580,10 +1653,13 @@
       });
       toggle.append(cb, el('span', { text:'mark “Lesson Complete” → lock as read-only reference' }));
       bar.append(toggle);
-      if (!L.builtin) bar.append(el('button', { class:'btn red sm', text:'delete lesson', onclick: () => {
-        if (!confirm('Delete this custom lesson?')) return;
-        const arr = Store.get().work.customLessons; arr.splice(arr.findIndex(x=>x.id===L.id),1); Store.save(true); location.hash='#work';
-      } }));
+      if (!L.builtin) {
+        bar.append(el('button', { class:'btn ghost sm', text:'edit lesson', onclick: () => editLesson(L.id) }));
+        bar.append(el('button', { class:'btn red sm', text:'delete lesson', onclick: () => {
+          if (!confirm('Delete this custom lesson?')) return;
+          const arr = Store.get().work.customLessons; arr.splice(arr.findIndex(x=>x.id===L.id),1); Store.save(true); location.hash='#work';
+        } }));
+      }
       box.append(bar);
       return box;
     }
