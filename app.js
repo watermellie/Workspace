@@ -787,13 +787,34 @@
       const state = !enabled() ? 'off' : status === 'syncing' ? 'syncing' : status === 'error' ? 'error' : dirty ? 'dirty' : 'ok';
       b.dataset.status = state;
       b.title = state === 'error' ? `sync error: ${lastError} — tap to retry`
-        : state === 'syncing' ? 'saving…'
+        : state === 'syncing' ? 'syncing…'
         : state === 'dirty' ? 'unsaved changes — tap to save to cloud'
-        : 'saved to cloud — tap to save now';
+        : 'up to date — tap to pull the latest from your other device';
       b.innerHTML = svg('cloud') + '<span class="sync-dot"></span>';
     }
 
-    return { enabled, get, set, isAuto, setAuto, push, pull, pushNow, syncOnLoad, markDirty, updateBtn,
+    /* pull the cloud's latest onto THIS device — for live multi-device viewing
+       (edit on laptop, keep iPad open as a reference). Never clobbers unsaved
+       local edits unless forced. Returns true if it actually loaded newer data. */
+    async function refresh(force) {
+      if (!enabled() || (dirty && !force)) return false;
+      const remote = await pull();
+      if (!remote || !remote.data) return false;
+      const localTs = Store.get().meta.updatedAt || 0;
+      const remoteTs = remote.data.meta?.updatedAt || Date.parse(remote.updated_at) || 0;
+      if (force || remoteTs > localTs + 1500) { Store.replaceAll(remote.data); render(); return true; }
+      return false;
+    }
+
+    /* the corner cloud button: SAVE if this device has unsaved edits, else PULL latest */
+    async function syncTap() {
+      if (!enabled()) { toast('cloud sync is off — set it up in settings'); return; }
+      if (dirty) { await push(); toast(status === 'ok' ? 'saved to cloud ✓' : `save failed: ${lastError}`); return; }
+      const got = await refresh(false);
+      toast(got ? 'loaded latest from cloud ↻' : (status === 'error' ? `sync failed: ${lastError}` : 'already up to date ✓'));
+    }
+
+    return { enabled, get, set, isAuto, setAuto, push, pull, pushNow, syncOnLoad, markDirty, updateBtn, refresh, syncTap,
       get status() { return status; }, get lastError() { return lastError; }, get dirty() { return dirty; } };
   })();
 
@@ -2966,8 +2987,8 @@
     $('#settings-btn').innerHTML = svg('gear');
     $('#search-btn').innerHTML = svg('search');
     $('#search-btn').addEventListener('click', () => Search.open());
-    // corner cloud button → tap to save to cloud now
-    $('#sync-btn').addEventListener('click', () => Sync.pushNow());
+    // corner cloud button → save if this device has edits, else pull the latest
+    $('#sync-btn').addEventListener('click', () => Sync.syncTap());
     $('#settings-btn').addEventListener('click', () => Modal.open('Settings', (body, close) => {
       const meta = Store.get().meta;
       body.append(
@@ -3043,6 +3064,12 @@
     Store.onSave(() => Sync.markDirty());
     Sync.updateBtn();
     Sync.syncOnLoad();
+
+    // live multi-device: auto-pull the latest when you return to this device + on a light timer,
+    // so an iPad kept open beside your laptop stays current (skips if this device has unsaved edits)
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) Sync.refresh(false); });
+    window.addEventListener('focus', () => Sync.refresh(false));
+    setInterval(() => { if (!document.hidden) Sync.refresh(false); }, 25000);
 
     let lastDay = todayKey();
     setInterval(async () => {
