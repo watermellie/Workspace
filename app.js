@@ -757,20 +757,26 @@
       if (!remote || !remote.data) { push(); return; }              // cloud empty → seed it
       const localTs = Store.get().meta.updatedAt || 0;
       const remoteTs = remote.data.meta?.updatedAt || Date.parse(remote.updated_at) || 0;
-      if (remoteTs > localTs + 1500) warnStale(remote, remoteTs, localTs);  // this device is behind
+      if (remoteTs > localTs + 1500) {
+        if (dirty) warnStale(remote, remoteTs, localTs);          // unsaved local edits → let the user choose
+        else { Store.replaceAll(remote.data); render(); }          // clean device → just adopt the latest, no popup
+      }
       else if (localTs > remoteTs + 1500) { if (autopush) push(); else { dirty = true; updateBtn(); } }
     }
 
     function warnStale(remote, remoteTs, localTs) {
       $('#sync-warn')?.remove();
       const ago = (ts) => { const m = Math.round((Date.now()-ts)/60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : `${Math.round(m/60)} hr ago`; };
-      const bar = el('div', { id:'sync-warn' }, [
+      const bar = el('div', { id:'sync-warn' });
+      const close = () => bar.remove();                  // always dismiss FIRST so it never gets stuck
+      bar.append(
         el('span', { html: `☁️ <b>Another device has newer changes</b> (cloud saved ${ago(remoteTs)}; this device ${localTs?('last edited '+ago(localTs)):'has no local edits'}).` }),
         el('div', { class:'sw-actions' }, [
-          el('button', { class:'btn primary sm', text:'load latest', onclick: () => { Store.replaceAll(remote.data); toast('loaded latest from cloud'); bar.remove(); render(); } }),
-          el('button', { class:'btn ghost sm', text:'keep this device', onclick: () => { bar.remove(); push(); toast('kept this device — uploaded to cloud'); } }),
+          el('button', { class:'btn primary sm', text:'load latest', onclick: () => { close(); Store.replaceAll(remote.data); toast('loaded latest from cloud'); render(); } }),
+          el('button', { class:'btn ghost sm', text:'keep this device', onclick: () => { close(); push(); toast('kept this device — uploaded to cloud'); } }),
         ]),
-      ]);
+        el('button', { class:'sw-x', title:'dismiss', text:'✕', onclick: close }),
+      );
       document.body.append(bar);
     }
 
